@@ -13,7 +13,7 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $actions = ['view', 'create', 'edit', 'delete'];
+        $actions = ['view', 'create', 'edit', 'delete', 'restore'];
         $names = collect(scandir(app_path('Models')))
             ->reject(fn ($name) => in_array($name, ['.', '..', 'Permission.php']))
             ->map(function ($name) use ($actions) {
