@@ -21,7 +21,10 @@ class RoleSeeder extends Seeder
             'guard_name' => config('auth.defaults.guard'),
         ]);
 
-        $manager->syncPermissions(['user.view', 'user.create', 'user.edit']);
+        $manager->syncPermissions([
+            'user.view', 'user.create', 'user.edit',
+            'lead.view', 'lead.create', 'lead.edit',
+        ]);
 
         User::query()
             ->where('email', 'supervisor@crm.io')
@@ -35,7 +38,10 @@ class RoleSeeder extends Seeder
             'guard_name' => config('auth.defaults.guard'),
         ]);
 
-        $agent->syncPermissions(['user.view']);
+        $agent->syncPermissions([
+            'user.view',
+            'lead.view',
+        ]);
 
         User::query()
             ->where('email', 'like', '%.agent@crm.io')
