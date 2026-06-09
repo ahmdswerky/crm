@@ -40,20 +40,20 @@ class LeadRepository implements LeadRepositoryInterface
         ]);
     }
 
-    public function update(Lead $user, array $data): Lead
+    public function update(Lead $lead, array $data): Lead
     {
-        $user->update([
-            'name' => Arr::get($data, 'name', $user->name),
-            'email' => Arr::get($data, 'email', $user->email),
-            'phone' => Arr::get($data, 'phone', $user->phone),
-            'status' => Arr::get($data, 'status', $user->status),
-            'city' => Arr::get($data, 'city', $user->city),
-            'address' => Arr::get($data, 'address', $user->address),
-            'company_name' => Arr::get($data, 'company_name', $user->company_name),
-            'source' => Arr::get($data, 'source', $user->source),
+        $lead->update([
+            'name' => Arr::get($data, 'name', $lead->name),
+            'email' => Arr::get($data, 'email', $lead->email),
+            'phone' => Arr::get($data, 'phone', $lead->phone),
+            'status' => Arr::get($data, 'status', $lead->status),
+            'city' => Arr::get($data, 'city', $lead->city),
+            'address' => Arr::get($data, 'address', $lead->address),
+            'company_name' => Arr::get($data, 'company_name', $lead->company_name),
+            'source' => Arr::get($data, 'source', $lead->source),
         ]);
 
-        return $user->fresh();
+        return $lead->fresh();
     }
 
     public function delete(int $id): bool

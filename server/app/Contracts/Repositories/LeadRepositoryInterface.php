@@ -13,7 +13,7 @@ interface LeadRepositoryInterface
 
     public function store(array $data): Lead;
 
-    public function update(Lead $user, array $data): Lead;
+    public function update(Lead $lead, array $data): Lead;
 
     public function delete(int $id): bool;
 }
