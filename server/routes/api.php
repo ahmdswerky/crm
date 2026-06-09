@@ -8,4 +8,6 @@ Route::prefix('v1')->group(function () {
     require_once base_path('routes/api/v1/users.php');
 
     require_once base_path('routes/api/v1/leads.php');
+
+    require_once base_path('routes/api/v1/properties.php');
 });

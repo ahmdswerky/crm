@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $manager = Role::create([
+        $manager = Role::firstOrCreate([
             'name' => 'manager',
             'guard_name' => config('auth.defaults.guard'),
         ]);
@@ -24,6 +24,7 @@ class RoleSeeder extends Seeder
         $manager->syncPermissions([
             'user.view', 'user.create', 'user.edit',
             'lead.view', 'lead.create', 'lead.edit',
+            'property.view', 'property.create', 'property.edit', 'property.delete',
         ]);
 
         User::query()
@@ -33,7 +34,7 @@ class RoleSeeder extends Seeder
 
         // ---- //
 
-        $agent = Role::create([
+        $agent = Role::firstOrCreate([
             'name' => 'agent',
             'guard_name' => config('auth.defaults.guard'),
         ]);
@@ -41,6 +42,7 @@ class RoleSeeder extends Seeder
         $agent->syncPermissions([
             'user.view',
             'lead.view',
+            'property.view',
         ]);
 
         User::query()
