@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Lead;
+use App\Models\Property;
 use App\Models\User;
 use App\Policies\LeadPolicy;
+use App\Policies\PropertyPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Gate;
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
+        Gate::policy(Property::class, PropertyPolicy::class);
     }
 
     /**
