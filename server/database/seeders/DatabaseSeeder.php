@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LeadSeeder::class,
             PropertySeeder::class,
+            AccountSeeder::class,
         ]);
     }
 }

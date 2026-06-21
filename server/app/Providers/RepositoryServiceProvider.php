@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Contracts\Repositories\AccountRepositoryInterface;
 use App\Contracts\Repositories\LeadRepositoryInterface;
 use App\Contracts\Repositories\PropertyRepositoryInterface;
 use App\Contracts\Repositories\UserRepositoryInterface;
+use App\Repositories\AccountRepository;
 use App\Repositories\LeadRepository;
 use App\Repositories\PropertyRepository;
 use App\Repositories\UserRepository;
@@ -20,6 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(PropertyRepositoryInterface::class, PropertyRepository::class);
+        $this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);
     }
 
     /**
