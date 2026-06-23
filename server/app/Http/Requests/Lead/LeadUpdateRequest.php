@@ -30,7 +30,7 @@ class LeadUpdateRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'min:4', 'max:250'],
             'email' => ['sometimes', 'required', 'email', Rule::unique('leads', 'email')->ignore($leadId), 'max:250'],
-            'phone' => ['sometimes', 'required', 'phone', Rule::unique('leads', 'phone')->ignore($leadId), 'max:250'],
+            'phone' => ['sometimes', 'required', 'phone', Rule::unique('leads', 'phone')->ignore($leadId), 'max:30'],
             'status' => ['sometimes', 'required', Rule::enum(LeadStatus::class)],
             'city' => ['sometimes', 'required', 'min:2', 'max:200'],
             'address' => ['nullable', 'min:10', 'max:200'],

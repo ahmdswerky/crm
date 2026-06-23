@@ -27,7 +27,7 @@ class UserUpdateRequest extends FormRequest
         $userId = $this->route('user.id');
 
         return [
-            'name' => 'required|min:4|max:250',
+            'name' => ['required', 'min:4', 'max:250'],
             'username' => [
                 'required',
                 'min:4',
@@ -44,9 +44,9 @@ class UserUpdateRequest extends FormRequest
                 'required',
                 'phone',
                 Rule::unique('users', 'phone')->ignore($userId),
-                'max:250',
+                'max:30',
             ],
-            'roles' => $canManageRoles ? 'array' : 'prohibited',
+            'roles' => [$canManageRoles ? 'array' : 'prohibited'],
             'roles.*' => [
                 'required',
                 Rule::exists(config('permission.table_names.roles'), 'name'),
