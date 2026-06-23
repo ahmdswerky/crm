@@ -14,4 +14,5 @@ Route::prefix('v1')->group(function () {
     require_once base_path('routes/api/v1/accounts.php');
 
     require_once base_path('routes/api/v1/contacts.php');
+
 });
