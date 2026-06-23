@@ -10,7 +10,7 @@ class AccountSeeder extends Seeder
     public function run(): void
     {
         Account::factory()
-            ->count(30)
+            ->count(10)
             ->create();
     }
 }
