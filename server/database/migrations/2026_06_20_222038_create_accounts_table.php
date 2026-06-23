@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('industry')->nullable();
             $table->string('phone', 30)->unique();
             $table->string('address')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
