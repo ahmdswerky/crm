@@ -20,10 +20,10 @@ class UserResource extends JsonResource
             'username' => $this->resource->username,
             'email' => $this->resource->email,
             'phone' => $this->resource->phone,
-            'roles' => RoleResource::collection($this->resource->roles),
+            'roles' => $this->whenLoaded('roles', fn () => RoleResource::collection($this->resource->roles)),
             'permissions' => $this->whenLoaded(
                 'permissions',
-                PermissionResource::collection($this->resource->getAllPermissions()),
+                fn () => PermissionResource::collection($this->resource->getAllPermissions()),
             ),
             'created_at' => $this->resource->created_at,
         ];
