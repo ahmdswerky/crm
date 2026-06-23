@@ -32,7 +32,7 @@ class PropertyRepository implements PropertyRepositoryInterface
 
     public function store(array $data): Property
     {
-        $model = $this->model->with(['owner'])->create([
+        $model = $this->model->create([
             'owner_id' => $data['owner_id'],
             'title' => $data['title'],
             'description' => $data['description'],
@@ -42,7 +42,7 @@ class PropertyRepository implements PropertyRepositoryInterface
             // 'purpose' => $data['purpose'] ?? PropertyPurpose::SALE,
             'type' => $data['type'],
             'status' => $data['status'] ?? PropertyStatus::PENDING,
-        ]);
+        ])->load(['owner']);
 
         return $model;
     }
