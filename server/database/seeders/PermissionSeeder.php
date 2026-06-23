@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
         $actions = ['view', 'create', 'edit', 'delete', 'restore'];
         $names = collect(scandir(app_path('Models')))
             ->reject(fn ($name) => in_array($name, ['.', '..', 'Permission.php']))
-            ->map(function ($name) use ($actions) {
+            ->map(function (string $name) use ($actions) {
                 $namespace = Str::of($name)
                     ->chopEnd('.php')
                     ->lower()
