@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Http\Requests\Deal;
+
+use App\Enums\DealStatus;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class DealStoreRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'value' => ['required', 'numeric', 'min:500'],
+            'deal_value' => ['required', 'numeric', 'min:500'],
+            'contact_id' => ['required', 'integer', 'exists:contacts,id'],
+            'property_id' => ['required', 'integer', 'exists:properties,id'],
+            'status' => ['required', Rule::enum(DealStatus::class)],
+            'commission_rate' => ['required', 'numeric', 'min:0'],
+            'closed_at' => ['nullable', 'date'],
+        ];
+    }
+}

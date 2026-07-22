@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             PropertySeeder::class,
             AccountSeeder::class,
             ContactSeeder::class,
+            DealSeeder::class,
         ]);
     }
 }

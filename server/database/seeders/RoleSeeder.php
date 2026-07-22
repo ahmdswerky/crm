@@ -27,6 +27,7 @@ class RoleSeeder extends Seeder
             'property.view', 'property.create', 'property.edit', 'property.delete',
             'account.view', 'account.create', 'account.edit', 'account.delete',
             'contact.view', 'contact.create', 'contact.edit', 'contact.delete',
+            'deal.view', 'deal.create', 'deal.edit', 'deal.delete',
         ]);
 
         User::query()
@@ -47,6 +48,7 @@ class RoleSeeder extends Seeder
             'property.view',
             'account.view', 'account.create', 'account.edit',
             'contact.view', 'contact.create', 'contact.edit',
+            'deal.view',
         ]);
 
         User::query()
