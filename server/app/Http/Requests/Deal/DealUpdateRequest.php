@@ -22,7 +22,7 @@ class DealUpdateRequest extends FormRequest
             'property_id' => ['sometimes', 'required', 'integer', 'exists:properties,id'],
             'status' => ['sometimes', 'required', Rule::enum(DealStatus::class)],
             'commission_rate' => ['sometimes', 'required', 'numeric'],
-            'closed_at' => ['nullable', 'datetime'],
+            'closed_at' => ['nullable', 'date'],
         ];
     }
 }
