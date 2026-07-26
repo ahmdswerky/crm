@@ -36,6 +36,7 @@ class LeadUpdateRequest extends FormRequest
             'address' => ['nullable', 'min:10', 'max:200'],
             'company_name' => ['nullable', 'min:2', 'max:150'],
             'source' => ['nullable', Rule::enum(LeadSource::class)],
+            'assigned_agent_id' => ['nullable', 'integer', Rule::exists('users', 'id')],
         ];
     }
 }

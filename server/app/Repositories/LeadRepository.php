@@ -16,13 +16,14 @@ class LeadRepository implements LeadRepositoryInterface
     {
         return $this->model
             ->query()
+            ->with(['assignedAgent:id,name,username,email'])
             ->paginate();
     }
 
     public function findById(int $id, array $with = []): ?Lead
     {
         return $this->model
-            ->with($with)
+            ->with(array_merge(['assignedAgent:id,name,username,email'], $with))
             ->findOrFail($id);
     }
 
@@ -37,7 +38,7 @@ class LeadRepository implements LeadRepositoryInterface
             'address' => $data['address'] ?? null,
             'company_name' => $data['company_name'] ?? null,
             'source' => $data['source'] ?? null,
-        ]);
+        ])->load(['assignedAgent']);
     }
 
     public function update(Lead $lead, array $data): Lead
@@ -51,9 +52,10 @@ class LeadRepository implements LeadRepositoryInterface
             'address' => Arr::get($data, 'address', $lead->address),
             'company_name' => Arr::get($data, 'company_name', $lead->company_name),
             'source' => Arr::get($data, 'source', $lead->source),
+            'assigned_agent_id' => Arr::get($data, 'assigned_agent_id', $lead->assigned_agent_id),
         ]);
 
-        return $lead->fresh();
+        return $lead->fresh(['assignedAgent']);
     }
 
     public function delete(int $id): bool

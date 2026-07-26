@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\LeadSource;
 use App\Enums\LeadStatus;
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,6 +29,10 @@ class LeadFactory extends Factory
             'address' => fake()->streetAddress(),
             'company_name' => fake()->randomElement([fake()->company(), null]),
             'source' => fake()->randomElement([...LeadSource::cases(), null]),
+            'assigned_agent_id' => fake()->randomElement([
+                null,
+                User::query()->inRandomOrder()->value('id'),
+            ]),
         ];
     }
 

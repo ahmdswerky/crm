@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasMany(Property::class);
     }
 
+    public function assignedLeads(): HasMany
+    {
+        return $this->hasMany(Lead::class, 'assigned_agent_id');
+    }
+
     public function checkPassword(string $password)
     {
         $hashedPassword = $this->attributes['password'];
