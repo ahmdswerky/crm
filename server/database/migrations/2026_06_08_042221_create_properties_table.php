@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'owner_id')->index();
+            $table->foreignIdFor(User::class, 'created_by')->nullable()->index();
             $table->string('title')->unique();
             $table->text('description');
             $table->string('city')->index();

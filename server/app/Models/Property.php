@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['owner_id', 'title', 'description', 'city', 'address', 'price', 'purpose', 'type', 'status'])]
+#[Fillable(['created_by', 'title', 'description', 'city', 'address', 'price', 'purpose', 'type', 'status'])]
 class Property extends Model
 {
     use HasFactory, SoftDeletes;
@@ -26,7 +26,7 @@ class Property extends Model
         ];
     }
 
-    public function owner(): BelongsTo
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class)
             ->without('roles');

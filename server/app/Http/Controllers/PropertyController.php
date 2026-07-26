@@ -43,6 +43,8 @@ class PropertyController extends Controller
     #[Authorize('view', 'property')]
     public function show(Property $property)
     {
+        $property->load('createdBy');
+
         return response()->json([
             'property' => PropertyResource::make($property),
         ]);

@@ -17,9 +17,6 @@ class PropertyRepository implements PropertyRepositoryInterface
     {
         return $this->model
             ->query()
-            ->with([
-                'owner',
-            ])
             ->paginate();
     }
 
@@ -33,7 +30,7 @@ class PropertyRepository implements PropertyRepositoryInterface
     public function store(array $data): Property
     {
         $model = $this->model->create([
-            'owner_id' => $data['owner_id'],
+            'created_by' => $data['created_by'],
             'title' => $data['title'],
             'description' => $data['description'],
             'city' => $data['city'],
@@ -42,7 +39,7 @@ class PropertyRepository implements PropertyRepositoryInterface
             // 'purpose' => $data['purpose'] ?? PropertyPurpose::SALE,
             'type' => $data['type'],
             'status' => $data['status'] ?? PropertyStatus::PENDING,
-        ])->load(['owner']);
+        ])->load(['createdBy']);
 
         return $model;
     }
@@ -60,7 +57,7 @@ class PropertyRepository implements PropertyRepositoryInterface
             'status' => Arr::get($data, 'status', $property->status),
         ]);
 
-        return $property->fresh(['owner']);
+        return $property->fresh(['createdBy']);
     }
 
     public function delete(int $id): bool

@@ -34,7 +34,7 @@ class User extends Authenticatable
 
     public function properties(): HasMany
     {
-        return $this->hasMany(Property::class);
+        return $this->hasMany(Property::class, 'created_by');
     }
 
     public function assignedLeads(): HasMany

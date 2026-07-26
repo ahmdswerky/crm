@@ -21,7 +21,7 @@ class PropertyFactory extends Factory
     public function definition(): array
     {
         return [
-            'owner_id' => 2, // supervisor id
+            'created_by' => 2, // supervisor id
             'title' => fake()->sentence(),
             'description' => fake()->words(15, true),
             'price' => fake()->numberBetween(1, 10) * 100000,

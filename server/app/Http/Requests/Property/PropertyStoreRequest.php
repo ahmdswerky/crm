@@ -33,14 +33,14 @@ class PropertyStoreRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:5000', 'max:1000000000'],
             'type' => ['required', Rule::enum(PropertyType::class)],
             'status' => ['nullable', Rule::enum(PropertyStatus::class)],
-            'owner_id' => ['required', 'integer'],
+            'created_by' => ['nullable', 'integer', Rule::exists('users', 'id')],
         ];
     }
 
     protected function prepareForValidation()
     {
         $this->merge([
-            'owner_id' => $this->user()->id,
+            'created_by' => $this->user()->id,
         ]);
     }
 }
