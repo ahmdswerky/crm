@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\ActivityLog;
 use App\Models\Lead;
 use App\Models\Property;
 use App\Models\User;
+use App\Policies\ActivityLogPolicy;
 use App\Policies\LeadPolicy;
 use App\Policies\PropertyPolicy;
 use App\Policies\UserPolicy;
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        Gate::policy(ActivityLog::class, ActivityLogPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
         Gate::policy(Property::class, PropertyPolicy::class);
@@ -33,7 +36,13 @@ class AppServiceProvider extends ServiceProvider
             return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
 
-        Gate::before(function ($user, $ability) {
+        Gate::before(function ($user, $ability, $arguments) {
+            $target = $arguments[0] ?? null;
+
+            if (is_a($target, ActivityLog::class, true)) {
+                return null;
+            }
+
             return $user->is_super ? true : null;
         });
     }

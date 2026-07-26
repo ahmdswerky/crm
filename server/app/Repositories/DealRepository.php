@@ -15,7 +15,7 @@ class DealRepository implements DealRepositoryInterface
     {
         return $this->model
             ->query()
-            ->with(['contact', 'property'])
+            ->with($this->dealRelations())
             ->paginate();
     }
 
@@ -23,7 +23,7 @@ class DealRepository implements DealRepositoryInterface
     {
         return $this->model
             ->query()
-            ->with(['contact', 'property'])
+            ->with($this->dealRelations())
             ->findOrFail($id);
     }
 
@@ -34,10 +34,11 @@ class DealRepository implements DealRepositoryInterface
             'deal_value' => $data['deal_value'],
             'contact_id' => $data['contact_id'],
             'property_id' => $data['property_id'],
+            'agent_id' => $data['agent_id'],
             'status' => $data['status'],
             'commission_rate' => $data['commission_rate'],
             'closed_at' => $data['closed_at'] ?? null,
-        ])->load(['contact', 'property']);
+        ])->load($this->dealRelations());
     }
 
     public function update(Deal $deal, array $data): Deal
@@ -47,6 +48,7 @@ class DealRepository implements DealRepositoryInterface
             'deal_value' => Arr::get($data, 'deal_value', $deal->deal_value),
             'contact_id' => Arr::get($data, 'contact_id', $deal->contact_id),
             'property_id' => Arr::get($data, 'property_id', $deal->property_id),
+            'agent_id' => Arr::get($data, 'agent_id', $deal->agent_id),
             'status' => Arr::get($data, 'status', $deal->status),
             'commission_rate' => Arr::get($data, 'commission_rate', $deal->commission_rate),
             'closed_at' => Arr::get($data, 'closed_at', $deal->closed_at),
@@ -54,11 +56,25 @@ class DealRepository implements DealRepositoryInterface
 
         $deal->refresh();
 
-        return $deal->load(['contact', 'property']);
+        return $deal->load($this->dealRelations());
     }
 
     public function delete(int $id): bool
     {
         return (bool) $this->model->destroy($id);
+    }
+
+    /**
+     * Select only the fields exposed by the nested deal resources.
+     *
+     * @return array<string, string>
+     */
+    private function dealRelations(): array
+    {
+        return [
+            'contact:id,name,title,email,phone,created_at',
+            'property:id,title,description,city,address,price,purpose,type,status,created_at',
+            'agent:id,name,username,email,phone,created_at',
+        ];
     }
 }

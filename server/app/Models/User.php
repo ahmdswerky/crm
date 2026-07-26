@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,11 +18,16 @@ use Spatie\Permission\Traits\HasRoles;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, LogsCrmActivity, Notifiable, SoftDeletes;
 
     protected $with = [
         'roles.permissions',
     ];
+
+    protected function auditAttributes(): array
+    {
+        return ['name', 'email', 'username', 'phone', 'is_super'];
+    }
 
     protected function casts(): array
     {
@@ -40,6 +46,11 @@ class User extends Authenticatable
     public function assignedLeads(): HasMany
     {
         return $this->hasMany(Lead::class, 'assigned_agent_id');
+    }
+
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class, 'agent_id');
     }
 
     public function checkPassword(string $password)

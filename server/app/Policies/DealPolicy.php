@@ -39,6 +39,6 @@ class DealPolicy
 
     public function forceDelete(User $user, Deal $deal): bool
     {
-        return $user->is_super;
+        return false;
     }
 }

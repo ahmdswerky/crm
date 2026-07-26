@@ -60,6 +60,6 @@ class PropertyPolicy
      */
     public function forceDelete(User $user, Property $property): bool
     {
-        return $user->is_super;
+        return false;
     }
 }

@@ -20,6 +20,7 @@ class DealUpdateRequest extends FormRequest
             'deal_value' => ['sometimes', 'required', 'numeric'],
             'contact_id' => ['sometimes', 'required', 'integer', 'exists:contacts,id'],
             'property_id' => ['sometimes', 'required', 'integer', 'exists:properties,id'],
+            'agent_id' => ['sometimes', 'required', 'integer', Rule::exists('users', 'id')],
             'status' => ['sometimes', 'required', Rule::enum(DealStatus::class)],
             'commission_rate' => ['sometimes', 'required', 'numeric'],
             'closed_at' => ['nullable', 'date'],

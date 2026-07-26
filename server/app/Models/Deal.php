@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Enums\DealStatus;
+use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['value', 'deal_value', 'contact_id', 'property_id', 'status', 'commission_rate', 'closed_at'])]
+#[Fillable(['value', 'deal_value', 'contact_id', 'property_id', 'agent_id', 'status', 'commission_rate', 'closed_at'])]
 class Deal extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsCrmActivity, SoftDeletes;
 
     protected function casts(): array
     {
@@ -32,5 +34,11 @@ class Deal extends Model
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);
+    }
+
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'agent_id')
+            ->without('roles');
     }
 }

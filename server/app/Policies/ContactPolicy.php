@@ -39,6 +39,6 @@ class ContactPolicy
 
     public function forceDelete(User $user, Contact $contact): bool
     {
-        return $user->is_super;
+        return false;
     }
 }

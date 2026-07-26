@@ -20,6 +20,7 @@ class DealResource extends JsonResource
             'deal_value' => $this->resource->deal_value,
             'contact' => $this->whenLoaded('contact', fn () => ContactResource::make($this->resource->contact)),
             'property' => $this->whenLoaded('property', fn () => PropertyResource::make($this->resource->property)),
+            'agent' => $this->whenLoaded('agent', fn () => UserResource::make($this->resource->agent)),
             'status' => $this->resource->status,
             'commission_rate' => $this->resource->commission_rate,
             'closed_at' => $this->resource->closed_at,

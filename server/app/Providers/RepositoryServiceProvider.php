@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Contracts\Repositories\AccountRepositoryInterface;
+use App\Contracts\Repositories\ActivityLogRepositoryInterface;
 use App\Contracts\Repositories\ContactRepositoryInterface;
 use App\Contracts\Repositories\DealRepositoryInterface;
 use App\Contracts\Repositories\LeadRepositoryInterface;
 use App\Contracts\Repositories\PropertyRepositoryInterface;
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Repositories\AccountRepository;
+use App\Repositories\ActivityLogRepository;
 use App\Repositories\ContactRepository;
 use App\Repositories\DealRepository;
 use App\Repositories\LeadRepository;
@@ -23,6 +25,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(ActivityLogRepositoryInterface::class, ActivityLogRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
         $this->app->bind(PropertyRepositoryInterface::class, PropertyRepository::class);

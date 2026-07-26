@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['name', 'title', 'email', 'phone', 'account_id'])]
 class Contact extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsCrmActivity, SoftDeletes;
 
     public function account(): BelongsTo
     {

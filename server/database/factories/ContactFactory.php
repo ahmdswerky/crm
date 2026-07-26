@@ -23,7 +23,7 @@ class ContactFactory extends Factory
             'title' => fake()->randomElement([fake()->jobTitle(), null]),
             'email' => fake()->randomElement([fake()->unique()->safeEmail(), null]),
             'phone' => fake()->unique()->e164PhoneNumber(),
-            'account_id' => Account::inRandomOrder()->first()->id,
+            'account_id' => Account::query()->inRandomOrder()->value('id'),
         ];
     }
 }

@@ -29,7 +29,7 @@ class LeadIndexRequest extends FormRequest
             'status' => ['sometimes', 'required', 'min:2', 'max:200'],
             'city' => ['sometimes', 'required', 'min:2', 'max:200'],
             'address' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'company_name' => ['sometimes', 'required', 'min:2', 'max:200'],
+            'company_name' => ['sometimes', 'required', 'min:2', 'max:150'],
             'source' => ['sometimes', 'required', 'min:2', 'max:200'],
         ];
     }

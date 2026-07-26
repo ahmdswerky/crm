@@ -59,6 +59,6 @@ class UserPolicy
      */
     public function forceDelete(User $user): bool
     {
-        return $user->is_super;
+        return false;
     }
 }

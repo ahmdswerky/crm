@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PropertyPurpose;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
+use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['created_by', 'title', 'description', 'city', 'address', 'price', 'purpose', 'type', 'status'])]
 class Property extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsCrmActivity, SoftDeletes;
 
     protected function casts()
     {

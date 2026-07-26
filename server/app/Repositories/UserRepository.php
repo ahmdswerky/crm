@@ -4,13 +4,17 @@ namespace App\Repositories;
 
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
+use App\Services\AuditEventLogger;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function __construct(protected readonly User $model) {}
+    public function __construct(
+        protected readonly User $model,
+        private readonly AuditEventLogger $auditEvents,
+    ) {}
 
     public function paginate(): LengthAwarePaginator
     {
@@ -47,13 +51,20 @@ class UserRepository implements UserRepositoryInterface
 
     public function store(array $data): User
     {
-        return $this->model->create([
+        $user = $this->model->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'username' => Str::of($data['username'])->slug('.')->lower()->toString(),
             'phone' => $data['phone'],
             'password' => $data['password'],
         ]);
+
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $user->syncRoles($data['roles']);
+            $this->auditEvents->rolesUpdated($user, [], $data['roles']);
+        }
+
+        return $user->fresh(['roles.permissions']);
     }
 
     public function update(User $user, array $data): User
@@ -66,7 +77,9 @@ class UserRepository implements UserRepositoryInterface
         ]);
 
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $beforeRoles = $user->roles->pluck('name')->all();
             $user->syncRoles($data['roles']);
+            $this->auditEvents->rolesUpdated($user, $beforeRoles, $data['roles']);
         }
 
         return $user->fresh(['roles.permissions']);
@@ -80,9 +93,15 @@ class UserRepository implements UserRepositoryInterface
             return false;
         }
 
-        return $user->update([
+        $updated = $user->update([
             'password' => $newPassword,
         ]);
+
+        if ($updated) {
+            $this->auditEvents->passwordUpdated($user);
+        }
+
+        return $updated;
     }
 
     public function delete(int $id): bool
