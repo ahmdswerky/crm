@@ -49,7 +49,6 @@ test('a super user can consume the deal api', function () {
         ->assertJsonPath('deal.status', 'inquiry')
         ->assertJsonPath('deal.contact.id', $contact->id)
         ->assertJsonPath('deal.property.id', $property->id)
-        ->assertJsonPath('deal.agent_id', $agent->id)
         ->assertJsonPath('deal.agent.id', $agent->id);
 
     $dealId = (int) $this->actingAs($user)
@@ -74,7 +73,7 @@ test('a super user can consume the deal api', function () {
         ->assertOk()
         ->assertJsonPath('deal.status', 'won')
         ->assertJsonPath('deal.closed_at', '2026-07-17T00:00:00.000000Z')
-        ->assertJsonPath('deal.agent_id', $replacementAgent->id);
+        ->assertJsonPath('deal.agent.id', $replacementAgent->id);
 
     $this->actingAs($user)
         ->deleteJson("/api/v1/deals/{$dealId}")

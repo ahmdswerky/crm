@@ -2,11 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Account;
 use App\Models\ActivityLog;
+use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\Property;
 use App\Models\User;
+use App\Policies\AccountPolicy;
 use App\Policies\ActivityLogPolicy;
+use App\Policies\ContactPolicy;
 use App\Policies\LeadPolicy;
 use App\Policies\PropertyPolicy;
 use App\Policies\UserPolicy;
@@ -24,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(ActivityLog::class, ActivityLogPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
+        Gate::policy(Contact::class, ContactPolicy::class);
+        Gate::policy(Account::class, AccountPolicy::class);
         Gate::policy(Property::class, PropertyPolicy::class);
     }
 
