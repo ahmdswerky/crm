@@ -41,9 +41,11 @@ class UserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user): bool
+    public function delete(User $user, User $target): bool
     {
-        return $user->can('user.delete');
+        return $user->can('user.delete')
+            && $user->isNot($target)
+            && ! $target->is_super;
     }
 
     /**

@@ -9,6 +9,8 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:sanctum')->name('user');
 
+Route::put('user', [AuthController::class, 'update'])->middleware('auth:sanctum')->name('user.update');
+
 Route::put('update-password', [AuthController::class, 'passwordUpdate'])->middleware('auth:sanctum')->name('password.update');
 
 Route::put('forgot-password', [PasswordResetLinkController::class, 'store'])->middleware('guest')->name('password.forgot');
