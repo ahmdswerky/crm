@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\LeadRepositoryInterface;
+use App\Http\Requests\Lead\LeadIndexRequest;
 use App\Http\Requests\Lead\LeadStoreRequest;
 use App\Http\Requests\Lead\LeadUpdateRequest;
 use App\Http\Resources\LeadResource;
@@ -17,9 +18,9 @@ class LeadController extends Controller
      * Display a listing of the resource.
      */
     #[Authorize('viewAny', Lead::class)]
-    public function index()
+    public function index(LeadIndexRequest $request)
     {
-        $data = $this->leadRepository->paginate();
+        $data = $this->leadRepository->paginate($request->validated());
 
         return LeadResource::collection($data);
     }

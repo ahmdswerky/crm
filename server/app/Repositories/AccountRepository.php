@@ -6,15 +6,30 @@ use App\Contracts\Repositories\AccountRepositoryInterface;
 use App\Models\Account;
 use Arr;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class AccountRepository implements AccountRepositoryInterface
 {
     public function __construct(protected readonly Account $model) {}
 
-    public function paginate(): LengthAwarePaginator
+    public function paginate(array $filters = []): LengthAwarePaginator
     {
         return $this->model
             ->query()
+            ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('industry', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['industry'] ?? null, fn (Builder $query, string $industry) => $query->where('industry', 'like', "%{$industry}%"))
+            ->when($filters['phone'] ?? null, fn (Builder $query, string $phone) => $query->where('phone', 'like', "%{$phone}%"))
+            ->when($filters['address'] ?? null, fn (Builder $query, string $address) => $query->where('address', 'like', "%{$address}%"))
+            ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
+            ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->paginate();
     }
 

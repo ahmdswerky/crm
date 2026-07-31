@@ -7,7 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface DealRepositoryInterface
 {
-    public function paginate(): LengthAwarePaginator;
+    public function paginate(array $filters = []): LengthAwarePaginator;
 
     public function find(int $id): Deal;
 
@@ -16,4 +16,6 @@ interface DealRepositoryInterface
     public function update(Deal $deal, array $data): Deal;
 
     public function delete(int $id): bool;
+
+    public function filtersInfo(): array;
 }

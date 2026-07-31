@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\ContactRepositoryInterface;
+use App\Http\Requests\Contact\ContactIndexRequest;
 use App\Http\Requests\Contact\ContactStoreRequest;
 use App\Http\Requests\Contact\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
@@ -14,9 +15,9 @@ class ContactController extends Controller
     public function __construct(protected ContactRepositoryInterface $contactRepository) {}
 
     #[Authorize('viewAny', Contact::class)]
-    public function index()
+    public function index(ContactIndexRequest $request)
     {
-        $data = $this->contactRepository->paginate();
+        $data = $this->contactRepository->paginate($request->validated());
 
         return ContactResource::collection($data);
     }

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface PropertyRepositoryInterface
 {
-    public function paginate(): LengthAwarePaginator;
+    public function paginate(array $filters = []): LengthAwarePaginator;
 
     public function findById(int $id, array $with = []): ?Property;
 
@@ -16,4 +16,6 @@ interface PropertyRepositoryInterface
     public function update(Property $property, array $data): Property;
 
     public function delete(int $id): bool;
+
+    public function filtersInfo(): array;
 }

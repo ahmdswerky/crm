@@ -7,16 +7,32 @@ use App\Enums\PropertyPurpose;
 use App\Enums\PropertyStatus;
 use App\Models\Property;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 class PropertyRepository implements PropertyRepositoryInterface
 {
     public function __construct(protected readonly Property $model) {}
 
-    public function paginate(): LengthAwarePaginator
+    public function paginate(array $filters = []): LengthAwarePaginator
     {
         return $this->model
             ->query()
+            ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query
+                        ->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%")
+                        ->orWhereHas('createdBy', fn (Builder $query) => $query->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->when($filters['type'] ?? null, fn (Builder $query, string $type) => $query->where('type', $type))
+            ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->where('city', 'like', "%{$city}%"))
+            ->when($filters['min_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '>=', $price))
+            ->when($filters['max_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '<=', $price))
             ->paginate();
     }
 
@@ -63,5 +79,17 @@ class PropertyRepository implements PropertyRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) $this->model->destroy($id);
+    }
+
+    public function filtersInfo(): array
+    {
+        $priceRange = $this->model
+            ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
+            ->first()
+            ->toArray();
+
+        return [
+            ...$priceRange,
+        ];
     }
 }

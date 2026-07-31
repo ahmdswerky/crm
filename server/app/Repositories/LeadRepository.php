@@ -6,16 +6,34 @@ use App\Contracts\Repositories\LeadRepositoryInterface;
 use App\Enums\LeadStatus;
 use App\Models\Lead;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 class LeadRepository implements LeadRepositoryInterface
 {
     public function __construct(protected readonly Lead $model) {}
 
-    public function paginate(): LengthAwarePaginator
+    public function paginate(array $filters = []): LengthAwarePaginator
     {
         return $this->model
             ->query()
+            ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%")
+                        ->orWhere('company_name', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->when($filters['source'] ?? null, fn (Builder $query, string $source) => $query->where('source', $source))
+            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->where('city', 'like', "%{$city}%"))
+            ->when($filters['company'] ?? null, fn (Builder $query, string $company) => $query->where('company_name', 'like', "%{$company}%"))
+            ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
+            ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->with(['assignedAgent:id,name,username,email'])
             ->paginate();
     }

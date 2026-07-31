@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\DealRepositoryInterface;
+use App\Http\Requests\Deal\DealIndexRequest;
 use App\Http\Requests\Deal\DealStoreRequest;
 use App\Http\Requests\Deal\DealUpdateRequest;
 use App\Http\Resources\DealResource;
@@ -14,11 +15,15 @@ class DealController extends Controller
     public function __construct(protected DealRepositoryInterface $dealRepository) {}
 
     #[Authorize('viewAny', Deal::class)]
-    public function index()
+    public function index(DealIndexRequest $request)
     {
-        $data = $this->dealRepository->paginate();
+        $data = $this->dealRepository->paginate($request->validated());
+        $filterInfo = $this->dealRepository->filtersInfo();
 
-        return DealResource::collection($data);
+        return DealResource::collection($data)
+            ->additional([
+                'filter' => $filterInfo,
+            ]);
     }
 
     #[Authorize('create', Deal::class)]

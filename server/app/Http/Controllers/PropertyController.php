@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\PropertyRepositoryInterface;
+use App\Http\Requests\Property\PropertyIndexRequest;
 use App\Http\Requests\Property\PropertyStoreRequest;
 use App\Http\Requests\Property\PropertyUpdateRequest;
 use App\Http\Resources\PropertyResource;
@@ -17,11 +18,15 @@ class PropertyController extends Controller
      * Display a listing of the resource.
      */
     #[Authorize('viewAny', Property::class)]
-    public function index()
+    public function index(PropertyIndexRequest $request)
     {
-        $data = $this->propertyRepository->paginate();
+        $data = $this->propertyRepository->paginate($request->validated());
+        $filterInfo = $this->propertyRepository->filtersInfo();
 
-        return PropertyResource::collection($data);
+        return PropertyResource::collection($data)
+            ->additional([
+                'filter' => $filterInfo,
+            ]);
     }
 
     /**

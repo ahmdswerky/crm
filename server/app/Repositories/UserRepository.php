@@ -5,8 +5,8 @@ namespace App\Repositories;
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use App\Services\AuditEventLogger;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -17,13 +17,28 @@ class UserRepository implements UserRepositoryInterface
         private readonly AuditEventLogger $auditEvents,
     ) {}
 
-    public function paginate(): LengthAwarePaginator
+    public function paginate(array $filters = []): LengthAwarePaginator
     {
         $isSuperAdmin = (bool) request()->user()->is_super;
 
         return $this->model
             ->query()
             ->when(! $isSuperAdmin, fn (Builder $query) => $query->where('is_super', false))
+            ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhereHas('roles', fn (Builder $query) => $query->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->when($filters['role'] ?? null, fn (Builder $query, string $role) => $query->whereHas('roles', fn (Builder $query) => $query->where('name', $role)))
+            ->when($filters['access'] ?? null, fn (Builder $query, string $access) => $query->where('is_super', $access === 'super'))
+            ->when($filters['permission'] ?? null, fn (Builder $query, string $permission) => $query->whereHas('permissions', fn (Builder $query) => $query->where('name', $permission)))
+            ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
+            ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->paginate();
     }
 
