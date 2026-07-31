@@ -23,7 +23,7 @@ class UserStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $canManageRoles = $this->user()->can('role.edit');
+        $canManageRoles = (bool) $this->user()->is_super;
 
         return [
             'name' => 'required|min:4|max:250',

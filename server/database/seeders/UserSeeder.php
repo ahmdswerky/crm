@@ -36,5 +36,45 @@ class UserSeeder extends Seeder
                 'username' => 'j.ryan',
             ]);
         }
+
+        if (! User::whereEmail($email = 'm.hassan.agent@crm.io')->exists()) {
+            User::factory()->create([
+                'email' => $email,
+                'name' => 'Maya Hassan',
+                'username' => 'm.hassan',
+            ]);
+        }
+
+        if (! User::whereEmail($email = 'o.khalil.agent@crm.io')->exists()) {
+            User::factory()->create([
+                'email' => $email,
+                'name' => 'Omar Khalil',
+                'username' => 'o.khalil',
+            ]);
+        }
+
+        if (! User::whereEmail($email = 'l.adel.agent@crm.io')->exists()) {
+            User::factory()->create([
+                'email' => $email,
+                'name' => 'Lina Adel',
+                'username' => 'l.adel',
+            ]);
+        }
+
+        if (! User::whereEmail($email = 'k.nassar.agent@crm.io')->exists()) {
+            User::factory()->create([
+                'email' => $email,
+                'name' => 'Karim Nassar',
+                'username' => 'k.nassar',
+            ]);
+        }
+
+        if (! User::whereEmail($email = 'n.samir.agent@crm.io')->exists()) {
+            User::factory()->create([
+                'email' => $email,
+                'name' => 'Nour Samir',
+                'username' => 'n.samir',
+            ]);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use App\Services\AuditEventLogger;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -18,8 +19,11 @@ class UserRepository implements UserRepositoryInterface
 
     public function paginate(): LengthAwarePaginator
     {
+        $isSuperAdmin = (bool) request()->user()->is_super;
+
         return $this->model
             ->query()
+            ->when(! $isSuperAdmin, fn (Builder $query) => $query->where('is_super', false))
             ->paginate();
     }
 

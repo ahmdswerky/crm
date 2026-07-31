@@ -6,6 +6,7 @@ use App\Contracts\Repositories\DealRepositoryInterface;
 use App\Models\Deal;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Builder;
 
 class DealRepository implements DealRepositoryInterface
 {
@@ -13,8 +14,12 @@ class DealRepository implements DealRepositoryInterface
 
     public function paginate(): LengthAwarePaginator
     {
+        $isAgent = request()->user()->roles->contains('name', 'agent');
+        $userId = request()->user()->id;
+
         return $this->model
             ->query()
+            ->when($isAgent, fn (Builder $query) => $query->where('agent_id', $userId))
             ->with($this->dealRelations())
             ->paginate();
     }

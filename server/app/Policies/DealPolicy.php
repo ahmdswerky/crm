@@ -24,11 +24,19 @@ class DealPolicy
 
     public function update(User $user, Deal $deal): bool
     {
+        if ($deal->agent_id == $user->id) {
+            return true;
+        }
+
         return $user->can('deal.edit');
     }
 
     public function delete(User $user, Deal $deal): bool
     {
+        if ($deal->agent_id == $user->id) {
+            return true;
+        }
+
         return $user->can('deal.delete');
     }
 

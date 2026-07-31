@@ -7,6 +7,10 @@ Route::group([], fn () => require base_path('routes/api/auth.php'));
 Route::prefix('v1')->group(function () {
     require base_path('routes/api/v1/users.php');
 
+    require base_path('routes/api/v1/roles.php');
+
+    require base_path('routes/api/v1/permissions.php');
+
     require base_path('routes/api/v1/leads.php');
 
     require base_path('routes/api/v1/properties.php');

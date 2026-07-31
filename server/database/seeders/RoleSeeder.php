@@ -22,6 +22,7 @@ class RoleSeeder extends Seeder
         ]);
 
         $manager->syncPermissions([
+            // 'role.view', 'role.create', 'role.edit', 'role.delete', 'role.restore',
             'user.view', 'user.create', 'user.edit', 'user.delete',
             'lead.view', 'lead.create', 'lead.edit', 'lead.delete',
             'property.view', 'property.create', 'property.edit', 'property.delete',
@@ -49,7 +50,7 @@ class RoleSeeder extends Seeder
             'property.view',
             'account.view', 'account.create', 'account.edit',
             'contact.view', 'contact.create', 'contact.edit',
-            'deal.view',
+            'deal.view', 'deal.create',
         ]);
 
         User::query()

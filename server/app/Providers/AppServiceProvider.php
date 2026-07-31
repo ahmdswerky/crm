@@ -7,12 +7,14 @@ use App\Models\ActivityLog;
 use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\Property;
+use App\Models\Role;
 use App\Models\User;
 use App\Policies\AccountPolicy;
 use App\Policies\ActivityLogPolicy;
 use App\Policies\ContactPolicy;
 use App\Policies\LeadPolicy;
 use App\Policies\PropertyPolicy;
+use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Gate;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Contact::class, ContactPolicy::class);
         Gate::policy(Account::class, AccountPolicy::class);
         Gate::policy(Property::class, PropertyPolicy::class);
+        Gate::policy(Role::class, RolePolicy::class);
     }
 
     /**

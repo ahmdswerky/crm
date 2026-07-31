@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,6 +37,11 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_super' => 'boolean',
         ];
+    }
+
+    public function scopeAgents(Builder $query): Builder
+    {
+        return $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'agent'));
     }
 
     public function properties(): HasMany

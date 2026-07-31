@@ -2,4 +2,9 @@
 
 namespace App\Models;
 
-class Role extends \Spatie\Permission\Models\Role {}
+use App\Support\Audit\LogsCrmActivity;
+
+class Role extends \Spatie\Permission\Models\Role
+{
+    use LogsCrmActivity;
+}

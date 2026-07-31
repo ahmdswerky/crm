@@ -22,9 +22,10 @@ class UserResource extends JsonResource
             'phone' => $this->resource->phone,
             'roles' => $this->whenLoaded('roles', fn () => RoleResource::collection($this->resource->roles)),
             'permissions' => $this->whenLoaded(
-                'permissions',
+                'roles',
                 fn () => PermissionResource::collection($this->resource->getAllPermissions()),
             ),
+            'is_super' => $this->resource->is_super,
             'created_at' => $this->resource->created_at,
         ];
     }
