@@ -31,7 +31,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'user' => UserResource::make($attempt->user),
+            'user' => UserResource::make($attempt->user->load('media')),
             'token' => $attempt->access_token,
         ]);
     }
@@ -39,7 +39,7 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response([
-            'user' => UserResource::make($request->user()),
+            'user' => UserResource::make($request->user()->load('media')),
         ]);
     }
 

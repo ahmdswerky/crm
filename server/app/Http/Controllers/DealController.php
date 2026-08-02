@@ -39,7 +39,7 @@ class DealController extends Controller
     #[Authorize('view', 'deal')]
     public function show(Deal $deal)
     {
-        $deal->load(['contact', 'property', 'agent']);
+        $deal->load(['contact', 'property.media', 'agent']);
 
         return response()->json([
             'deal' => DealResource::make($deal),

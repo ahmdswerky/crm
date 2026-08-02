@@ -44,6 +44,8 @@ class LeadController extends Controller
     #[Authorize('view', 'lead')]
     public function show(Lead $lead)
     {
+        $lead->load('contact');
+
         return response()->json([
             'lead' => LeadResource::make($lead),
         ]);

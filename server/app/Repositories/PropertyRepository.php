@@ -55,7 +55,7 @@ class PropertyRepository implements PropertyRepositoryInterface
             // 'purpose' => $data['purpose'] ?? PropertyPurpose::SALE,
             'type' => $data['type'],
             'status' => $data['status'] ?? PropertyStatus::PENDING,
-        ])->load(['createdBy']);
+        ])->load(['createdBy', 'media']);
 
         return $model;
     }
@@ -73,7 +73,7 @@ class PropertyRepository implements PropertyRepositoryInterface
             'status' => Arr::get($data, 'status', $property->status),
         ]);
 
-        return $property->fresh(['createdBy']);
+        return $property->fresh(['createdBy', 'media']);
     }
 
     public function delete(int $id): bool

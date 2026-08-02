@@ -23,6 +23,7 @@ class UserRepository implements UserRepositoryInterface
 
         return $this->model
             ->query()
+            ->with('media')
             ->when(! $isSuperAdmin, fn (Builder $query) => $query->where('is_super', false))
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
@@ -83,7 +84,7 @@ class UserRepository implements UserRepositoryInterface
             $this->auditEvents->rolesUpdated($user, [], $data['roles']);
         }
 
-        return $user->fresh(['roles.permissions']);
+        return $user->fresh(['roles.permissions', 'media']);
     }
 
     public function update(User $user, array $data): User
@@ -101,7 +102,7 @@ class UserRepository implements UserRepositoryInterface
             $this->auditEvents->rolesUpdated($user, $beforeRoles, $data['roles']);
         }
 
-        return $user->fresh(['roles.permissions']);
+        return $user->fresh(['roles.permissions', 'media']);
     }
 
     public function updatePassword(User $user, string $currentPassword, string $newPassword): bool

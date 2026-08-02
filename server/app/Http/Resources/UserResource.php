@@ -20,6 +20,10 @@ class UserResource extends JsonResource
             'username' => $this->resource->username,
             'email' => $this->resource->email,
             'phone' => $this->resource->phone,
+            'avatar' => $this->when(
+                $this->resource->relationLoaded('media'),
+                fn () => ($avatar = $this->resource->getFirstMedia('main')) ? MediaResource::make($avatar) : null,
+            ),
             'roles' => $this->whenLoaded('roles', fn () => RoleResource::collection($this->resource->roles)),
             'permissions' => $this->whenLoaded(
                 'roles',

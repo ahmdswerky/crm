@@ -6,16 +6,19 @@ use App\Enums\PropertyPurpose;
 use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use App\Support\Audit\LogsCrmActivity;
+use App\Support\Media\HasGallery;
+use App\Support\Media\HasMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 
 #[Fillable(['created_by', 'title', 'description', 'city', 'address', 'price', 'purpose', 'type', 'status'])]
-class Property extends Model
+class Property extends Model implements SpatieHasMedia
 {
-    use HasFactory, LogsCrmActivity, SoftDeletes;
+    use HasFactory, HasGallery, HasMedia, LogsCrmActivity, SoftDeletes;
 
     protected function casts()
     {

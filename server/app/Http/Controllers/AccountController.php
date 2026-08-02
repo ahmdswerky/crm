@@ -35,6 +35,8 @@ class AccountController extends Controller
     #[Authorize('view', 'account')]
     public function show(Account $account)
     {
+        $account->loadCount('contacts');
+
         return response()->json([
             'account' => AccountResource::make($account),
         ]);

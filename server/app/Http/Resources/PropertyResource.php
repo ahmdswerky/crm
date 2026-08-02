@@ -17,6 +17,10 @@ class PropertyResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'createdBy' => $this->whenLoaded('createdBy', fn () => UserResource::make($this->resource->createdBy)),
+            'images' => $this->when(
+                $this->resource->relationLoaded('media'),
+                fn () => MediaResource::collection($this->resource->getMedia('gallery')),
+            ),
             'title' => $this->resource->title,
             'description' => $this->resource->description,
             'city' => $this->resource->city,

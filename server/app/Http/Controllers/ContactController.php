@@ -35,6 +35,8 @@ class ContactController extends Controller
     #[Authorize('view', 'contact')]
     public function show(Contact $contact)
     {
+        $contact->load('account', 'lead');
+
         return response()->json([
             'contact' => ContactResource::make($contact),
         ]);

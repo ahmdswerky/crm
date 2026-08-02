@@ -44,6 +44,8 @@ class UserController extends Controller
     #[Authorize('view', 'user')]
     public function show(User $user)
     {
+        $user->load('media');
+
         return response()->json([
             'user' => UserResource::make($user),
         ]);

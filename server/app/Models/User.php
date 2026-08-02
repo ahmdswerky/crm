@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Support\Audit\LogsCrmActivity;
+use App\Support\Media\HasMain;
+use App\Support\Media\HasMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,13 +15,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'username', 'phone', 'password', 'is_super'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements SpatieHasMedia
 {
-    use HasApiTokens, HasFactory, HasRoles, LogsCrmActivity, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasMain, HasMedia, HasRoles, LogsCrmActivity, Notifiable, SoftDeletes;
 
     protected $with = [
         'roles.permissions',
