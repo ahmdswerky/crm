@@ -23,8 +23,10 @@ class LeadIndexRequest extends FormRequest
             'city' => ['nullable', 'string', 'max:200'],
             'company' => ['nullable', 'string', 'max:250'],
             'created_from' => ['nullable', 'date'],
+            'assigned_agent' => ['nullable', 'exists:users,id'],
             'created_to' => ['nullable', 'date', 'after_or_equal:created_from'],
             'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 }

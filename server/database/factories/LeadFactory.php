@@ -28,12 +28,22 @@ class LeadFactory extends Factory
             'city' => fake()->city(),
             'address' => fake()->streetAddress(),
             'company_name' => fake()->randomElement([fake()->company(), null]),
-            'source' => fake()->randomElement([...LeadSource::cases(), null]),
+            'source' => fake()->randomElement(LeadSource::cases()),
             'assigned_agent_id' => fake()->randomElement([
                 null,
                 User::query()->inRandomOrder()->value('id'),
             ]),
         ];
+    }
+
+    /**
+     * Indicate that the model's assigned agent should have value.
+     */
+    public function assigned(): static
+    {
+        return $this->state([
+            'assigned_agent_id' => User::query()->inRandomOrder()->value('id'),
+        ]);
     }
 
     /**

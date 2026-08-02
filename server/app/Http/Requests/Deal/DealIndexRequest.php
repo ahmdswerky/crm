@@ -28,6 +28,7 @@ class DealIndexRequest extends FormRequest
             'min_deal_value' => ['nullable', 'numeric', 'min:0', Rule::when($this->filled('max_deal_value'), ['lte:max_deal_value'])],
             'max_deal_value' => ['nullable', 'numeric', 'min:0', Rule::when($this->filled('min_deal_value'), ['gte:min_deal_value'])],
             'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 }

@@ -20,6 +20,7 @@ class AccountResource extends JsonResource
             'industry' => $this->resource->industry,
             'phone' => $this->resource->phone,
             'address' => $this->resource->address,
+            'contacts_count' => $this->whenCounted('contacts', fn () => $this->resource->contacts_count),
             'created_at' => $this->resource->created_at,
         ];
     }

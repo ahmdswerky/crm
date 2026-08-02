@@ -32,7 +32,7 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
             ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->paginate(
-                perPage: $filters['per_page'] ?? 50,
+                perPage: $filters['per_page'] ?? 30,
                 page: $filters['page'] ?? null,
             );
     }

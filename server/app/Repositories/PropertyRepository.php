@@ -33,7 +33,8 @@ class PropertyRepository implements PropertyRepositoryInterface
             ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->where('city', 'like', "%{$city}%"))
             ->when($filters['min_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '>=', $price))
             ->when($filters['max_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '<=', $price))
-            ->paginate();
+            ->with(['media'])
+            ->paginate(perPage: 12);
     }
 
     public function findById(int $id, array $with = []): ?Property

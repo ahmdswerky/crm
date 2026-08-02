@@ -59,6 +59,8 @@ class ContactRepository implements ContactRepositoryInterface
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'],
             'account_id' => $data['account_id'],
+            'lead_id' => $data['lead_id'],
+            'assigned_agent_id' => $data['assigned_agent_id'],
         ])->load(['account']);
     }
 

@@ -48,10 +48,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability, $arguments) {
             $target = $arguments[0] ?? null;
 
-            if (is_a($target, ActivityLog::class, true)) {
-                return null;
-            }
-
             return $user->is_super ? true : null;
         });
     }

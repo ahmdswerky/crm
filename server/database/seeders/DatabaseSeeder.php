@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LeadSeeder::class,
             PropertySeeder::class,
+            PropertyMediaSeeder::class,
             AccountSeeder::class,
             ContactSeeder::class,
             DealSeeder::class,

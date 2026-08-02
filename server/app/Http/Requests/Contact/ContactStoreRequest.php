@@ -19,6 +19,8 @@ class ContactStoreRequest extends FormRequest
             'email' => ['nullable', 'email', 'unique:contacts,email', 'max:250'],
             'phone' => ['required', 'phone', 'unique:contacts,phone', 'max:30'],
             'account_id' => ['required', 'exists:accounts,id'],
+            'lead_id' => ['required', 'exists:leads,id'],
+            'assigned_agent_id' => ['required', 'exists:users,id'],
         ];
     }
 }

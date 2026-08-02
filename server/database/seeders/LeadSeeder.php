@@ -23,8 +23,9 @@ class LeadSeeder extends Seeder
             ->create();
 
         Lead::factory()
-            ->qualified()
-            ->count(10)
+            ->pending()
+            ->assigned()
+            ->count(100)
             ->create();
 
         Lead::factory()

@@ -28,6 +28,7 @@ class LeadRepository implements LeadRepositoryInterface
                         ->orWhere('company_name', 'like', "%{$search}%");
                 });
             })
+            ->when($filters['assigned_agent'] ?? null, fn (Builder $query, string $assignedAgent) => $query->where('assigned_agent_id', $assignedAgent))
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
             ->when($filters['source'] ?? null, fn (Builder $query, string $source) => $query->where('source', $source))
             ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->where('city', 'like', "%{$city}%"))
@@ -35,13 +36,15 @@ class LeadRepository implements LeadRepositoryInterface
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->with(['assignedAgent:id,name,username,email'])
-            ->paginate();
+            ->paginate(perPage: $filters['per_page'] ?? 15);
     }
 
     public function findById(int $id, array $with = []): ?Lead
     {
         return $this->model
-            ->with(array_merge(['assignedAgent:id,name,username,email'], $with))
+            ->with(array_merge([
+                'assignedAgent:id,name,username,email',
+            ], $with))
             ->findOrFail($id);
     }
 

@@ -40,7 +40,7 @@ class DealRepository implements DealRepositoryInterface
             ->when($filters['min_deal_value'] ?? null, fn (Builder $query, float $value) => $query->where('deal_value', '>=', $value))
             ->when($filters['max_deal_value'] ?? null, fn (Builder $query, float $value) => $query->where('deal_value', '<=', $value))
             ->with($this->dealRelations())
-            ->paginate();
+            ->paginate(perPage: $filters['per_page'] ?? 15);
     }
 
     public function find(int $id): Deal
@@ -93,6 +93,7 @@ class DealRepository implements DealRepositoryInterface
         return [
             'contact:id,name,title,email,phone,created_at',
             'property:id,title,description,city,address,price,purpose,type,status,created_at',
+            'property.media',
             'agent:id,name,username,email,phone,created_at',
         ];
     }

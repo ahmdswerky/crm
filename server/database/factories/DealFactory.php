@@ -18,11 +18,13 @@ class DealFactory extends Factory
 
     public function definition(): array
     {
+        $property = Property::query()->inRandomOrder()->first();
+
         return [
-            'value' => $value = fake()->numberBetween(1, 10) * 100000,
+            'value' => $value = $property->price,
             'deal_value' => fake()->randomElement([$value, $value + (fake()->numberBetween(1, 10) * 10000 * fake()->randomElement([1, -1]))]),
             'contact_id' => Contact::query()->inRandomOrder()->value('id'),
-            'property_id' => Property::query()->inRandomOrder()->value('id'),
+            'property_id' => $property->id,
             'agent_id' => User::query()->agents()->inRandomOrder()->value('id'),
             'status' => fake()->randomElement(DealStatus::cases()),
             'commission_rate' => fake()->randomElement([2.5, 1.5]),
