@@ -2,8 +2,10 @@
 
 namespace App\Contracts\Repositories;
 
+use App\Enums\PropertyStatus;
 use App\Models\Property;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface PropertyRepositoryInterface
 {
@@ -18,4 +20,8 @@ interface PropertyRepositoryInterface
     public function delete(int $id): bool;
 
     public function filtersInfo(): array;
+
+    public function updateStatus(int $id, PropertyStatus $status): bool;
+
+    public function lockByIds(array $ids): Collection;
 }

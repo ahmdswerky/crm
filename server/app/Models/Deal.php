@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\DealStatus;
 use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,11 @@ class Deal extends Model
             'commission_rate' => 'float',
             'closed_at' => 'date',
         ];
+    }
+
+    public function scopeByAgent(Builder $query, int $userId): Builder
+    {
+        return $query->where('agent_id', $userId);
     }
 
     public function contact(): BelongsTo

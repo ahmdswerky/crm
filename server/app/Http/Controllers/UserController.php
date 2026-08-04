@@ -46,6 +46,11 @@ class UserController extends Controller
     {
         $user->load('media');
 
+        $user->append([
+            'totalPotentialCommission',
+            'totalActualCommission',
+        ]);
+
         return response()->json([
             'user' => UserResource::make($user),
         ]);

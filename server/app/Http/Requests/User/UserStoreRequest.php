@@ -31,7 +31,7 @@ class UserStoreRequest extends FormRequest
             'email' => 'required|email|unique:users,email|max:250',
             'phone' => 'required|phone|unique:users,phone|max:30',
             'password' => 'required|min:6|max:100',
-            'roles' => $canManageRoles ? 'array' : 'prohibited',
+            'roles' => $canManageRoles ? 'array|min:1' : 'prohibited',
             'roles.*' => [
                 'required',
                 Rule::exists(config('permission.table_names.roles'), 'name'),

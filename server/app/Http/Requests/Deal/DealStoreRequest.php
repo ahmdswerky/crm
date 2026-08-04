@@ -16,13 +16,11 @@ class DealStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => ['required', 'numeric', 'min:500'],
-            'deal_value' => ['required', 'numeric', 'min:500'],
+            'deal_value' => ['required', 'numeric', 'min:5000'],
             'contact_id' => ['required', 'integer', 'exists:contacts,id'],
             'property_id' => ['required', 'integer', 'exists:properties,id'],
             'agent_id' => ['required', 'integer', Rule::exists('users', 'id')],
             'status' => ['required', Rule::enum(DealStatus::class)],
-            'commission_rate' => ['required', 'numeric', 'min:0'],
             'closed_at' => ['nullable', 'date'],
         ];
     }

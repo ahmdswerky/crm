@@ -9,6 +9,7 @@ use App\Models\Property;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class PropertyRepository implements PropertyRepositoryInterface
 {
@@ -92,5 +93,29 @@ class PropertyRepository implements PropertyRepositoryInterface
         return [
             ...$priceRange,
         ];
+    }
+
+    public function updateStatus(int $id, PropertyStatus $status): bool
+    {
+        $property = $this->model->newQuery()->findOrFail($id);
+
+        if ($property->status === $status) {
+            return true;
+        }
+
+        return $property->update([
+            'status' => $status,
+        ]);
+    }
+
+    public function lockByIds(array $ids): Collection
+    {
+        return collect($ids)
+            ->map(static fn (int|string $id): int => (int) $id)
+            ->unique()
+            ->sort()
+            ->mapWithKeys(fn (int $id): array => [
+                $id => $this->model->newQuery()->lockForUpdate()->findOrFail($id),
+            ]);
     }
 }

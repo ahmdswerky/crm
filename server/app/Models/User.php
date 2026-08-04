@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\DealStatus;
 use App\Support\Audit\LogsCrmActivity;
 use App\Support\Media\HasMain;
 use App\Support\Media\HasMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +47,52 @@ class User extends Authenticatable implements SpatieHasMedia
     public function scopeAgents(Builder $query): Builder
     {
         return $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'agent'));
+    }
+
+    public function commissionRate(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $role = $this->roles->first()?->name;
+
+                if (! $role) {
+                    return 1;
+                }
+
+                return config('crm.commission_rates.'.$role, 1);
+            }
+        );
+    }
+
+    public function totalPotentialCommission(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $dealsTotal = Deal::byAgent($this->id)
+                    ->whereIn('status', [
+                        DealStatus::INQUIRY,
+                        DealStatus::VIEWING,
+                        DealStatus::OFFER_MADE,
+                        DealStatus::LEGAL,
+                    ])
+                    ->sum('deal_value');
+                $rate = $this->commissionRate;
+
+                return $dealsTotal * $rate / 100;
+            }
+        );
+    }
+
+    public function totalActualCommission(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $dealsTotal = Deal::byAgent($this->id)->whereStatus(DealStatus::WON)->sum('deal_value');
+                $rate = $this->commissionRate;
+
+                return $dealsTotal * $rate / 100;
+            }
+        );
     }
 
     public function properties(): HasMany

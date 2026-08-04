@@ -8,11 +8,15 @@ use App\Http\Requests\Deal\DealStoreRequest;
 use App\Http\Requests\Deal\DealUpdateRequest;
 use App\Http\Resources\DealResource;
 use App\Models\Deal;
+use App\Services\DealService;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
 
 class DealController extends Controller
 {
-    public function __construct(protected DealRepositoryInterface $dealRepository) {}
+    public function __construct(
+        protected DealService $dealService,
+        protected DealRepositoryInterface $dealRepository,
+    ) {}
 
     #[Authorize('viewAny', Deal::class)]
     public function index(DealIndexRequest $request)
@@ -29,7 +33,7 @@ class DealController extends Controller
     #[Authorize('create', Deal::class)]
     public function store(DealStoreRequest $request)
     {
-        $deal = $this->dealRepository->store($request->validated());
+        $deal = $this->dealService->store($request->validated());
 
         return response()->json([
             'deal' => DealResource::make($deal),
@@ -49,7 +53,7 @@ class DealController extends Controller
     #[Authorize('update', 'deal')]
     public function update(DealUpdateRequest $request, Deal $deal)
     {
-        $deal = $this->dealRepository->update($deal, $request->validated());
+        $deal = $this->dealService->update($deal, $request->validated());
 
         return response()->json([
             'deal' => DealResource::make($deal),
@@ -59,7 +63,7 @@ class DealController extends Controller
     #[Authorize('delete', 'deal')]
     public function destroy(Deal $deal)
     {
-        $this->dealRepository->delete($deal->id);
+        $this->dealService->delete($deal);
 
         return response()->json([], 204);
     }

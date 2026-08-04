@@ -29,6 +29,9 @@ class UserResource extends JsonResource
                 'roles',
                 fn () => PermissionResource::collection($this->resource->getAllPermissions()),
             ),
+            'commission_rate' => $this->commissionRate,
+            'total_potential_commission' => $this->whenAppended('totalPotentialCommission', fn () => $this->totalPotentialCommission),
+            'total_actual_commission' => $this->whenAppended('totalActualCommission', fn () => $this->totalActualCommission),
             'is_super' => $this->resource->is_super,
             'created_at' => $this->resource->created_at,
         ];

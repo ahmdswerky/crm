@@ -15,17 +15,21 @@ class LeadRepository implements LeadRepositoryInterface
 
     public function paginate(array $filters = []): LengthAwarePaginator
     {
+        $isAgent = request()->user()->roles->contains('name', 'agent');
+        $userId = request()->user()->id;
+
         return $this->model
             ->query()
+            ->when($isAgent, fn (Builder $query) => $query->where('assigned_agent_id', $userId))
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query
-                        ->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('city', 'like', "%{$search}%")
-                        ->orWhere('address', 'like', "%{$search}%")
-                        ->orWhere('company_name', 'like', "%{$search}%");
+                        ->whereLike('name', "%{$search}%")
+                        ->orWhereLike('email', "%{$search}%")
+                        ->orWhereLike('phone', "%{$search}%")
+                        ->orWhereLike('city', "%{$search}%")
+                        ->orWhereLike('address', "%{$search}%")
+                        ->orWhereLike('company_name', "%{$search}%");
                 });
             })
             ->when($filters['assigned_agent'] ?? null, fn (Builder $query, string $assignedAgent) => $query->where('assigned_agent_id', $assignedAgent))
@@ -36,6 +40,7 @@ class LeadRepository implements LeadRepositoryInterface
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->with(['assignedAgent:id,name,username,email'])
+            ->withExists('contact')
             ->paginate(perPage: $filters['per_page'] ?? 15);
     }
 
@@ -82,5 +87,12 @@ class LeadRepository implements LeadRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) $this->model->destroy($id);
+    }
+
+    public function updateStatus(int $id, LeadStatus $status): bool
+    {
+        return $this->model->where('id', $id)->update([
+            'status' => $status,
+        ]);
     }
 }

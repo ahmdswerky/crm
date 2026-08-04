@@ -8,11 +8,15 @@ use App\Http\Requests\Contact\ContactStoreRequest;
 use App\Http\Requests\Contact\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
+use App\Services\ContactService;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
 
 class ContactController extends Controller
 {
-    public function __construct(protected ContactRepositoryInterface $contactRepository) {}
+    public function __construct(
+        protected ContactService $contactService,
+        protected ContactRepositoryInterface $contactRepository,
+    ) {}
 
     #[Authorize('viewAny', Contact::class)]
     public function index(ContactIndexRequest $request)
@@ -25,7 +29,10 @@ class ContactController extends Controller
     #[Authorize('create', Contact::class)]
     public function store(ContactStoreRequest $request)
     {
-        $contact = $this->contactRepository->store($request->validated());
+        $contact = $this->contactService->store(
+            $request->input('lead_id'),
+            $request->only(['title', 'phone', 'account_id']),
+        );
 
         return response()->json([
             'contact' => ContactResource::make($contact),

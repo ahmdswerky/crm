@@ -3,10 +3,12 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\DealRepositoryInterface;
+use App\Enums\DealStatus;
 use App\Models\Deal;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class DealRepository implements DealRepositoryInterface
 {
@@ -108,5 +110,26 @@ class DealRepository implements DealRepositoryInterface
         return [
             ...$valuesRange,
         ];
+    }
+
+    public function updateStatus(int $id, DealStatus $status): bool
+    {
+        $property = $this->model->newQuery()->findOrFail($id);
+
+        if ($property->status === $status) {
+            return true;
+        }
+
+        return $property->update([
+            'status' => $status,
+        ]);
+    }
+
+    public function statusesForProperty(int $propertyId): Collection
+    {
+        return $this->model
+            ->newQuery()
+            ->where('property_id', $propertyId)
+            ->pluck('status');
     }
 }

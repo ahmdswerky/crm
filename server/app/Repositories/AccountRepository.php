@@ -33,11 +33,28 @@ class AccountRepository implements AccountRepositoryInterface
             ->paginate();
     }
 
-    public function find(int $id): ?Account
+    public function findById(int $id): ?Account
     {
         return $this->model
             ->query()
             ->findOrFail($id);
+    }
+
+    public function findOrCreateByName(string $name, ?string $phone): Account
+    {
+        $account = $this->model
+            ->query()
+            ->where('name', $name)
+            ->value('id');
+
+        if ($account) {
+            return $account;
+        }
+
+        return $this->store([
+            'name' => $name,
+            'phone' => $phone,
+        ]);
     }
 
     public function store(array $data): Account
@@ -46,9 +63,9 @@ class AccountRepository implements AccountRepositoryInterface
             ->query()
             ->create([
                 'name' => $data['name'],
-                'industry' => $data['industry'],
+                'industry' => $data['industry'] ?? null,
                 'phone' => $data['phone'],
-                'address' => $data['address'],
+                'address' => $data['address'] ?? null,
             ]);
     }
 
