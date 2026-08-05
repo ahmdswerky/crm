@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\DealStatus;
+use App\Enums\PropertyStatus;
 use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Property;
@@ -18,7 +19,10 @@ class DealFactory extends Factory
 
     public function definition(): array
     {
-        $property = Property::query()->inRandomOrder()->first();
+        $property = Property::query()
+            ->whereStatus(PropertyStatus::PENDING)
+            ->inRandomOrder()
+            ->first();
 
         return [
             'value' => $value = $property->price,

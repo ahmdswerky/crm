@@ -75,7 +75,7 @@ class DealService
         }, 3);
     }
 
-    private function synchronizePropertyStatus(int $propertyId): void
+    public function synchronizePropertyStatus(int $propertyId): void
     {
         $status = $this->propertyStatusResolver->resolve(
             $this->dealRepository->statusesForProperty($propertyId),

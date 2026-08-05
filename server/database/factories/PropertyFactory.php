@@ -22,7 +22,7 @@ class PropertyFactory extends Factory
     {
         return [
             'created_by' => 2, // supervisor id
-            'title' => fake()->unique()->sentence(2),
+            'title' => fake()->unique()->catchPhrase(),
             'description' => fake()->words(15, true),
             'price' => fake()->numberBetween(1, 10) * 100000,
             'city' => fake()->city(),
