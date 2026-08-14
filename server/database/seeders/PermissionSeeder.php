@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
     {
         $actions = ['view', 'create', 'edit', 'delete', 'restore'];
         $names = collect(scandir(app_path('Models')))
-            ->reject(fn ($name) => in_array($name, ['.', '..', 'ActivityLog.php', 'Permission.php']))
+            ->reject(fn ($name) => in_array($name, ['.', '..', 'ActivityLog.php', 'Permission.php', 'ReportRun.php']))
             ->map(function (string $name) use ($actions) {
                 $namespace = Str::of($name)
                     ->chopEnd('.php')
@@ -31,6 +31,7 @@ class PermissionSeeder extends Seeder
             ->concat([
                 ['name' => 'activity-log.view', 'guard_name' => config('auth.defaults.guard')],
                 ['name' => 'activity-log.revert', 'guard_name' => config('auth.defaults.guard')],
+                ['name' => 'report.view', 'guard_name' => config('auth.defaults.guard')],
             ])
             ->toArray();
 
