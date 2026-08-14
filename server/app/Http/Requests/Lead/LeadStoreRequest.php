@@ -26,10 +26,13 @@ class LeadStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'min:4', 'max:250'],
+            'name' => ['required', 'min:2', 'max:250'],
             'email' => ['required', 'email', 'unique:leads,email', 'max:250'],
             'phone' => ['required', 'phone', 'unique:leads,phone', 'max:250'],
-            'status' => ['nullable', Rule::enum(LeadStatus::class)],
+            'status' => ['nullable', Rule::in([
+                LeadStatus::PENDING->value,
+                LeadStatus::CONTACTED->value,
+            ])],
             'city' => ['required', 'min:2', 'max:200'],
             'address' => ['nullable', 'min:10', 'max:200'],
             'company_name' => ['nullable', 'min:2', 'max:150'],

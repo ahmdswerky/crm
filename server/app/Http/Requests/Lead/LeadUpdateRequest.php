@@ -7,6 +7,7 @@ use App\Enums\LeadStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class LeadUpdateRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class LeadUpdateRequest extends FormRequest
         $leadId = $this->route('lead.id');
 
         return [
-            'name' => ['sometimes', 'required', 'min:4', 'max:250'],
+            'name' => ['sometimes', 'required', 'min:2', 'max:250'],
             'email' => ['sometimes', 'required', 'email', Rule::unique('leads', 'email')->ignore($leadId), 'max:250'],
             'phone' => ['sometimes', 'required', 'phone', Rule::unique('leads', 'phone')->ignore($leadId), 'max:30'],
             'status' => ['sometimes', 'required', Rule::enum(LeadStatus::class)],
@@ -38,5 +39,26 @@ class LeadUpdateRequest extends FormRequest
             'source' => ['nullable', Rule::enum(LeadSource::class)],
             'assigned_agent_id' => ['nullable', 'integer', Rule::exists('users', 'id')],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            $lead = $this->route('lead');
+            $status = $this->input('status', $lead?->status?->value);
+
+            if ($status !== LeadStatus::QUALIFIED->value) {
+                return;
+            }
+
+            $companyName = $this->input('company_name', $lead?->company_name);
+            if (! is_string($companyName) || trim($companyName) === '') {
+                $validator->errors()->add('company_name', 'A company is required before qualifying a lead.');
+            }
+
+            if (! $this->input('assigned_agent_id', $lead?->assigned_agent_id)) {
+                $validator->errors()->add('assigned_agent_id', 'An assigned agent is required before qualifying a lead.');
+            }
+        });
     }
 }

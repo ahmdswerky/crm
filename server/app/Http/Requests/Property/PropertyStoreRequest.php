@@ -32,7 +32,6 @@ class PropertyStoreRequest extends FormRequest
             'address' => ['nullable', 'min:10', 'max:200'],
             'price' => ['required', 'numeric', 'min:5000', 'max:1000000000'],
             'type' => ['required', Rule::enum(PropertyType::class)],
-            'status' => ['nullable', Rule::enum(PropertyStatus::class)],
             'created_by' => ['nullable', 'integer', Rule::exists('users', 'id')],
         ];
     }

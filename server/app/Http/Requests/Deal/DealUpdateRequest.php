@@ -17,8 +17,8 @@ class DealUpdateRequest extends FormRequest
     {
         return [
             'deal_value' => ['sometimes', 'required', 'numeric', 'min:5000'],
-            'contact_id' => ['sometimes', 'required', 'integer', 'exists:contacts,id'],
-            'property_id' => ['sometimes', 'required', 'integer', 'exists:properties,id'],
+            // 'contact_id' => ['sometimes', 'required', 'integer', 'exists:contacts,id'],
+            // 'property_id' => ['sometimes', 'required', 'integer', 'exists:properties,id'],
             'agent_id' => ['sometimes', 'required', 'integer', Rule::exists('users', 'id')],
             'status' => ['sometimes', 'required', Rule::enum(DealStatus::class)],
             'closed_at' => ['nullable', 'date'],
