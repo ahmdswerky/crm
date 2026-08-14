@@ -98,4 +98,28 @@ class LeadRepository implements LeadRepositoryInterface
             'status' => $status,
         ]);
     }
+
+    public function stats(): array
+    {
+        $isAgent = request()->user()->roles->contains('name', 'agent');
+        $userId = request()->user()->id;
+
+        $stats = $this->model->selectRaw('COUNT(id) FILTER(WHERE status = ?) as pending_count, COUNT(id) FILTER(WHERE status = ?) as contacted_count, COUNT(id) FILTER(WHERE status = ?) as qualified_count, COUNT(id) FILTER(WHERE status = ?) as unqalified_count', [
+            LeadStatus::PENDING->value,
+            LeadStatus::CONTACTED->value,
+            LeadStatus::QUALIFIED->value,
+            LeadStatus::UNQUALIFIED->value,
+        ])
+        ->when($isAgent, fn (Builder $query) => $query->where('assigned_agent_id', $userId))
+        ->first();
+
+        return [
+            'stats' => [
+                'pending_count' => $stats->pending_count,
+                'contacted_count' => $stats->contacted_count,
+                'qualified_count' => $stats->qualified_count,
+                'unqalified_count' => $stats->unqalified_count,
+            ],
+        ];
+    }
 }

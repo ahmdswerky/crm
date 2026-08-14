@@ -25,4 +25,5 @@ Route::prefix('v1')->group(function () {
 
     require base_path('routes/api/v1/media.php');
 
+    require base_path('routes/api/v1/analytics.php');
 });

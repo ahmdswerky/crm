@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'assigned_agent_id')->constrained();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->index('created_at');
         });
     }
 

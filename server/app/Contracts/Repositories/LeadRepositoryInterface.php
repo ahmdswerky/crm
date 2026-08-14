@@ -19,4 +19,6 @@ interface LeadRepositoryInterface
     public function delete(int $id): bool;
 
     public function updateStatus(int $id, LeadStatus $status): bool;
+
+    public function stats(): array;
 }

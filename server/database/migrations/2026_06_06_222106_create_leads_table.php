@@ -29,6 +29,9 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->index('created_at');
+            $table->index(['status', 'created_at']);
         });
     }
 

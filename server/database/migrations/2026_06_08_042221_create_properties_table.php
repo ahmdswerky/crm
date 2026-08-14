@@ -29,6 +29,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['type', 'status']);
+            $table->index('created_at');
         });
     }
 

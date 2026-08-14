@@ -25,6 +25,8 @@ return new class extends Migration
             $table->timestamp('closed_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->index('created_at');
             $table->index(['status', 'closed_at']);
         });
     }

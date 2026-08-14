@@ -30,6 +30,7 @@ class RoleSeeder extends Seeder
             'contact.view', 'contact.create', 'contact.edit', 'contact.delete',
             'deal.view', 'deal.create', 'deal.edit', 'deal.delete',
             'activity-log.view', 'activity-log.revert',
+            'report.view',
         ]);
 
         // Managers Assign
@@ -54,6 +55,7 @@ class RoleSeeder extends Seeder
             'account.view', 'account.create', 'account.edit',
             'contact.view', 'contact.create', 'contact.edit',
             'deal.view', 'deal.create',
+            'report.view',
         ]);
 
         User::query()

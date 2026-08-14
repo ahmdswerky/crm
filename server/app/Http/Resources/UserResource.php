@@ -14,6 +14,8 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isAgent =  $request->user()?->isAgent;
+
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
@@ -31,9 +33,9 @@ class UserResource extends JsonResource
                 'roles',
                 fn () => PermissionResource::collection($this->resource->getAllPermissions()),
             ),
-            'commission_rate' => $this->commissionRate,
-            'total_potential_commission' => $this->whenAppended('totalPotentialCommission', fn () => $this->totalPotentialCommission),
-            'total_actual_commission' => $this->whenAppended('totalActualCommission', fn () => $this->totalActualCommission),
+            'commission_rate' => $this->when(!$isAgent, fn () => $this->commissionRate),
+            'total_potential_commission' => $this->when(!$isAgent, fn () => $this->whenAppended('totalPotentialCommission', fn () => $this->totalPotentialCommission)),
+            'total_actual_commission' => $this->when(!$isAgent, fn () => $this->whenAppended('totalActualCommission', fn () => $this->totalActualCommission)),
             'is_super' => $this->resource->is_super,
             'created_at' => $this->resource->created_at,
         ];
