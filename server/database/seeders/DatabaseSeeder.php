@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            AccountSeeder::class,
             LeadSeeder::class,
             PropertySeeder::class,
             PropertyMediaSeeder::class,
-            AccountSeeder::class,
             ContactSeeder::class,
             DealSeeder::class,
         ]);

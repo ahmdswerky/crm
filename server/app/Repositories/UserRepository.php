@@ -23,16 +23,16 @@ class UserRepository implements UserRepositoryInterface
 
         return $this->model
             ->query()
-            ->with('media')
+            ->when(($filters['with'] ?? null) === 'manager', fn (Builder $query) => $query->with('manager'))
             ->when(! $isSuperAdmin, fn (Builder $query) => $query->where('is_super', false))
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query
-                        ->where('name', 'like', "%{$search}%")
-                        ->orWhere('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhereHas('roles', fn (Builder $query) => $query->where('name', 'like', "%{$search}%"));
+                        ->whereLike('name', "%{$search}%")
+                        ->orWhereLike('username', "%{$search}%")
+                        ->orWhereLike('email', "%{$search}%")
+                        ->orWhereLike('phone', "%{$search}%")
+                        ->orWhereHas('roles', fn (Builder $query) => $query->whereLike('name', "%{$search}%"));
                 });
             })
             ->when($filters['role'] ?? null, fn (Builder $query, string $role) => $query->whereHas('roles', fn (Builder $query) => $query->where('name', $role)))
@@ -77,6 +77,7 @@ class UserRepository implements UserRepositoryInterface
             'username' => Str::of($data['username'])->slug('.')->lower()->toString(),
             'phone' => $data['phone'],
             'password' => $data['password'],
+            'direct_manager_id' => $data['direct_manager_id'] ?? null,
         ]);
 
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
@@ -94,6 +95,7 @@ class UserRepository implements UserRepositoryInterface
             'username' => Arr::get($data, 'username', $user->username),
             'email' => Arr::get($data, 'email', $user->email),
             'phone' => Arr::get($data, 'phone', $user->phone),
+            'direct_manager_id' => Arr::get($data, 'direct_manager_id', $user->direct_manager_id),
         ]);
 
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {

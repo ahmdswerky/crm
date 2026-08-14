@@ -32,9 +32,12 @@ class RoleSeeder extends Seeder
             'activity-log.view', 'activity-log.revert',
         ]);
 
+        // Managers Assign
         User::query()
-            ->where('email', 'supervisor@crm.io')
-            ->first()
+            ->select(['id', 'email'])
+            ->whereIn('email', ['michael@crm.io', 'chris@crm.io'])
+            ->get()
+            ->map
             ->assignRole('manager');
 
         // ---- //
@@ -54,9 +57,10 @@ class RoleSeeder extends Seeder
         ]);
 
         User::query()
-            ->where('email', 'like', '%.agent@crm.io')
+            ->whereLike('email', '%.agent@crm.io')
             ->get()
-            ->map(fn (User $user) => $user->assignRole('agent'));
+            ->map
+            ->assignRole('agent');
 
         // User::query()
         //     ->where('email', 'owner@crm.io')

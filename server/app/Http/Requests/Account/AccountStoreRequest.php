@@ -15,8 +15,8 @@ class AccountStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'unique:accounts,name', 'max:250'],
-            'industry' => ['required', 'min:2', 'max:200'],
-            'phone' => ['required', 'phone', 'unique:accounts,phone', 'max:30'],
+            'industry' => ['nullable', 'min:2', 'max:200'],
+            'phone' => ['nullable', 'phone', 'unique:accounts,phone', 'max:30'],
             'address' => ['nullable', 'string', 'min:10', 'max:200'],
         ];
     }

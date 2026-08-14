@@ -14,19 +14,23 @@ class ContactRepository implements ContactRepositoryInterface
 
     public function paginate(array $filters = []): LengthAwarePaginator
     {
+        $isAgent = request()->user()->roles->contains('name', 'agent');
+        $userId = request()->user()->id;
+
         return $this->model
             ->query()
+            ->when($isAgent, fn (Builder $query) => $query->where('assigned_agent_id', $userId))
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query
-                        ->where('name', 'like', "%{$search}%")
-                        ->orWhere('title', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhereHas('account', fn (Builder $query) => $query->where('name', 'like', "%{$search}%"));
+                        ->whereLike('name', "%{$search}%")
+                        ->orWhereLike('title', "%{$search}%")
+                        ->orWhereLike('email', "%{$search}%")
+                        ->orWhereLike('phone', "%{$search}%")
+                        ->orWhereHas('account', fn (Builder $query) => $query->whereLike('name', "%{$search}%"));
                 });
             })
-            ->when($filters['title'] ?? null, fn (Builder $query, string $title) => $query->where('title', 'like', "%{$title}%"))
+            ->when($filters['title'] ?? null, fn (Builder $query, string $title) => $query->whereLike('title', "%{$title}%"))
             ->when($filters['account'] ?? null, fn (Builder $query, int $accountId) => $query->where('account_id', $accountId))
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
@@ -35,7 +39,7 @@ class ContactRepository implements ContactRepositoryInterface
                     $query->select([
                         'id',
                         'name',
-                    ]);
+                    ])->with(['media']);
                 },
             ])
             ->paginate();

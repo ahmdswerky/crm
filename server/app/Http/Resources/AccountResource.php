@@ -20,6 +20,10 @@ class AccountResource extends JsonResource
             'industry' => $this->resource->industry,
             'phone' => $this->resource->phone,
             'address' => $this->resource->address,
+            'image' => $this->when(
+                $this->resource->relationLoaded('media'),
+                fn () => ($image = $this->resource->getFirstMedia('main')) ? MediaResource::make($image) : null,
+            ),
             'contacts_count' => $this->whenCounted('contacts', fn () => $this->resource->contacts_count),
             'created_at' => $this->resource->created_at,
         ];

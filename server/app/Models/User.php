@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\DealStatus;
+use App\Enums\CommissionRecipientType;
 use App\Support\Audit\LogsCrmActivity;
 use App\Support\Media\HasMain;
 use App\Support\Media\HasMedia;
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,7 +21,17 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'username', 'phone', 'password', 'is_super'])]
+#[Fillable([
+    'name',
+    'email',
+    'username',
+    'phone',
+    'password',
+    'is_super',
+    'direct_manager_id',
+    'total_potential_commission',
+    'total_actual_commission',
+])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements SpatieHasMedia
 {
@@ -41,7 +52,14 @@ class User extends Authenticatable implements SpatieHasMedia
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_super' => 'boolean',
+            'total_potential_commission' => 'float',
+            'total_actual_commission' => 'float',
         ];
+    }
+
+    public function scopeManagers(Builder $query): Builder
+    {
+        return $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'manager'));
     }
 
     public function scopeAgents(Builder $query): Builder
@@ -49,17 +67,38 @@ class User extends Authenticatable implements SpatieHasMedia
         return $query->whereHas('roles', fn (Builder $roles) => $roles->where('name', 'agent'));
     }
 
+    public function isAgent(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->roles->contains('name', 'agent'),
+        );
+    }
+
     public function commissionRate(): Attribute
     {
         return Attribute::make(
             get: function () {
-                $role = $this->roles->first()?->name;
+                $recipientType = $this->roles->contains('name', 'manager')
+                    ? CommissionRecipientType::MANAGER
+                    : ($this->roles->contains('name', 'agent') ? CommissionRecipientType::AGENT : null);
 
-                if (! $role) {
+                if (! $recipientType) {
                     return 1;
                 }
 
-                return config('crm.commission_rates.'.$role, 1);
+                $policy = CommissionPolicy::query()
+                    ->where('recipient_type', $recipientType->value)
+                    ->where('user_id', $this->id)
+                    ->whereDate('effective_from', '<=', today())
+                    ->where(function ($query): void {
+                        $query
+                            ->whereNull('effective_to')
+                            ->orWhereDate('effective_to', '>=', today());
+                    })
+                    ->latest('effective_from')
+                    ->first();
+
+                return $policy?->rate ?? config('crm.commission_rates.'.$recipientType->value, 1);
             }
         );
     }
@@ -67,32 +106,27 @@ class User extends Authenticatable implements SpatieHasMedia
     public function totalPotentialCommission(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $dealsTotal = Deal::byAgent($this->id)
-                    ->whereIn('status', [
-                        DealStatus::INQUIRY,
-                        DealStatus::VIEWING,
-                        DealStatus::OFFER_MADE,
-                        DealStatus::LEGAL,
-                    ])
-                    ->sum('deal_value');
-                $rate = $this->commissionRate;
-
-                return $dealsTotal * $rate / 100;
-            }
+            get: fn () => (float) ($this->attributes['total_potential_commission'] ?? 0),
         );
     }
 
     public function totalActualCommission(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $dealsTotal = Deal::byAgent($this->id)->whereStatus(DealStatus::WON)->sum('deal_value');
-                $rate = $this->commissionRate;
-
-                return $dealsTotal * $rate / 100;
-            }
+            get: fn () => (float) ($this->attributes['total_actual_commission'] ?? 0),
         );
+    }
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'direct_manager_id')
+            ->without('roles');
+    }
+
+    public function teamMemebers(): HasMany
+    {
+        return $this->hasMany(self::class, 'direct_manager_id')
+            ->without('roles');
     }
 
     public function properties(): HasMany

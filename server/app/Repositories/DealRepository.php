@@ -7,6 +7,7 @@ use App\Enums\DealStatus;
 use App\Models\Deal;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -19,13 +20,13 @@ class DealRepository implements DealRepositoryInterface
         $isAgent = request()->user()->roles->contains('name', 'agent');
         $userId = request()->user()->id;
 
+
         return $this->model
             ->query()
             ->when($isAgent, fn (Builder $query) => $query->where('agent_id', $userId))
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query
-                        ->where('status', 'like', "%{$search}%")
                         ->orWhereHas('contact', fn (Builder $query) => $query->whereAny(['name', 'email', 'phone'], 'like', "%{$search}%"))
                         ->orWhereHas('property', fn (Builder $query) => $query->whereAny(['title', 'city', 'address'], 'like', "%{$search}%"))
                         ->orWhereHas('agent', fn (Builder $query) => $query->whereAny(['name', 'username', 'email', 'phone'], 'like', "%{$search}%"));
@@ -93,10 +94,11 @@ class DealRepository implements DealRepositoryInterface
     private function dealRelations(): array
     {
         return [
-            'contact:id,name,title,email,phone,created_at',
+            'contact:id,name,title,email,phone,lead_id,created_at',
             'property:id,title,description,city,address,price,purpose,type,status,created_at',
             'property.media',
             'agent:id,name,username,email,phone,created_at',
+            'allocations.recipient:id,name,username,email,phone,created_at',
         ];
     }
 

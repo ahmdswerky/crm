@@ -31,6 +31,11 @@ class Lead extends Model
         return $query->where('status', LeadStatus::PENDING);
     }
 
+    public function scopeContacted(Builder $query): Builder
+    {
+        return $query->where('status', LeadStatus::CONTACTED);
+    }
+
     public function scopeQualified(Builder $query): Builder
     {
         return $query->where('status', LeadStatus::QUALIFIED);

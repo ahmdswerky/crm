@@ -24,6 +24,8 @@ class UserResource extends JsonResource
                 $this->resource->relationLoaded('media'),
                 fn () => ($avatar = $this->resource->getFirstMedia('main')) ? MediaResource::make($avatar) : null,
             ),
+            'manager' => $this->whenLoaded('manager', fn () => self::make($this->resource->manager)),
+            'team_members' => $this->whenLoaded('teamMemebers', fn () => self::collection($this->resource->teamMemebers)),
             'roles' => $this->whenLoaded('roles', fn () => RoleResource::collection($this->resource->roles)),
             'permissions' => $this->whenLoaded(
                 'roles',

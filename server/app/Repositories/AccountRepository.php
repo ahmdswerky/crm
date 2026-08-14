@@ -19,17 +19,20 @@ class AccountRepository implements AccountRepositoryInterface
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query
-                        ->where('name', 'like', "%{$search}%")
-                        ->orWhere('industry', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('address', 'like', "%{$search}%");
+                        ->whereLike('name', "%{$search}%")
+                        ->orWhereLike('industry', "%{$search}%")
+                        ->orWhereLike('phone', "%{$search}%")
+                        ->orWhereLike('address', "%{$search}%");
                 });
             })
-            ->when($filters['industry'] ?? null, fn (Builder $query, string $industry) => $query->where('industry', 'like', "%{$industry}%"))
-            ->when($filters['phone'] ?? null, fn (Builder $query, string $phone) => $query->where('phone', 'like', "%{$phone}%"))
-            ->when($filters['address'] ?? null, fn (Builder $query, string $address) => $query->where('address', 'like', "%{$address}%"))
+            ->when($filters['industry'] ?? null, fn (Builder $query, string $industry) => $query->whereLike('industry', "%{$industry}%"))
+            ->when($filters['phone'] ?? null, fn (Builder $query, string $phone) => $query->whereLike('phone', "%{$phone}%"))
+            ->when($filters['address'] ?? null, fn (Builder $query, string $address) => $query->whereLike('address', "%{$address}%"))
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
+            ->with('media')
+            ->withCount('contacts')
+            ->orderBy('contacts_count', 'desc')
             ->paginate();
     }
 
@@ -37,24 +40,17 @@ class AccountRepository implements AccountRepositoryInterface
     {
         return $this->model
             ->query()
+            ->with('media')
             ->findOrFail($id);
     }
 
-    public function findOrCreateByName(string $name, ?string $phone): Account
+    public function findOrCreateByName(string $name): Account
     {
-        $account = $this->model
+        return $this->model
             ->query()
-            ->where('name', $name)
-            ->value('id');
-
-        if ($account) {
-            return $account;
-        }
-
-        return $this->store([
-            'name' => $name,
-            'phone' => $phone,
-        ]);
+            ->firstOrCreate([
+                'name' => $name,
+            ]);
     }
 
     public function store(array $data): Account
@@ -66,7 +62,8 @@ class AccountRepository implements AccountRepositoryInterface
                 'industry' => $data['industry'] ?? null,
                 'phone' => $data['phone'],
                 'address' => $data['address'] ?? null,
-            ]);
+            ])
+            ->load('media');
     }
 
     public function update(Account $account, array $data): Account
@@ -78,7 +75,7 @@ class AccountRepository implements AccountRepositoryInterface
             'address' => Arr::get($data, 'address', $account->address),
         ]);
 
-        return $account->fresh();
+        return $account->fresh()->load('media');
     }
 
     public function delete(int $id): bool

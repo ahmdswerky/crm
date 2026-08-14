@@ -21,8 +21,10 @@ class LeadController extends Controller
     public function index(LeadIndexRequest $request)
     {
         $data = $this->leadRepository->paginate($request->validated());
+        $stats = $this->leadRepository->stats();
 
-        return LeadResource::collection($data);
+        return LeadResource::collection($data)
+            ->additional([...$stats]);
     }
 
     /**
@@ -44,7 +46,7 @@ class LeadController extends Controller
     #[Authorize('view', 'lead')]
     public function show(Lead $lead)
     {
-        $lead->load('contact');
+        $lead->load('contact.account.media', 'assignedAgent');
 
         return response()->json([
             'lead' => LeadResource::make($lead),

@@ -29,6 +29,7 @@ class PropertyResource extends JsonResource
             'purpose' => $this->resource->purpose,
             'type' => $this->resource->type,
             'status' => $this->resource->status,
+            'deals_count' => $this->whenCounted('deals', fn () => $this->resource->deals_count),
             'created_at' => $this->resource->created_at,
         ];
     }

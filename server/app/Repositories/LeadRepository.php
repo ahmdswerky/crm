@@ -35,12 +35,13 @@ class LeadRepository implements LeadRepositoryInterface
             ->when($filters['assigned_agent'] ?? null, fn (Builder $query, string $assignedAgent) => $query->where('assigned_agent_id', $assignedAgent))
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
             ->when($filters['source'] ?? null, fn (Builder $query, string $source) => $query->where('source', $source))
-            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->where('city', 'like', "%{$city}%"))
-            ->when($filters['company'] ?? null, fn (Builder $query, string $company) => $query->where('company_name', 'like', "%{$company}%"))
+            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->whereLike('city', "%{$city}%"))
+            ->when($filters['company'] ?? null, fn (Builder $query, string $company) => $query->whereLike('company_name', "%{$company}%"))
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->with(['assignedAgent:id,name,username,email'])
             ->withExists('contact')
+            ->latest('updated_at')
             ->paginate(perPage: $filters['per_page'] ?? 15);
     }
 
@@ -91,7 +92,9 @@ class LeadRepository implements LeadRepositoryInterface
 
     public function updateStatus(int $id, LeadStatus $status): bool
     {
-        return $this->model->where('id', $id)->update([
+        $lead = $this->model->findOrFail($id);
+
+        return $lead->update([
             'status' => $status,
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Account;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -15,12 +16,13 @@ class MediaOwnerRegistry
     /** @return array<int, string> */
     public function types(): array
     {
-        return ['property', 'user'];
+        return ['account', 'property', 'user'];
     }
 
     public function resolve(string $type, int $id): Model&HasMedia
     {
         $model = match ($type) {
+            'account' => Account::query()->find($id),
             'property' => Property::query()->find($id),
             'user' => User::query()->find($id),
             default => null,
@@ -36,6 +38,7 @@ class MediaOwnerRegistry
     public function resolveMediaOwner(Media $media): Model&HasMedia
     {
         $type = match ($media->model_type) {
+            Account::class => 'account',
             Property::class => 'property',
             User::class => 'user',
             default => null,

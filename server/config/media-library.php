@@ -72,9 +72,9 @@ return [
      * in `shell.php.jpg`) is rejected even if the final extension is allowed.
      * Leave `null` to disable allowlisting.
      */
-    'allowed_extensions' => ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+    'allowed_extensions' => ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg'],
 
-    'image_mime_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/avif'],
+    'image_mime_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/svg+xml'],
 
     'collection_limits' => [
         'gallery' => 20,

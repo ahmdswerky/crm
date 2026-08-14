@@ -21,10 +21,31 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        if (! User::whereEmail($email = 'supervisor@crm.io')->exists()) {
+        if (! User::whereEmail($email = config('app.dev_email'))->exists()) {
             User::factory()->create([
-                'name' => 'Supervisor',
-                'username' => 'supervisor',
+                'name' => 'Developer',
+                'username' => 'dev',
+                'is_super' => true,
+                'email' => $email,
+            ]);
+        }
+
+        $superviros1 = User::whereEmail($email = 'michael@crm.io')->first();
+
+        if (! $superviros1) {
+            $superviros1 = User::factory()->create([
+                'name' => 'Michael Smith',
+                'username' => 'michael',
+                'email' => $email,
+            ]);
+        }
+
+        $superviros2 = User::whereEmail($email = 'chris@crm.io')->first();
+
+        if (! $superviros2) {
+            $superviros2 = User::factory()->create([
+                'name' => 'Chris Anderson',
+                'username' => 'chris',
                 'email' => $email,
             ]);
         }
@@ -34,6 +55,7 @@ class UserSeeder extends Seeder
                 'email' => $email,
                 'name' => 'Jack Ryan',
                 'username' => 'j.ryan',
+                'direct_manager_id' => $superviros1->id,
             ]);
         }
 
@@ -42,6 +64,7 @@ class UserSeeder extends Seeder
                 'email' => $email,
                 'name' => 'Maya Hassan',
                 'username' => 'm.hassan',
+                'direct_manager_id' => $superviros1->id,
             ]);
         }
 
@@ -50,6 +73,7 @@ class UserSeeder extends Seeder
                 'email' => $email,
                 'name' => 'Omar Khalil',
                 'username' => 'o.khalil',
+                'direct_manager_id' => $superviros1->id,
             ]);
         }
 
@@ -58,6 +82,7 @@ class UserSeeder extends Seeder
                 'email' => $email,
                 'name' => 'Lina Adel',
                 'username' => 'l.adel',
+                'direct_manager_id' => $superviros2->id,
             ]);
         }
 
@@ -66,6 +91,7 @@ class UserSeeder extends Seeder
                 'email' => $email,
                 'name' => 'Karim Nassar',
                 'username' => 'k.nassar',
+                'direct_manager_id' => $superviros2->id,
             ]);
         }
 
@@ -74,6 +100,7 @@ class UserSeeder extends Seeder
                 'email' => $email,
                 'name' => 'Nour Samir',
                 'username' => 'n.samir',
+                'direct_manager_id' => $superviros2->id,
             ]);
         }
     }

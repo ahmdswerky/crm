@@ -22,19 +22,19 @@ class PropertyRepository implements PropertyRepositoryInterface
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
                     $query
-                        ->where('title', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
-                        ->orWhere('city', 'like', "%{$search}%")
-                        ->orWhere('address', 'like', "%{$search}%")
-                        ->orWhereHas('createdBy', fn (Builder $query) => $query->where('name', 'like', "%{$search}%"));
+                        ->whereLike('title', "%{$search}%")
+                        ->orWhereLike('description', "%{$search}%")
+                        ->orWhereLike('city', "%{$search}%")
+                        ->orWhereLike('address', "%{$search}%");
                 });
             })
             ->when($filters['type'] ?? null, fn (Builder $query, string $type) => $query->where('type', $type))
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
-            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->where('city', 'like', "%{$city}%"))
+            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->whereLike('city', "%{$city}%"))
             ->when($filters['min_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '>=', $price))
             ->when($filters['max_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '<=', $price))
             ->with(['media'])
+            ->withCount('deals')
             ->paginate(perPage: 12);
     }
 

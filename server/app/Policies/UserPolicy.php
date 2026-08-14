@@ -35,6 +35,10 @@ class UserPolicy
      */
     public function update(User $user): bool
     {
+        if ($user->is_super) {
+            return false;
+        }
+
         return $user->can('user.edit');
     }
 

@@ -19,7 +19,7 @@ class AccountUpdateRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'string', 'unique:accounts,name', 'max:250'],
             'industry' => ['nullable', 'string', 'min:2', 'max:200'],
-            'phone' => ['sometimes', 'required', 'phone', Rule::unique('leads', 'phone')->ignore($accountId), 'max:30'],
+            'phone' => ['nullable', 'phone', Rule::unique('accounts', 'phone')->ignore($accountId), 'max:30'],
             'address' => ['nullable', 'string', 'min:10', 'max:200'],
         ];
     }

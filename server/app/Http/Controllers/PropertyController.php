@@ -48,7 +48,9 @@ class PropertyController extends Controller
     #[Authorize('view', 'property')]
     public function show(Property $property)
     {
-        $property->load(['createdBy', 'media']);
+        $property
+            ->load(['createdBy', 'media'])
+            ->loadCount('deals');
 
         return response()->json([
             'property' => PropertyResource::make($property),

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Account;
 use App\Models\ActivityLog;
 use App\Models\Contact;
+use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Role;
