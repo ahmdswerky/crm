@@ -22,6 +22,13 @@ class UserController extends Controller
     {
         $data = $this->userRepository->paginate($request->validated());
 
+        if (! $request->user()->isAgent) {
+            $data->getCollection()->each->append([
+                'totalPotentialCommission',
+                'totalActualCommission',
+            ]);
+        }
+
         return UserResource::collection($data);
     }
 
@@ -75,6 +82,8 @@ class UserController extends Controller
     #[Authorize('delete', 'user')]
     public function destroy(User $user)
     {
+        abort_if($user->is_super, 404);
+
         $this->userRepository->delete($user->id);
 
         return response()->json([], 204);

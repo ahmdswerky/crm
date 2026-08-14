@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CommissionAllocationState;
 use App\Enums\DealStatus;
 use App\Support\Audit\LogsCrmActivity;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -12,7 +13,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['value', 'deal_value', 'contact_id', 'property_id', 'agent_id', 'status', 'commission_rate', 'closed_at'])]
+#[Fillable([
+    'value',
+    'deal_value',
+    'contact_id',
+    'property_id',
+    'agent_id',
+    'status',
+    'commission_rate',
+    'commission_version',
+    'commission_status',
+    'commission_agent_amount',
+    'commission_manager_amount',
+    'commission_company_amount',
+    'commission_total_amount',
+    'commission_calculated_at',
+    'commission_finalized_at',
+    'closed_at',
+])]
 class Deal extends Model
 {
     use HasFactory, LogsCrmActivity, SoftDeletes;
@@ -24,6 +42,14 @@ class Deal extends Model
             'deal_value' => 'float',
             'status' => DealStatus::class,
             'commission_rate' => 'float',
+            'commission_version' => 'integer',
+            'commission_status' => CommissionAllocationState::class,
+            'commission_agent_amount' => 'float',
+            'commission_manager_amount' => 'float',
+            'commission_company_amount' => 'float',
+            'commission_total_amount' => 'float',
+            'commission_calculated_at' => 'datetime',
+            'commission_finalized_at' => 'datetime',
             'closed_at' => 'date',
         ];
     }
@@ -77,5 +103,10 @@ class Deal extends Model
     {
         return $this->belongsTo(User::class, 'agent_id')
             ->without('roles');
+    }
+
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(CommissionAllocation::class);
     }
 }

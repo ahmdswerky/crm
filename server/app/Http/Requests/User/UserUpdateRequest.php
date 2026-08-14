@@ -46,6 +46,7 @@ class UserUpdateRequest extends FormRequest
                 Rule::unique('users', 'phone')->ignore($userId),
                 'max:30',
             ],
+            'direct_manager_id' => ['sometimes', 'nullable', 'exists:users,id'],
             'roles' => [$canManageRoles ? 'array' : 'prohibited'],
             'roles.*' => [
                 'required',

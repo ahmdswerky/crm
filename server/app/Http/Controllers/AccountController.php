@@ -35,7 +35,7 @@ class AccountController extends Controller
     #[Authorize('view', 'account')]
     public function show(Account $account)
     {
-        $account->loadCount('contacts');
+        $account->load('media')->loadCount('contacts');
 
         return response()->json([
             'account' => AccountResource::make($account),
@@ -55,6 +55,8 @@ class AccountController extends Controller
     #[Authorize('delete', 'account')]
     public function destroy(Account $account)
     {
+        abort_if($account->contacts()->exists(), 404);
+
         $this->accountRepository->delete($account->id);
 
         return response()->json([], 204);

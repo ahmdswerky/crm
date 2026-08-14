@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use App\Services\AuditEventLogger;
+use App\Services\CommissionService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -14,7 +15,8 @@ class UserRepository implements UserRepositoryInterface
 {
     public function __construct(
         protected readonly User $model,
-        private readonly AuditEventLogger $auditEvents,
+        protected readonly AuditEventLogger $auditEvents,
+        protected readonly CommissionService $commissionService,
     ) {}
 
     public function paginate(array $filters = []): LengthAwarePaginator
@@ -40,6 +42,7 @@ class UserRepository implements UserRepositoryInterface
             ->when($filters['permission'] ?? null, fn (Builder $query, string $permission) => $query->whereHas('permissions', fn (Builder $query) => $query->where('name', $permission)))
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
+            ->whereNot('email', config('app.dev_email'))
             ->paginate();
     }
 
@@ -104,7 +107,10 @@ class UserRepository implements UserRepositoryInterface
             $this->auditEvents->rolesUpdated($user, $beforeRoles, $data['roles']);
         }
 
-        return $user->fresh(['roles.permissions', 'media']);
+        $updated = $user->fresh(['roles.permissions', 'media']);
+        $this->commissionService->recalculateForUser($updated);
+
+        return $updated;
     }
 
     public function updatePassword(User $user, string $currentPassword, string $newPassword): bool

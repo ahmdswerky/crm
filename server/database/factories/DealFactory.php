@@ -23,16 +23,20 @@ class DealFactory extends Factory
             ->whereStatus(PropertyStatus::PENDING)
             ->inRandomOrder()
             ->first();
+        $contact = Contact::select(['id', 'assigned_agent_id'])->inRandomOrder()->first();
+
+        $status = fake()->randomElement(DealStatus::cases());
 
         return [
             'value' => $value = $property->price,
             'deal_value' => fake()->randomElement([$value, $value + (fake()->numberBetween(1, 10) * 10000 * fake()->randomElement([1, -1]))]),
-            'contact_id' => Contact::query()->inRandomOrder()->value('id'),
+            'contact_id' => $contact->id,
             'property_id' => $property->id,
-            'agent_id' => User::query()->agents()->inRandomOrder()->value('id'),
-            'status' => fake()->randomElement(DealStatus::cases()),
+            'agent_id' => $contact->assigned_agent_id,
+            'status' => $status,
             'commission_rate' => fake()->randomElement([2.5, 1.5]),
-            'closed_at' => fake()->randomElement([fake()->dateTimeBetween(now()->subDays(2), now()->subDay()), null]),
+            'created_at' => $date = fake()->dateTimeBetween(now()->subMonths(18), now()->subDay()),
+            'closed_at' => $status === DealStatus::WON ? $date : null,
         ];
     }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Account::class)->constrained();
             $table->foreignIdFor(Lead::class)->constrained();
+            $table->unique('lead_id');
             $table->string('name')->index();
             $table->string('title')->nullable();
             $table->string('email')->nullable();

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ActivityLog;
+use App\Models\Deal;
 use App\Models\User;
 use App\Support\Audit\ActivitySubjectRegistry;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,10 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class ActivityReversionService
 {
-    public function __construct(private readonly ActivitySubjectRegistry $subjects) {}
+    public function __construct(
+        protected readonly ActivitySubjectRegistry $subjects,
+        protected readonly DealService $dealService,
+    ) {}
 
     public function revert(int $activityId, User $actor, string $reason): ActivityLog
     {
@@ -88,6 +92,10 @@ class ActivityReversionService
 
         $subject->fill($oldValues);
         $subject->save();
+
+        if ($subject instanceof Deal) {
+            $this->dealService->recalculateCommission($subject);
+        }
 
         return array_keys($oldValues);
     }

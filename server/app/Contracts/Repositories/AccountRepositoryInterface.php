@@ -11,7 +11,7 @@ interface AccountRepositoryInterface
 
     public function findById(int $id): ?Account;
 
-    public function findOrCreateByName(string $name, ?string $phone): Account;
+    public function findOrCreateByName(string $name): Account;
 
     public function store(array $data): Account;
 

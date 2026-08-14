@@ -24,6 +24,24 @@ class DealResource extends JsonResource
             'agent' => $this->whenLoaded('agent', fn () => UserResource::make($this->resource->agent)),
             'status' => $this->resource->status,
             'commission_rate' => $this->resource->commission_rate,
+            'commission' => [
+                'status' => $this->resource->commission_status,
+                'version' => $this->resource->commission_version,
+                'agent_amount' => $this->resource->commission_agent_amount,
+                'manager_amount' => $this->resource->commission_manager_amount,
+                'company_amount' => $this->resource->commission_company_amount,
+                'total_amount' => $this->resource->commission_total_amount,
+                'calculated_at' => $this->resource->commission_calculated_at,
+                'finalized_at' => $this->resource->commission_finalized_at,
+                'allocations' => $this->when(
+                    $this->resource->relationLoaded('allocations'),
+                    fn () => CommissionAllocationResource::collection(
+                        $this->resource->allocations
+                            ->where('version', $this->resource->commission_version)
+                            ->values(),
+                    ),
+                ),
+            ],
             'closed_at' => $this->resource->closed_at,
             'created_at' => $this->resource->created_at,
         ];

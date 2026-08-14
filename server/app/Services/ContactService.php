@@ -4,38 +4,48 @@ namespace App\Services;
 
 use App\Contracts\Repositories\AccountRepositoryInterface;
 use App\Contracts\Repositories\ContactRepositoryInterface;
-use App\Contracts\Repositories\LeadRepositoryInterface;
 use App\Enums\LeadStatus;
 use App\Models\Contact;
-use Arr;
+use App\Models\Lead;
 use Illuminate\Support\Facades\DB;
 
 class ContactService
 {
     public function __construct(
-        protected LeadRepositoryInterface $leadRepository,
         protected ContactRepositoryInterface $contactRepository,
         protected AccountRepositoryInterface $accountRepository,
     ) {}
 
-    public function store(int $leadId, array $extraData = []): Contact
+    public function createFromQualifiedLead(int $leadId): ?Contact
     {
-        return DB::transaction(function () use (&$contact, $leadId, $extraData) {
-            $lead = $this->leadRepository->findById($leadId);
+        return DB::transaction(function () use ($leadId): ?Contact {
+            $lead = Lead::query()->lockForUpdate()->findOrFail($leadId);
 
-            $accountId = $extraData['account_id'] ??
-                ($this->accountRepository->findOrCreateByName($lead->company_name, $lead->phone))->id;
+            if ($lead->status !== LeadStatus::QUALIFIED) {
+                return null;
+            }
 
-            $this->leadRepository->updateStatus($lead->id, LeadStatus::QUALIFIED);
+            $existingContact = Contact::withTrashed()
+                ->where('lead_id', $lead->id)
+                ->first();
+
+            if ($existingContact) {
+                return $existingContact;
+            }
+
+            if (! $lead->company_name || ! $lead->assigned_agent_id) {
+                return null;
+            }
+
+            $account = $this->accountRepository->findOrCreateByName($lead->company_name);
 
             return $this->contactRepository->store([
                 'lead_id' => $lead->id,
                 'name' => $lead->name,
-                'title' => $extraData['title'] ?? null,
-                'email' => $lead->email ?? $extraData['email'] ?? null,
-                'phone' => $extraData['phone'] ?? $lead->phone,
-                'account_id' => $accountId,
-                'assigned_agent_id' => $lead->assigned_agent_id ?? Arr::get($extraData, 'assigned_agent_id'),
+                'email' => $lead->email,
+                'phone' => $lead->phone,
+                'account_id' => $account->id,
+                'assigned_agent_id' => $lead->assigned_agent_id,
             ]);
         }, 3);
     }

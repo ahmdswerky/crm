@@ -21,6 +21,7 @@ class UserIndexRequest extends FormRequest
             'permission' => ['nullable', 'string', Rule::exists('permissions', 'name')],
             'created_from' => ['nullable', 'date'],
             'created_to' => ['nullable', 'date', 'after_or_equal:created_from'],
+            'with' => ['nullable', Rule::in(['manager'])],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }

@@ -15,6 +15,7 @@ class DealService
         protected PropertyRepositoryInterface $propertyRepository,
         protected UserRepositoryInterface $userRepository,
         protected PropertyStatusResolver $propertyStatusResolver,
+        protected CommissionService $commissionService,
     ) {}
 
     public function store(array $data): Deal
@@ -36,6 +37,7 @@ class DealService
             ]);
 
             $this->synchronizePropertyStatus($property->id);
+            $this->commissionService->recalculate($deal);
 
             return $this->dealRepository->find($deal->id);
         }, 3);
@@ -52,6 +54,10 @@ class DealService
 
             $deal = $this->dealRepository->update($deal, $data);
 
+            if (array_intersect(array_keys($data), ['deal_value', 'agent_id', 'status', 'closed_at']) !== []) {
+                $this->commissionService->recalculate($deal);
+            }
+
             foreach (array_unique($propertyIds) as $propertyId) {
                 $this->synchronizePropertyStatus($propertyId);
             }
@@ -66,6 +72,8 @@ class DealService
             $propertyId = (int) $deal->property_id;
 
             $this->propertyRepository->lockByIds([$propertyId]);
+
+            $this->commissionService->voidDeal($deal);
 
             $deleted = $this->dealRepository->delete($deal->id);
 
@@ -82,5 +90,13 @@ class DealService
         );
 
         $this->propertyRepository->updateStatus($propertyId, $status);
+    }
+
+    public function recalculateCommission(Deal $deal): Deal
+    {
+        return DB::transaction(
+            fn () => $this->commissionService->recalculate($deal),
+            3,
+        );
     }
 }
