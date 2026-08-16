@@ -203,42 +203,7 @@ export interface paths {
             };
         };
         put?: never;
-        /** contacts (store) */
-        post: {
-            parameters: {
-                query?: never;
-                header?: {
-                    /** @example Bearer {{token}} */
-                    Authorization?: string;
-                };
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        /** Format: bignum */
-                        readonly id: number;
-                        name: string;
-                        title?: string | null;
-                        email?: string | null;
-                        phone: string;
-                        /** Format: bignum */
-                        account_id: number;
-                    };
-                };
-            };
-            responses: {
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": Record<string, never>;
-                    };
-                };
-            };
-        };
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -362,11 +327,28 @@ export interface components {
             industry: string;
             phone: string;
             address: string;
+            readonly image?: components["schemas"]["Media"] | null;
             /** Format: date */
             created_at?: string;
         };
         AccountDetails: components["schemas"]["Account"] & {
             readonly contacts_count: number;
+        };
+        Media: {
+            id: number;
+            /** Format: uuid */
+            uuid: string;
+            name: string;
+            mime_type: string;
+            /** Format: int64 */
+            size: number;
+            /** Format: uri */
+            url: string;
+            /** Format: uri */
+            thumbnail_url: string;
+            order: number;
+            /** Format: date-time */
+            created_at: string;
         };
         Contact: {
             /** Format: bignum */
@@ -375,6 +357,8 @@ export interface components {
             title?: string | null;
             email?: string | null;
             phone: string;
+            /** Format: bignum */
+            readonly lead_id?: number;
             account?: components["schemas"]["Account"];
             readonly lead?: components["schemas"]["Lead"];
             /** Format: date */

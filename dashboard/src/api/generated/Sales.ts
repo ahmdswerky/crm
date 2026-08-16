@@ -128,11 +128,6 @@ export interface paths {
                         agent_id: number;
                         /** @enum {string} */
                         status: "inquiry" | "viewing" | "offer_made" | "legal" | "won" | "lost";
-                        /**
-                         * Format: double
-                         * @example 2.5
-                         */
-                        commission_rate: number;
                         /** Format: date-time */
                         closed_at: string;
                     };
@@ -229,11 +224,6 @@ export interface paths {
                         /** @enum {string} */
                         status?: "inquiry" | "viewing" | "offer_made" | "legal" | "won" | "lost";
                         /**
-                         * Format: double
-                         * @example 2.5
-                         */
-                        commission_rate?: number;
-                        /**
                          * Format: date
                          * @example 2026-07-17
                          */
@@ -302,12 +292,50 @@ export interface components {
             agent: components["schemas"]["Agent"];
             /** @enum {string} */
             status: "inquiry" | "viewing" | "offer_made" | "legal" | "won" | "lost";
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Resolved agent rate retained for compatibility. Commission amounts are in commission.
+             */
             commission_rate: number;
+            commission: components["schemas"]["Commission"];
             /** Format: date-time */
             closed_at?: string | null;
             /** Format: date-time */
             readonly created_at?: string;
+        };
+        Commission: {
+            /** @enum {string} */
+            status: "estimate" | "final" | "superseded" | "void";
+            version: number;
+            /** Format: double */
+            agent_amount: number;
+            /** Format: double */
+            manager_amount: number;
+            /** Format: double */
+            company_amount: number;
+            /** Format: double */
+            total_amount: number;
+            /** Format: date-time */
+            calculated_at: string | null;
+            /** Format: date-time */
+            finalized_at: string | null;
+            allocations?: components["schemas"]["CommissionAllocation"][];
+        };
+        CommissionAllocation: {
+            /** @enum {string} */
+            recipient_type: "agent" | "manager" | "company";
+            recipient_user_id: number | null;
+            recipient?: components["schemas"]["Agent"];
+            /** Format: double */
+            base_amount: number;
+            /** Format: double */
+            rate: number;
+            /** Format: double */
+            amount: number;
+            /** @enum {string} */
+            state: "estimate" | "final" | "superseded" | "void";
+            /** Format: date-time */
+            snapshotted_at: string | null;
         };
         Contact: {
             /** Format: bignum */
@@ -317,6 +345,8 @@ export interface components {
             email?: string | null;
             phone: string;
             account?: components["schemas"]["Account"];
+            /** Format: bignum */
+            readonly lead_id?: number;
             /** Format: date */
             created_at?: string;
         };

@@ -291,6 +291,8 @@ export interface components {
             type: "land" | "villa" | "appartment" | "mansion" | "commercial";
             /** @enum {string} */
             status: "pending" | "showing" | "sold";
+            /** Format: int64 */
+            readonly deals_count?: number;
             readonly owner?: {
                 /**
                  * Format: bignum

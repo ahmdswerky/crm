@@ -128,11 +128,45 @@
   .dark body {
     background-image: radial-gradient(oklch(0.92 0.006 230 / 0.03) 0.5px, transparent 0.5px);
   }
-  button, a, input, textarea, select { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background; }
-  [data-slot="input-group"] [data-slot="input-group-addon"] + input[data-slot="input-group-control"].focus-visible\:\!ring-0:focus-visible {
-      box-shadow: none !important;
-  }
+  button, a { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background; }
 }
+
+/*a[href]:not([data-slot="button"]) {
+    transition: 75ms ease-in-out;
+}*/
+
+/*a[href]:not([data-slot="button"]):hover {
+  color: color-mix(in oklab, var(--primary) 75%, black);
+}*/
+
+/*.dark body {
+    a[href]:not([data-slot="button"]):hover {
+    color: color-mix(in oklab, currentColor 75%, black);
+    }
+}
+
+.light body {
+    a[href]:not([data-slot="button"]):hover {
+    color: color-mix(in oklab, currentColor 75%, white);
+    }
+}*/
+
+/*.dark body :not([data-slot="sidebar"]) a[href]:not([data-slot="button"]):hover {
+    color: yellow;
+}*/
+.dark body main a:hover {
+    color: currentColor;
+}
+.light body main a:hover {
+    color: currentColor;
+}
+
+/*.light body {
+    a[href]:not([data-slot="button"]):hover {
+    color: color-mix(in oklab, currentColor 75%, white);
+    }
+}*/
+
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -141,4 +175,90 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+@layer components {
+  .filter-tab {
+    --filter-tab-radius: var(--radius-md);
+    --filter-tab-surface: color-mix(in oklab, var(--muted) 60%, transparent);
+    --filter-tab-outside: var(--background);
+    position: relative;
+    display: inline-flex;
+  }
+
+  .filter-tab-roundout {
+    z-index: 2;
+  }
+
+  .filter-tab-roundout::before,
+  .filter-tab-roundout::after {
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    width: var(--filter-tab-radius);
+    height: var(--filter-tab-radius);
+    background: var(--filter-tab-surface);
+    content: "";
+  }
+
+  .filter-tab-roundout::before {
+    left: calc(var(--filter-tab-radius) * -1);
+  }
+
+  .filter-tab-roundout::after {
+    right: calc(var(--filter-tab-radius) * -1);
+  }
+
+  .filter-tab-roundout-button {
+    position: relative;
+    z-index: 2;
+    background: var(--filter-tab-surface);
+  }
+
+  .filter-tab-roundout-button:hover {
+    background: color-mix(in oklab, var(--muted) 80%, transparent);
+  }
+
+  .filter-tab-roundout-button::before,
+  .filter-tab-roundout-button::after {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    width: calc(var(--filter-tab-radius) * 2);
+    height: calc(var(--filter-tab-radius) * 2);
+    border-radius: 999px;
+    background: var(--filter-tab-outside);
+    content: "";
+    pointer-events: none;
+  }
+
+  .filter-tab-roundout-button::before {
+    left: calc(var(--filter-tab-radius) * -2);
+  }
+
+  .filter-tab-roundout-button::after {
+    right: calc(var(--filter-tab-radius) * -2);
+  }
+}
+
+
+.light .search-filter-card {
+    button[role="combobox"],
+    button[data-slot="popover-trigger"],
+    input[data-slot="input"],
+    div[data-slot="button-group"]
+    {
+        background-color: white;
+    }
+}
+
+.dark .search-filter-card {
+    button[role="combobox"],
+    button[data-slot="popover-trigger"],
+    input[data-slot="input"],
+    div[data-slot="button-group"]
+    {
+        background-color: color-mix(in oklab, var(--input) 30%, transparent);
+        background-color: color-mix(in oklab, var(--input) 65%, black);
+    }
 }

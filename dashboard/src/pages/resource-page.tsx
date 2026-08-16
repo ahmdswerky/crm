@@ -31,7 +31,7 @@ function relationValue(value: unknown, relation: ResourceDetailsPageProps["field
   const id = record[relation.idKey ?? "id"]
   const label = record[relation.labelKey ?? "name"]
   if (id === undefined || id === null) return display(label)
-  return <span className="inline-flex items-center gap-2">{relation.person && <PersonAvatar name={String(label)} size="sm" />}<Link className="text-primary hover:text-foreground" to={`${relation.basePath}/${id}`}>{display(label)}</Link></span>
+  return <span className="inline-flex items-center gap-2">{relation.person && <PersonAvatar name={String(label)} size="sm" />}<Link className="text-primary" to={`${relation.basePath}/${id}`}>{display(label)}</Link></span>
 }
 
 export function ResourcePage({ title, eyebrow, description, endpoint, columns }: ResourcePageProps) {

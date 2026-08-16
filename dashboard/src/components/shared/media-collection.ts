@@ -73,7 +73,9 @@ export function useMediaCollection({ ownerType, ownerId, collection, onChange }:
         collection,
       })
       const response = await apiJson<MediaCollectionResponse>(`${mediaEndpoint}?${params}`, { signal })
-      replaceMedia(response.data)
+      const nextMedia = ordered(response.data)
+      replaceMedia(nextMedia)
+      return nextMedia
     } catch (caught) {
       if (!(caught instanceof DOMException && caught.name === "AbortError")) {
         setError(caught instanceof Error ? caught.message : "Unable to load media.")
@@ -95,18 +97,15 @@ export function useMediaCollection({ ownerType, ownerId, collection, onChange }:
     setBusy(true)
     setError("")
     try {
-      const uploaded = await uploadMediaFiles({ ownerType, ownerId, collection, files })
-
-      replaceMedia(uploaded.length === 1 && collection === "main"
-        ? uploaded
-        : [...media, ...uploaded])
+      await uploadMediaFiles({ ownerType, ownerId, collection, files })
+      await refresh()
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to upload media.")
       throw caught
     } finally {
       setBusy(false)
     }
-  }, [collection, media, ownerId, ownerType, replaceMedia])
+  }, [collection, ownerId, ownerType, refresh])
 
   const remove = useCallback(async (id: number) => {
     setBusy(true)

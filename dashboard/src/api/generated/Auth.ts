@@ -187,6 +187,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/secure-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Generate secure token
+         * @description Generate a secure token for the authenticated super admin.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @example Bearer {{token}} */
+                    Authorization?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Secure token generated. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            token: string;
+                        };
+                    };
+                };
+                /** @description Only super admins can generate secure tokens. */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description A secure token cannot be generated for this account. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/update-password": {
         parameters: {
             query?: never;
@@ -492,6 +550,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/login-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * login users
+         * @description Public account list used to pre-fill the login form.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginUser"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/users": {
         parameters: {
             query?: never;
@@ -502,7 +598,10 @@ export interface paths {
         /** users (list) */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /** @description Relations to include in each user record. */
+                    with?: "manager";
+                };
                 header?: {
                     /** @example Bearer {{token}} */
                     Authorization?: string;
@@ -1208,10 +1307,13 @@ export interface components {
             email: string;
             phone: string;
             /** Format: double */
+            readonly commission_rate?: number;
+            /** Format: double */
             readonly total_potential_commission?: number;
             /** Format: double */
             readonly total_actual_commission?: number;
             readonly avatar?: components["schemas"]["Media"];
+            readonly manager?: components["schemas"]["User"];
             /** Format: password */
             password?: string;
             roles?: {
@@ -1227,6 +1329,11 @@ export interface components {
             readonly is_super: boolean;
             /** Format: date-time */
             readonly created_at?: string;
+        };
+        LoginUser: {
+            username: string;
+            role: string | null;
+            is_super: boolean;
         };
         Role: {
             /**

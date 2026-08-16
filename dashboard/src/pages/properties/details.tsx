@@ -1,0 +1,1 @@
+export { PropertyDetailsPage } from "./workspace"

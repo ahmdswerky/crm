@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export type NumericRange = [number, number]
 
@@ -37,6 +38,8 @@ export function NumericRangeFilter({
   const lowerValue = hasRange ? clamp(value[0], lowerBound, upperBound) : 0
   const upperValue = hasRange ? clamp(value[1], lowerBound, upperBound) : 0
   const [draft, setDraft] = useState<NumericRange>([lowerValue, upperValue])
+  const [tooltipOpen, setTooltipOpen] = useState(false)
+  const [adjusting, setAdjusting] = useState(false)
 
   useEffect(() => {
     setDraft((current) => current[0] === lowerValue && current[1] === upperValue ? current : [lowerValue, upperValue])
@@ -55,29 +58,34 @@ export function NumericRangeFilter({
 
   return (
     <div className="min-w-56 flex-1 sm:flex-none">
-      <div className="flex items-baseline justify-between gap-3">
-        <Label htmlFor={id} className="text-xs font-medium text-muted-foreground">{label}</Label>
-        <span className="font-mono text-xs text-muted-foreground">{format(draft[0])} – {format(draft[1])}</span>
-      </div>
-      <Slider
-        id={id}
-        aria-label={label}
-        className="mt-3"
-        min={lowerBound}
-        max={upperBound}
-        step={step}
-        value={draft}
-        disabled={disabled}
-        onValueChange={(next) => {
-          if (next.length !== 2) return
-          const [first, second] = next[0] <= next[1] ? next : [next[1], next[0]]
-          setDraft([first, second])
-        }}
-      />
-      <span aria-hidden="true" className="mt-2 flex w-full items-center justify-between text-xs font-medium text-muted-foreground">
-        <span>{format(lowerBound)}</span>
-        <span>{format(upperBound)}</span>
-      </span>
+      <Tooltip open={tooltipOpen || adjusting} onOpenChange={setTooltipOpen}>
+        <TooltipTrigger asChild>
+          <div onPointerDownCapture={() => setAdjusting(true)} onPointerUpCapture={() => setAdjusting(false)} onPointerCancelCapture={() => setAdjusting(false)}>
+            <Label htmlFor={id} className="text-xs font-medium text-muted-foreground">{label}</Label>
+            <div className="mt-3">
+              <Slider
+                id={id}
+                aria-label={label}
+                min={lowerBound}
+                max={upperBound}
+                step={step}
+                value={draft}
+                disabled={disabled}
+                onValueChange={(next) => {
+                  if (next.length !== 2) return
+                  const [first, second] = next[0] <= next[1] ? next : [next[1], next[0]]
+                  setDraft([first, second])
+                }}
+              />
+            </div>
+            <span aria-hidden="true" className="mt-2 flex w-full items-center justify-between text-xs font-medium text-muted-foreground">
+              <span>{format(lowerBound)}</span>
+              <span>{format(upperBound)}</span>
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" sideOffset={6} className="font-mono tabular-nums">{format(draft[0])} – {format(draft[1])}</TooltipContent>
+      </Tooltip>
     </div>
   )
 }

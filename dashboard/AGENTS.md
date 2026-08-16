@@ -41,6 +41,7 @@ The reference images communicate direction, not literal content. Do not copy the
 - Auth uses the documented bearer token behind a `TokenStore`, initially backed by `sessionStorage`.
 - English LTR ships first, but shadcn is initialized with RTL-safe generation and logical layout utilities.
 - The default visual direction is Quiet Ledger plus Archival Index: flat paper-like surfaces, graphite text, thin rules, restrained blue, low radii, and almost no shadow.
+- Form controls are permanently flat on focus: inputs, textareas, selects, comboboxes, and input groups must not use focus-visible borders, outlines, Tailwind `ring-*`/`focus-within:ring-*` utilities, or focus box-shadows. Remove any inherited global focus-shadow rule instead of overriding it locally.
 
 ## Expected verification
 
@@ -56,4 +57,3 @@ npm run test:e2e
 ```
 
 If a command cannot run, state the exact blocker and what was verified instead.
-

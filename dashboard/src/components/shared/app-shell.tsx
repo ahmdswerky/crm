@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react"
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import {
   BarChart3,
+  FileChartColumn,
   Building2,
   ChevronRight,
-  Contact,
   FolderKanban,
+  House,
   LayoutDashboard,
   LogOut,
   Moon,
@@ -52,21 +53,27 @@ type NavigationItem = {
   superOnly?: boolean
 }
 
-const navigation: NavigationItem[] = [
+const workspaceNavigation: NavigationItem[] = [
   { label: "Overview", to: "/", icon: LayoutDashboard },
-  { label: "Leads", to: "/leads", icon: BarChart3, permission: "lead.view" },
-  { label: "Deals", to: "/deals", icon: FolderKanban, permission: "deal.view" },
-  { label: "Properties", to: "/properties", icon: Building2, permission: "property.view" },
-  { label: "Accounts", to: "/accounts", icon: UsersRound, permission: "account.view" },
-  { label: "Contacts", to: "/contacts", icon: Contact, permission: "contact.view" },
+  { label: "Reports", to: "/reports", icon: FileChartColumn, permission: "report.view" },
   { label: "Agents", to: "/agents", icon: UsersRound, permission: "user.view" },
 ]
+
+const realEstateNavigation: NavigationItem[] = [
+  { label: "Leads", to: "/leads", icon: BarChart3, permission: "lead.view" },
+  { label: "Deals", to: "/deals", icon: FolderKanban, permission: "deal.view" },
+  { label: "Properties", to: "/properties", icon: House, permission: "property.view" },
+  { label: "Accounts", to: "/accounts", icon: UsersRound, permission: "account.view" },
+]
+
+const navigation = [...workspaceNavigation, ...realEstateNavigation]
 
 export function AppShell() {
   const { can, isSuper } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [realEstateOpen, setRealEstateOpen] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(() => location.pathname.startsWith("/settings"))
   const visibleNavigation = useMemo(
     () => navigation.filter((item) => (item.superOnly ? isSuper : !item.permission || can(item.permission))),
@@ -93,8 +100,10 @@ export function AppShell() {
       <Sidebar variant="sidebar" collapsible="icon">
         <SidebarHeader className="border-b border-sidebar-border">
           <div className="flex h-12 items-center gap-2 px-2">
-            <div className="grid size-7 place-items-center bg-sidebar-primary text-xs font-semibold text-sidebar-primary-foreground">C</div>
-            <span className="truncate text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">CRM / Ledger</span>
+            <div className="grid size-7 place-items-center rounded-md bg-sidebar-primary text-white">
+              <Building2 className="size-4" aria-hidden="true" />
+            </div>
+            <span className="truncate text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">CRM</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -102,16 +111,49 @@ export function AppShell() {
             <SidebarGroupLabel>Workspace</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {visibleNavigation.map(({ label, to, icon: Icon }) => (
+                {visibleNavigation.filter((item) => workspaceNavigation.includes(item)).map(({ label, to, icon: Icon }) => (
                   <SidebarMenuItem key={to}>
-                    <SidebarMenuButton asChild tooltip={label}>
-                      <NavLink to={to} end={to === "/"} className={({ isActive }) => isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : undefined}>
+                    <SidebarMenuButton asChild tooltip={label} isActive={location.pathname === to}>
+                      <NavLink to={to} end={to === "/"}>
                         <Icon />
                         <span>{label}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Real estate</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    type="button"
+                    tooltip="Real estate"
+                    aria-expanded={realEstateOpen}
+                    onClick={() => setRealEstateOpen((open) => !open)}
+                  >
+                    <Building2 />
+                    <span>Real estate</span>
+                    <ChevronRight className={`ms-auto size-4 transition-transform ${realEstateOpen ? "rotate-90" : ""}`} />
+                  </SidebarMenuButton>
+                  {realEstateOpen && (
+                    <SidebarMenuSub>
+                      {visibleNavigation.filter((item) => realEstateNavigation.includes(item)).map(({ label, to, icon: Icon }) => (
+                        <SidebarMenuSubItem key={to}>
+                          <SidebarMenuSubButton asChild isActive={location.pathname === to}>
+                            <NavLink to={to}>
+                              <Icon />
+                              <span>{label}</span>
+                            </NavLink>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  )}
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

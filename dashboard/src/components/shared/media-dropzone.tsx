@@ -24,6 +24,8 @@ type MediaDropzoneProps = {
   className?: string
   uploadLabel?: string
   uploadMode?: "immediate" | "deferred"
+  autoUpload?: boolean
+  deferredDescription?: string
   queueLayout?: "horizontal" | "vertical"
   onUpload?: (files: File[]) => Promise<unknown>
   onFilesChange?: (files: File[]) => void
@@ -54,7 +56,7 @@ function revokePreviewUrl(url: string) {
   if (url && typeof URL.revokeObjectURL === "function") URL.revokeObjectURL(url)
 }
 
-export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false, emptyTitle, emptyDescription, ariaLabel, ariaLabelledBy, className, uploadLabel, uploadMode = "immediate", queueLayout = "horizontal", onUpload, onFilesChange }: MediaDropzoneProps) {
+export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false, emptyTitle, emptyDescription, ariaLabel, ariaLabelledBy, className, uploadLabel, uploadMode = "immediate", autoUpload = false, deferredDescription = "Images upload after this record is created.", queueLayout = "horizontal", onUpload, onFilesChange }: MediaDropzoneProps) {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const queueRef = useRef<QueuedFile[]>([])
@@ -88,12 +90,14 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     }
 
     setMessage("")
-    setQueue((current) => [...current, ...inputFiles.map((file) => ({
+    const nextItems = inputFiles.map((file) => ({
       id: newId(),
       file,
       previewUrl: createPreviewUrl(file),
       status: "queued" as const,
-    }))])
+    }))
+    setQueue((current) => [...current, ...nextItems])
+    if (autoUpload && uploadMode !== "deferred" && onUpload) void uploadItems(nextItems)
   }
 
   function onInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -120,9 +124,9 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     setQueue([])
   }
 
-  async function uploadQueue() {
+  async function uploadItems(items: QueuedFile[]) {
     if (uploadMode === "deferred" || !onUpload) return
-    const files = queue.filter((item) => item.status === "queued" || item.status === "error")
+    const files = items.filter((item) => item.status === "queued" || item.status === "error")
     if (!files.length) return
     const ids = new Set(files.map((item) => item.id))
     setMessage("")
@@ -135,6 +139,10 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     } catch {
       setQueue((current) => current.map((item) => ids.has(item.id) ? { ...item, status: "error", error: "Upload failed. Try again." } : item))
     }
+  }
+
+  async function uploadQueue() {
+    await uploadItems(queue)
   }
 
   const queuedCount = queue.filter((item) => item.status === "queued" || item.status === "error").length
@@ -181,12 +189,12 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     </div>}
 
     {queue.length > 0 && <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
-      <p className="text-xs text-muted-foreground">{queue.length} {queue.length === 1 ? "image" : "images"} staged</p>
+      <p className="text-xs text-muted-foreground">{queue.length} {queue.length === 1 ? "image" : "images"} {autoUpload ? "added" : "staged"}</p>
       <div className="flex gap-2">
-        {uploadMode === "deferred" ? <><p className="text-xs text-muted-foreground">Images upload after the property is created.</p><Button type="button" variant="ghost" size="sm" onClick={clearQueue}>Clear queue</Button></> : <><Button type="button" variant="ghost" size="sm" disabled={hasUploading} onClick={clearQueue}>Clear queue</Button><Button type="button" size="sm" disabled={!queuedCount || hasUploading || disabled} onClick={() => void uploadQueue()}>
+        {uploadMode === "deferred" ? <><p className="text-xs text-muted-foreground">{deferredDescription}</p><Button type="button" variant="ghost" size="sm" onClick={clearQueue}>Clear queue</Button></> : <><Button type="button" variant="ghost" size="sm" disabled={hasUploading} onClick={clearQueue}>Clear queue</Button>{(!autoUpload || queue.some((item) => item.status === "error")) && <Button type="button" size="sm" disabled={!queuedCount || hasUploading || disabled} onClick={() => void uploadQueue()}>
           {hasUploading ? <LoaderCircle className="motion-safe:animate-spin" /> : <UploadCloud />}
           {hasUploading ? "Uploading" : uploadLabel ?? `Upload ${queuedCount} ${queuedCount === 1 ? "image" : "images"}`}
-        </Button></>}
+        </Button>}</>}
       </div>
     </div>}
   </div>

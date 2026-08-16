@@ -155,7 +155,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        OwnerType: "property" | "user";
+        OwnerType: "account" | "property" | "user";
         Media: {
             id: number;
             /** Format: uuid */

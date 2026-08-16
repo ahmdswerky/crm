@@ -1,42 +1,85 @@
-import { ImageIcon, Trash2 } from "lucide-react"
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react"
+import { ImageIcon } from "lucide-react"
 import type { ManagedMedia, MediaOwnerType } from "@/components/shared/media-collection"
 import { useMediaCollection } from "@/components/shared/media-collection"
-import { MediaDropzone } from "@/components/shared/media-dropzone"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
-type SingleMediaFieldProps = {
-  ownerType: MediaOwnerType
-  ownerId: number
-  collection: string
+type BaseSingleMediaFieldProps = {
   label: string
   description?: string
   disabled?: boolean
+}
+
+type ManagedSingleMediaFieldProps = BaseSingleMediaFieldProps & {
+  ownerType: MediaOwnerType
+  ownerId: number
+  collection: string
   onChange?: (media: ManagedMedia[]) => void
 }
 
-export function SingleMediaField({ ownerType, ownerId, collection, label, description, disabled = false, onChange }: SingleMediaFieldProps) {
-  const { media, loading, busy, error, upload, remove } = useMediaCollection({ ownerType, ownerId, collection, onChange })
+type StagedSingleMediaFieldProps = BaseSingleMediaFieldProps & {
+  onFilesChange: (files: File[]) => void
+}
+
+const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"])
+const accept = "image/jpeg,image/png,image/webp,image/avif"
+const maxFileSize = 10 * 1024 * 1024
+
+export function SingleMediaField(props: ManagedSingleMediaFieldProps | StagedSingleMediaFieldProps) {
+  return "ownerId" in props ? <ManagedSingleMediaField {...props} /> : <StagedSingleMediaField {...props} />
+}
+
+function ManagedSingleMediaField({ ownerType, ownerId, collection, label, disabled = false, onChange }: ManagedSingleMediaFieldProps) {
+  const { media, loading, busy, error, upload } = useMediaCollection({ ownerType, ownerId, collection, onChange })
   const current = media[0]
 
-  async function deleteCurrent() {
-    if (!current) return
-    try {
-      await remove(current.id)
-    } catch {
-      // The inline error state explains the failed request.
+  return <CompactImagePicker label={label} disabled={disabled || busy} loading={loading} image={current ? { src: current.thumbnail_url || current.url, alt: current.name } : undefined} error={error} onFile={(file) => void upload([file]).catch(() => undefined)} />
+}
+
+function StagedSingleMediaField({ label, disabled = false, onFilesChange }: StagedSingleMediaFieldProps) {
+  const [file, setFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState("")
+
+  useEffect(() => {
+    if (!file) { setPreviewUrl(""); return }
+    const url = typeof URL.createObjectURL === "function" ? URL.createObjectURL(file) : ""
+    setPreviewUrl(url)
+    return () => { if (url && typeof URL.revokeObjectURL === "function") URL.revokeObjectURL(url) }
+  }, [file])
+
+  function setStagedFile(nextFile: File) {
+    setFile(nextFile)
+    onFilesChange([nextFile])
+  }
+  return <CompactImagePicker label={label} disabled={disabled} image={file ? { src: previewUrl, alt: `${label} preview` } : undefined} onFile={setStagedFile} />
+}
+
+function CompactImagePicker({ label, disabled, loading = false, image, error, onFile }: { label: string; disabled: boolean; loading?: boolean; image?: { src: string; alt: string }; error?: string; onFile: (file: File) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [validationError, setValidationError] = useState("")
+
+  function choose(file?: File) {
+    if (!file || disabled) return
+    if (!acceptedTypes.has(file.type) || file.size > maxFileSize) {
+      setValidationError(`${file.name} must be a JPEG, PNG, WebP, or AVIF image under 10 MB.`)
+      return
     }
+    setValidationError("")
+    onFile(file)
+  }
+  function onInputChange(event: ChangeEvent<HTMLInputElement>) {
+    choose(event.target.files?.[0])
+    event.target.value = ""
+  }
+  function onDrop(event: DragEvent<HTMLButtonElement>) {
+    event.preventDefault()
+    choose(event.dataTransfer.files[0])
   }
 
-  return <section className="space-y-4 border border-border bg-card p-4">
-    <div><h3 className="font-medium">{label}</h3>{description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}</div>
-    {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-    {loading ? <Skeleton className="h-20 w-full" /> : current && <article className="flex overflow-hidden border border-border bg-muted/20">
-      <img src={current.thumbnail_url || current.url} alt={current.name} className="size-20 shrink-0 object-cover" />
-      <div className="min-w-0 flex-1 px-3 py-2.5"><p className="truncate text-sm font-medium" title={current.name}>{current.name}</p><div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground"><ImageIcon className="size-3.5" /><span>Current profile image</span></div><p className="mt-2 text-[11px] text-muted-foreground">Replacing this image keeps only the newest file.</p></div>
-      <div className="p-2"><Button type="button" variant="ghost" size="icon-sm" className="text-destructive hover:text-destructive" disabled={disabled || busy} aria-label="Remove current profile image" onClick={() => void deleteCurrent()}><Trash2 /></Button></div>
-    </article>}
-    <MediaDropzone multiple={false} maxFiles={1} disabled={disabled || busy} emptyTitle={current ? "Drop a replacement image here" : "Drop a profile image here"} emptyDescription="JPEG, PNG, WebP, or AVIF · maximum 10 MB" uploadLabel={current ? "Replace image" : "Upload image"} onUpload={upload} />
+  return <section className="space-y-2">
+    <input ref={inputRef} className="sr-only" type="file" accept={accept} disabled={disabled} onChange={onInputChange} />
+    <div className="flex justify-center">{loading ? <Skeleton className="size-16 rounded-md" /> : <button type="button" aria-label={`${image ? "Replace" : "Upload"} ${label}`} disabled={disabled} onClick={() => inputRef.current?.click()} onDragOver={(event) => event.preventDefault()} onDrop={onDrop} className="grid size-16 place-items-center overflow-hidden rounded-md border border-border bg-white p-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-55 dark:bg-white">{image?.src ? <img src={image.src} alt={image.alt} className="size-full object-contain" /> : <ImageIcon className="size-5" aria-hidden="true" />}</button>}</div>
+    {(error || validationError) && <Alert variant="destructive"><AlertDescription>{error || validationError}</AlertDescription></Alert>}
   </section>
 }

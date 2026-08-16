@@ -4,8 +4,8 @@ import { ChevronDown, Loader2 } from "lucide-react"
 import { FieldError } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { InputGroup, InputGroupAddon, InputGroupText } from "@/components/ui/input-group"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group"
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export type SearchableResourceOption = {
   id: number
@@ -20,14 +20,17 @@ export type SearchableResourcePage = {
   lastPage: number
 }
 
-type SearchableResourcePickerProps = {
+type SearchableResourceValue = number | string
+
+type SearchableResourcePickerProps<Value extends SearchableResourceValue> = {
   id: string
   label: string
-  labelStyle?: "block-start" | "plain"
+  labelStyle?: "block-start" | "plain" | "inline" | "icon-only"
   required?: boolean
   icon?: ReactNode
-  value: number
-  onChange: (value: number, option?: SearchableResourceOption) => void
+  value: Value
+  valueMode?: "id" | "label"
+  onChange: (value: Value, option?: SearchableResourceOption) => void
   error?: string
   loadOptions: (query: string, page: number, signal: AbortSignal) => Promise<SearchableResourcePage>
   placeholder: string
@@ -36,12 +39,13 @@ type SearchableResourcePickerProps = {
   emptyLabel: string
   noResultsLabel: string
   description?: string
+  selectedOption?: SearchableResourceOption
   renderOption?: (option: SearchableResourceOption) => ReactNode
   renderSelectedOption?: (option: SearchableResourceOption) => ReactNode
   className?: string
 }
 
-export function SearchableResourcePicker({
+export function SearchableResourcePicker<Value extends SearchableResourceValue>({
   id,
   label,
   labelStyle = "block-start",
@@ -57,14 +61,16 @@ export function SearchableResourcePicker({
   emptyLabel,
   noResultsLabel,
   description,
+  selectedOption: selectedOptionProp,
   renderOption,
   renderSelectedOption,
   className,
-}: SearchableResourcePickerProps) {
+  valueMode = "id",
+}: SearchableResourcePickerProps<Value>) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [options, setOptions] = useState<SearchableResourceOption[]>([])
-  const [selectedOption, setSelectedOption] = useState<SearchableResourceOption | null>(null)
+  const [selectedOption, setSelectedOption] = useState<SearchableResourceOption | null>(selectedOptionProp ?? null)
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [page, setPage] = useState(1)
@@ -73,8 +79,14 @@ export function SearchableResourcePicker({
   const requestController = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    if (!value) setSelectedOption(null)
-  }, [value])
+    if (!value) {
+      setSelectedOption((current) => current === null ? current : null)
+      return
+    }
+    const matchesValue = valueMode === "label" ? selectedOptionProp?.label === value : selectedOptionProp?.id === value
+    if (matchesValue && selectedOptionProp) setSelectedOption((current) => current?.id === selectedOptionProp.id ? current : selectedOptionProp)
+    else if (valueMode === "label") setSelectedOption((current) => current && current.label !== value ? null : current)
+  }, [selectedOptionProp, value, valueMode])
 
   useEffect(() => {
     requestController.current?.abort()
@@ -118,27 +130,46 @@ export function SearchableResourcePicker({
   }
 
   const labelId = `${id}-label`
-  const selectedLabel = selectedOption?.id === value ? selectedOption.label : undefined
+  const selectedLabel = valueMode === "label"
+    ? typeof value === "string" && value.trim() ? value : undefined
+    : selectedOption?.id === value ? selectedOption.label : undefined
+  const editable = valueMode === "label"
+  const inputValue = typeof value === "string" ? value : ""
+
+  function openEditablePicker() {
+    setQuery(inputValue)
+    setOpen(true)
+  }
+
+  function changeEditableValue(nextValue: string) {
+    setQuery(nextValue)
+    onChange(nextValue as Value)
+    setOpen(true)
+  }
 
   return <div className={className}>
     {labelStyle === "plain" && <label id={labelId} htmlFor={id} className="text-xs font-medium text-muted-foreground">{label}{required && <span className="font-normal text-muted-foreground"> (required)</span>}</label>}
     <InputGroup className={`${labelStyle === "plain" ? "mt-1 " : ""}h-auto! overflow-hidden`}>
       {labelStyle === "block-start" && <InputGroupAddon align="block-start" className="bg-muted dark:bg-muted"><InputGroupText id={labelId}><span className="inline-flex items-center gap-1.5">{icon}{label}{required && <span className="font-normal text-muted-foreground">(required)</span>}</span></InputGroupText></InputGroupAddon>}
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button id={id} type="button" variant="ghost" role="combobox" aria-labelledby={labelId} aria-expanded={open} aria-invalid={Boolean(error)} className="h-8 w-full justify-between rounded-none border-0 px-2.5 font-normal focus-visible:ring-0">
+      {labelStyle === "inline" && <InputGroupAddon align="inline-start" className="bg-muted dark:bg-muted"><InputGroupText id={labelId}><span className="inline-flex items-center gap-1.5">{icon}{label}{required && <span className="font-normal text-muted-foreground">(required)</span>}</span></InputGroupText></InputGroupAddon>}
+      {labelStyle === "icon-only" && icon && <InputGroupAddon className="bg-transparent">{icon}</InputGroupAddon>}
+      <Popover open={open} onOpenChange={setOpen} modal={false}>
+        {editable ? <PopoverAnchor asChild>
+          <InputGroupInput id={id} role="combobox" aria-label={labelStyle === "icon-only" ? label : undefined} aria-labelledby={labelStyle === "icon-only" ? undefined : labelId} aria-autocomplete="list" aria-expanded={open} aria-invalid={Boolean(error)} placeholder={placeholder} value={inputValue} onFocus={openEditablePicker} onClick={openEditablePicker} onChange={(event) => changeEditableValue(event.target.value)} />
+        </PopoverAnchor> : <PopoverTrigger asChild>
+          <Button id={id} type="button" variant="ghost" role="combobox" aria-label={labelStyle === "icon-only" ? label : undefined} aria-labelledby={labelStyle === "icon-only" ? undefined : labelId} aria-expanded={open} aria-invalid={Boolean(error)} className="h-8 w-full justify-between rounded-none border-0 px-2.5 font-normal focus-visible:ring-0">
             {selectedOption && selectedLabel && renderSelectedOption ? renderSelectedOption(selectedOption) : <span className={selectedLabel ? "truncate text-foreground" : "truncate text-muted-foreground"}>{selectedLabel ?? placeholder}</span>}
             <ChevronDown className="ms-2 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           </Button>
-        </PopoverTrigger>
-        <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] p-0">
+        </PopoverTrigger>}
+        <PopoverContent align="start" collisionPadding={{ top: 16, bottom: 16, left: 16, right: 16 }} onOpenAutoFocus={(event) => { if (editable) event.preventDefault() }} className="w-[var(--radix-popover-trigger-width)] p-0">
           <Command shouldFilter={false}>
-            <CommandInput inputGroupClassName="!border-0 focus-within:!border-0 focus-within:ring-0" className="focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0" placeholder={searchPlaceholder} value={query} onValueChange={setQuery} />
-            <CommandList>
+            {!editable && <CommandInput inputGroupClassName="!border-0 focus-within:!border-0 focus-within:ring-0" className="focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0" placeholder={searchPlaceholder} value={query} onValueChange={setQuery} />}
+            <CommandList onWheel={(event) => event.stopPropagation()}>
               {loading && <div className="flex items-center gap-2 px-3 py-3 text-sm text-muted-foreground"><Loader2 className="size-3.5 animate-spin" aria-hidden="true" />{loadingLabel}</div>}
               {!loading && loadError && <div role="alert" className="px-3 py-3 text-sm text-destructive">{loadError}</div>}
               {!loading && !loadError && options.length === 0 && <CommandEmpty>{query.trim() ? noResultsLabel : emptyLabel}</CommandEmpty>}
-              {!loading && options.length > 0 && <CommandGroup>{options.map((option) => <CommandItem key={option.id} value={String(option.id)} aria-label={option.label} data-checked={value === option.id} onSelect={() => { setSelectedOption(option); onChange(option.id, option); setOpen(false) }}>{renderOption ? renderOption(option) : <div className="min-w-0 flex-1"><p className="truncate font-medium">{option.label}</p>{option.description && <p className="truncate text-xs text-muted-foreground">{option.description}</p>}</div>}</CommandItem>)}</CommandGroup>}
+              {!loading && options.length > 0 && <CommandGroup>{options.map((option) => <CommandItem key={option.id} value={String(option.id)} aria-label={option.label} data-checked={valueMode === "label" ? value === option.label : value === option.id} onSelect={() => { setSelectedOption(option); onChange((valueMode === "label" ? option.label : option.id) as Value, option); setOpen(false) }}>{renderOption ? renderOption(option) : <div className="min-w-0 flex-1"><p className="truncate font-medium">{option.label}</p>{option.description && <p className="truncate text-xs text-muted-foreground">{option.description}</p>}</div>}</CommandItem>)}</CommandGroup>}
             </CommandList>
             {loadError && options.length > 0 && <p role="alert" className="px-3 py-2 text-xs text-destructive">{loadError}</p>}
             {page < lastPage && <div className="border-t border-border p-1"><Button type="button" variant="ghost" size="sm" className="w-full justify-center" onClick={() => void loadMore()} disabled={loadingMore}>{loadingMore && <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />}{loadingMore ? "Loading…" : "Load more"}</Button></div>}

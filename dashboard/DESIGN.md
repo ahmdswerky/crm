@@ -131,7 +131,7 @@ The palette is a restrained monochrome ledger with one quiet blue annotation col
 
 ### Primary
 
-- **Ledger Blue:** the only brand/action accent. Use it for primary actions, current selection, focus indication, and interactive links. It must occupy no more than 10% of a screen.
+- **Ledger Blue:** the only brand/action accent. Use it for primary actions, current selection, and interactive links. It must occupy no more than 10% of a screen.
 - **Ledger Blue Ink:** use for text and icons on the pale Ledger Blue Wash.
 - **Ledger Blue Wash:** use for selected navigation, selected rows, and informational badges. Never use it as a large page background.
 
@@ -189,7 +189,6 @@ The system is flat by default. Depth comes from tonal surface changes, rules, st
 
 - **Floating Low** (`0 8px 24px rgb(15 23 42 / 0.08)`): dropdown menus, popovers, and command results.
 - **Floating High** (`0 18px 48px rgb(15 23 42 / 0.14)`): dialogs and mobile sheets.
-- **Focus Ring** (`0 0 0 3px color-mix(in oklch, var(--ring) 24%, transparent)`): keyboard focus when an outline alone would be obscured.
 
 **The Flat-by-Default Rule.** Cards, table regions, sidebars, inspectors, and form sections never receive ambient shadows at rest.
 
@@ -201,7 +200,7 @@ The system is flat by default. Depth comes from tonal surface changes, rules, st
 
 - **Shape:** compact and gently squared (4px radius), 36px default height, and at least 44px touch target on coarse-pointer devices.
 - **Primary:** Ledger Blue with Paper text. One primary action per local region.
-- **Hover / Focus:** darken the fill slightly on hover; use the shared focus ring on `:focus-visible`; active state compresses through color, never bounce or scale choreography.
+- **Hover / Focus:** darken the fill slightly on hover; active state compresses through color, never bounce or scale choreography.
 - **Secondary:** Paper surface, Graphite text, and a 1px Rule border.
 - **Ghost:** transparent at rest and Paper Muted on hover. Icon-only buttons always have an accessible name and tooltip.
 - **Destructive:** destructive ink and border at rest; use a filled destructive treatment only inside the final confirmation action.
@@ -222,7 +221,7 @@ The system is flat by default. Depth comes from tonal surface changes, rules, st
 ### Inputs / Fields
 
 - **Style:** 36px controls with Paper background, Graphite text, 1px Rule border, and 4px radius.
-- **Focus:** Ledger Blue border plus the shared focus ring. Placeholder text must remain readable.
+- **Focus:** keep the control visually flat. Never add a focus-visible border, outline, ring, or box-shadow to an input, textarea, select, combobox, or input group. Placeholder text must remain readable.
 - **Error / Disabled:** error text appears adjacent to the field and is connected with `aria-describedby`; disabled controls use Paper Muted without reducing text below readable contrast.
 - **Forms:** use shadcn `Field`, React Hook Form, and Zod. Server validation remains authoritative and maps back to the relevant field.
 
@@ -256,6 +255,7 @@ The system is flat by default. Depth comes from tonal surface changes, rules, st
 - **Do** create hierarchy with fixed typography, alignment, 4/8/12/16/24/32px spacing, and 1px rules.
 - **Do** keep Ledger Blue below 10% of visible surface area.
 - **Do** use complete component states: default, hover, focus-visible, active, disabled, loading, error, and selected where applicable.
+- **Do** keep form-control focus states free of borders, outlines, rings, and box-shadows, including styles inherited from global selectors.
 - **Do** preserve selected-record context in the URL.
 - **Do** use logical inline/block properties and verify an RTL smoke case.
 - **Do** keep animations between 150ms and 200ms, state-driven, and removable under `prefers-reduced-motion`.
@@ -268,6 +268,7 @@ The system is flat by default. Depth comes from tonal surface changes, rules, st
 - **Don't** use cream, beige, parchment, or faux-vintage warmth as the main surface.
 - **Don't** imitate literal notebook skeuomorphism: no spiral bindings, torn paper, sticky notes, leather, or handwriting.
 - **Don't** use over-rounded controls, nested cards, heavy shadows, or decorative motion.
+- **Don't** use `focus-visible:ring-*`, `focus-within:ring-*`, focus borders, or focus box-shadows on form controls.
 - **Don't** use a colored border-left or border-right greater than 1px as an accent.
 - **Don't** use gradient text, uppercase tracked eyebrows, or numbered headings as visual scaffolding.
 - **Don't** invent analytics, global record search, filters, role choices, payment behavior, or ordering that is absent from OpenAPI.

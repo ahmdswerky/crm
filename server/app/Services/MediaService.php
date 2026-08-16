@@ -23,6 +23,9 @@ class MediaService
     {
         $uploadLimit = config("media-library.collection_upload_limits.{$collection}");
         $limit = config("media-library.collection_limits.{$collection}");
+        $seedPlaceholders = $model->getMedia($collection)
+            ->filter(fn (Media $media): bool => $media->getCustomProperty('seed_placeholder') === true);
+        $existingMediaCount = $model->getMedia($collection)->count() - $seedPlaceholders->count();
 
         if (is_int($uploadLimit) && count($images) > $uploadLimit) {
             throw ValidationException::withMessages([
@@ -30,11 +33,13 @@ class MediaService
             ]);
         }
 
-        if (is_int($limit) && $model->getMedia($collection)->count() + count($images) > $limit) {
+        if (is_int($limit) && $existingMediaCount + count($images) > $limit) {
             throw ValidationException::withMessages([
                 'files' => [sprintf('This collection can have at most %d files.', $limit)],
             ]);
         }
+
+        $seedPlaceholders->each->delete();
 
         return collect($images)->map(function (UploadedFile $image) use ($collection, $model, $uploadedBy): Media {
             $media = $model
