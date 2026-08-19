@@ -1,0 +1,4 @@
+interface:
+  display_name: "Convert Preview to Drawer"
+  short_description: "Migrate one CRM resource preview to an overlay drawer"
+  default_prompt: "Use $convert-resource-preview-to-drawer to migrate one CRM dashboard resource from its current inline preview to a right-side overlay drawer, popup deletion confirmation, and show-page editing."

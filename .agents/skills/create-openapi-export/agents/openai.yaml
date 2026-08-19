@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create OpenAPI Export"
+  short_description: "Generate ApiDog-style OpenAPI JSON exports"
+  default_prompt: "Use $create-openapi-export to document the Deals API."

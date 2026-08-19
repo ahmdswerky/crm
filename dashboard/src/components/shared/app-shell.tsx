@@ -60,7 +60,7 @@ const workspaceNavigation: NavigationItem[] = [
 ]
 
 const realEstateNavigation: NavigationItem[] = [
-  { label: "Leads", to: "/leads", icon: BarChart3, permission: "lead.view" },
+  { label: "Pipeline", to: "/pipeline", icon: BarChart3, permission: "lead.view" },
   { label: "Deals", to: "/deals", icon: FolderKanban, permission: "deal.view" },
   { label: "Properties", to: "/properties", icon: House, permission: "property.view" },
   { label: "Accounts", to: "/accounts", icon: UsersRound, permission: "account.view" },

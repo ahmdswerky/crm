@@ -250,6 +250,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        Media: {
+            id: number;
+            /** Format: uuid */
+            uuid: string;
+            name: string;
+            mime_type: string;
+            /** Format: int64 */
+            size: number;
+            /** Format: uri */
+            url: string;
+            /** Format: uri */
+            thumbnail_url: string;
+            order: number;
+            /** Format: date-time */
+            created_at: string;
+        };
         Lead: {
             /** @description ID */
             readonly id?: number;
@@ -276,6 +292,7 @@ export interface components {
             readonly username: string;
             /** Format: email */
             email: string;
+            readonly avatar?: components["schemas"]["Media"];
         };
         Contact: {
             /** Format: bignum */
