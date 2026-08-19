@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create API Endpoint"
+  short_description: "Create CRM API endpoints using project conventions"
+  default_prompt: "Use $create-api-endpoint to create an API endpoint for Contact."

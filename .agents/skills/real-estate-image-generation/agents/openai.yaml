@@ -1,0 +1,4 @@
+interface:
+  display_name: "Real Estate Image Generation"
+  short_description: "Generate realistic property image sets"
+  default_prompt: "Use $real-estate-image-generation to create a consistent ultra-realistic image set for this property."

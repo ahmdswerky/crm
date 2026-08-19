@@ -376,7 +376,7 @@ describe("DealsPage table interactions", () => {
 
     const row = await screen.findByRole("row", { name: /Layla Nasser/ })
     const contactLink = within(row).getByRole("link", { name: "Layla Nasser" })
-    expect(contactLink).toHaveAttribute("href", "/leads?record=18")
+    expect(contactLink).toHaveAttribute("href", "/pipeline?record=18")
     expect(contactLink).toHaveClass("text-foreground", "hover:text-primary")
     expect(within(row).getByRole("link", { name: "Palm Hills Villa" })).toHaveClass("text-foreground", "hover:text-primary")
     expect(within(row).getByRole("link", { name: "Open Palm Hills Villa" })).toHaveAttribute("href", "/properties/8")

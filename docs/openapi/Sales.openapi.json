@@ -1,0 +1,1153 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sales",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "deals (list)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "min_value",
+            "in": "query",
+            "description": "Lowest listed deal value to include.",
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "max_value",
+            "in": "query",
+            "description": "Highest listed deal value to include.",
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "min_deal_value",
+            "in": "query",
+            "description": "Lowest final deal value to include.",
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "max_deal_value",
+            "in": "query",
+            "description": "Highest final deal value to include.",
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search deal status, contact, property, or agent details.",
+            "schema": {
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Deal status to include.",
+            "schema": {
+              "type": "string",
+              "enum": ["inquiry", "viewing", "offer_made", "legal", "won", "lost"]
+            }
+          },
+          {
+            "name": "contact",
+            "in": "query",
+            "description": "Contact ID to include.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "property",
+            "in": "query",
+            "description": "Property ID to include.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "agent",
+            "in": "query",
+            "description": "Agent ID to include.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "closed_from",
+            "in": "query",
+            "description": "Earliest closed date to include.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "closed_to",
+            "in": "query",
+            "description": "Latest closed date to include.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of deals per page, from 1 to 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Deal"
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "null"
+                        },
+                        "next": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "first",
+                        "last",
+                        "prev",
+                        "next"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "page": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "page",
+                              "active"
+                            ]
+                          }
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "from",
+                        "last_page",
+                        "links",
+                        "path",
+                        "per_page",
+                        "to",
+                        "total"
+                      ]
+                    },
+                    "filter": {
+                      "type": "object",
+                      "description": "The available ranges for deal values.",
+                      "properties": {
+                        "min_value": {
+                          "type": "number",
+                          "format": "double",
+                          "nullable": true
+                        },
+                        "max_value": {
+                          "type": "number",
+                          "format": "double",
+                          "nullable": true
+                        },
+                        "min_deal_value": {
+                          "type": "number",
+                          "format": "double",
+                          "nullable": true
+                        },
+                        "max_deal_value": {
+                          "type": "number",
+                          "format": "double",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "min_value",
+                        "max_value",
+                        "min_deal_value",
+                        "max_deal_value"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "links",
+                    "meta",
+                    "filter"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "deals (store)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250000
+                  },
+                  "deal_value": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 240000
+                  },
+                  "contact_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "property_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "agent_id": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "inquiry",
+                      "viewing",
+                      "offer_made",
+                      "legal",
+                      "won",
+                      "lost"
+                    ]
+                  },
+                  "closed_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "value",
+                  "deal_value",
+                  "contact_id",
+                  "property_id",
+                  "agent_id",
+                  "status",
+                  "closed_at"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deal": {
+                      "$ref": "#/components/schemas/Deal"
+                    }
+                  },
+                  "required": [
+                    "deal"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{id}": {
+      "get": {
+        "summary": "deals (show)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "integer",
+              "format": "bignum"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deal": {
+                      "$ref": "#/components/schemas/Deal"
+                    }
+                  },
+                  "required": [
+                    "deal"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "deals (update)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "integer",
+              "format": "bignum"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250000
+                  },
+                  "deal_value": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 240000
+                  },
+                  "contact_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "property_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "agent_id": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "inquiry",
+                      "viewing",
+                      "offer_made",
+                      "legal",
+                      "won",
+                      "lost"
+                    ]
+                  },
+                  "closed_at": {
+                    "type": "string",
+                    "format": "date",
+                    "nullable": true,
+                    "example": "2026-07-17"
+                  },
+                  "_method": {
+                    "type": "string",
+                    "const": "PUT"
+                  }
+                },
+                "required": [
+                  "_method"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deal": {
+                      "$ref": "#/components/schemas/Deal"
+                    }
+                  },
+                  "required": [
+                    "deal"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "deals (delete)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "integer",
+              "format": "bignum"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Deal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID",
+            "readOnly": true
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "deal_value": {
+            "type": "number",
+            "format": "double"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact"
+          },
+          "property": {
+            "$ref": "#/components/schemas/Property"
+          },
+          "agent_id": {
+            "type": "integer"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/Agent",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "inquiry",
+              "viewing",
+              "offer_made",
+              "legal",
+              "won",
+              "lost"
+            ]
+          },
+          "commission_rate": {
+            "type": "number",
+            "format": "double",
+            "description": "Resolved agent rate retained for compatibility. Commission amounts are in commission."
+          },
+          "commission": {
+            "$ref": "#/components/schemas/Commission"
+          },
+          "closed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "value",
+          "deal_value",
+          "contact",
+          "property",
+          "agent_id",
+          "agent",
+          "status",
+          "commission_rate",
+          "commission"
+        ]
+      },
+      "Commission": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["estimate", "final", "superseded", "void"]
+          },
+          "version": {
+            "type": "integer"
+          },
+          "agent_amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "manager_amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "company_amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "total_amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "calculated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "finalized_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "allocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommissionAllocation"
+            }
+          }
+        },
+        "required": [
+          "status",
+          "version",
+          "agent_amount",
+          "manager_amount",
+          "company_amount",
+          "total_amount",
+          "calculated_at",
+          "finalized_at"
+        ]
+      },
+      "CommissionAllocation": {
+        "type": "object",
+        "properties": {
+          "recipient_type": {
+            "type": "string",
+            "enum": ["agent", "manager", "company"]
+          },
+          "recipient_user_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/Agent",
+            "nullable": true
+          },
+          "base_amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "state": {
+            "type": "string",
+            "enum": ["estimate", "final", "superseded", "void"]
+          },
+          "snapshotted_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "recipient_type",
+          "recipient_user_id",
+          "base_amount",
+          "rate",
+          "amount",
+          "state",
+          "snapshotted_at"
+        ]
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "bignum"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string"
+          },
+          "account": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "lead_id": {
+            "type": "integer",
+            "format": "bignum",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "phone",
+          "name"
+        ]
+      },
+      "Property": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "bignum"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Media"
+            },
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "minimum": 5000,
+            "maximum": 1000000
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "land",
+              "villa",
+              "appartment",
+              "mansion",
+              "commercial"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "showing",
+              "sold"
+            ]
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "ID",
+                "format": "bignum"
+              },
+              "name": {
+                "type": "string"
+              },
+              "username": {
+                "type": "string",
+                "readOnly": true
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string",
+                "format": "password"
+              },
+              "created_at": {
+                "type": "string",
+                "readOnly": true,
+                "format": "date-time"
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "name",
+              "username",
+              "email",
+              "phone"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "city",
+          "address",
+          "price",
+          "type",
+          "created_at",
+          "status"
+        ]
+      },
+      "Media": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "uuid",
+          "name",
+          "mime_type",
+          "size",
+          "url",
+          "thumbnail_url",
+          "order",
+          "created_at"
+        ]
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "bignum"
+          },
+          "name": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string",
+            "example": "Development"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "industry",
+          "phone",
+          "address",
+          "name"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "bignum"
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string",
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "ID",
+                  "readOnly": true,
+                  "format": "bignum"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "name"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "readOnly": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "username",
+          "phone",
+          "permissions"
+        ]
+      },
+      "Agent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "readOnly": true,
+            "format": "bignum"
+          },
+          "name": {
+            "type": "string",
+            "description": "name"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Permission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "bignum",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "name"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1/deals",
+      "description": "Develop Env"
+    }
+  ],
+  "security": []
+}

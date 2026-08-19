@@ -66,7 +66,7 @@ export function EChartsRadialChart({
 
   useEffect(() => {
     const mount = mountRef.current;
-    if (!mount || !data.length) return;
+    if (isLoading || !mount || !data.length) return;
 
     const chart = echarts.init(mount);
     chartRef.current = chart;
@@ -135,7 +135,7 @@ export function EChartsRadialChart({
       chart.dispose();
       chartRef.current = null;
     };
-  }, [config, data, shouldReduceMotion, total, valueLabel, variant]);
+  }, [config, data, isLoading, shouldReduceMotion, total, valueLabel, variant]);
 
   if (isLoading) {
     return <RadialChartSkeleton className={className} variant={variant} />;

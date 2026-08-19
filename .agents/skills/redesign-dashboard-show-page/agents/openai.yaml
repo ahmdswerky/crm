@@ -1,0 +1,4 @@
+interface:
+  display_name: "Redesign Dashboard Show Page"
+  short_description: "Redesign CRM detail pages as operational workspaces"
+  default_prompt: "Use $redesign-dashboard-show-page to redesign the Deal show page from its OpenAPI contract and connected application data."
