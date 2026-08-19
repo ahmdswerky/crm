@@ -1,0 +1,111 @@
+dashboard/src/components/shared/app-shell.tsx
+  s_3a872f9e8a5261::t_6938d9a966c25f 63
+README.md
+  s_9614a6332f4761::t_eaa4429b0d481a 8,10-11,14-20,26
+  s_cbdf16dfa1cab6::t_4fd760f309191f 29-34
+  s_cbdf16dfa1cab6::t_7c5ded8b99b84f 21
+  s_9614a6332f4761::t_f1ff3d8ac35d8d 5,27,35,37,47,54,56,63,65-67
+  s_9614a6332f4761::t_d918411aec9d19 2-3,6-7,9,12-13,22-24,28,45
+  s_9614a6332f4761::t_933f855f046672 36,38-44,46,48-53,55,57-62,64,68
+  s_9614a6332f4761::t_bf06f1a45a45ae 25
+  s_9614a6332f4761::t_bd4f6ac81ed9f1 1,4
+dashboard/src/pages/leads/index.tsx
+  s_3a872f9e8a5261::t_6938d9a966c25f 537
+  s_3a872f9e8a5261::t_56666ea33264c7 632
+dashboard/src/pages/overview/components/overview-data-cards.tsx
+  s_3a872f9e8a5261::t_6938d9a966c25f 13
+dashboard/src/App.tsx
+  s_3a872f9e8a5261::t_6938d9a966c25f 54-58
+  s_cbdf16dfa1cab6::t_29333cf4d20909 66-67
+dashboard/src/pages/leads/index.test.tsx
+  s_3a872f9e8a5261::t_0018955218648f 45-52
+  s_3a872f9e8a5261::t_907b48d34b2bbd 43-44,53-56,59-60
+  s_3a872f9e8a5261::t_dfc947daa8b92b 35,129,175
+  s_3a872f9e8a5261::t_f7e28af0747eca 57-58
+  s_3a872f9e8a5261::t_76edb6724a4f80 135-159,161-162
+  s_3a872f9e8a5261::t_f9e914542c2bf4 160
+docs/openapi/Marketing.openapi.json
+  s_3a872f9e8a5261::t_19a994996b7975 486-500
+  s_3a872f9e8a5261::t_b3698c9812b2e2 1-485,501-646
+dashboard/scripts/generate-openapi.mjs
+  s_cbdf16dfa1cab6::t_07d71456def87c 1-117
+dashboard/src/pages/deals/details.tsx
+  s_3a872f9e8a5261::t_c37b96bb01a9b5 110
+  s_3a872f9e8a5261::t_84d1a0966533e7 128
+dashboard/src/pages/deals/index.tsx
+  s_3a872f9e8a5261::t_c37b96bb01a9b5 311
+dashboard/src/api/generated/Marketing.ts
+  s_3a872f9e8a5261::t_6b1ca8ef8cb3d2 253-268,295
+dashboard/src/pages/deals/index.test.tsx
+  s_3a872f9e8a5261::t_dfc947daa8b92b 379
+dashboard/src/pages/agents/shared.tsx
+  s_3a872f9e8a5261::t_c37b96bb01a9b5 147
+dashboard/public/openapi.json
+  s_cbdf16dfa1cab6::t_41d4d8ae4fee47 1-7284
+dashboard/package.json
+  s_cbdf16dfa1cab6::t_07d71456def87c 16
+  s_cbdf16dfa1cab6::t_85469b020a226b 28
+dashboard/src/pages/api-docs.tsx
+  s_cbdf16dfa1cab6::t_c6fe306c02525e 23
+  s_cbdf16dfa1cab6::t_07d71456def87c 1-22,24
+dashboard/package-lock.json
+  s_cbdf16dfa1cab6::t_5bac1253a623ee 17,76-138,716-869,1484-1520,1530-1556,1833-1850,1900-1995,2143-2151,2162-2167,3756-3766,4012-4092,4094-4095,4097-4098,4101-4104,4107-4159,4161-4164,4167-4170,4173-4176,4178-4650,4959-4984,5107-5115,5137-5151,5159-5176,5221-5226,5234-5239,5483-5513,5653-5878,5926-5943,6084-6093,6314-6323,6350,6353-6382,6536-6545,6625-6636,6737-6742,6798-6817,6897-6909,6985-6990,7026-7038,7654-7659,7883-7891,7975-7978,7981-8014,8173-8181,8208-8540,8569-8577,8588-8593,8607-8626,8689-8703,8812-8823,8880-8895,9075-9080,9198-9203,9238-9244,9611-9620,9633-9656,9695-9733,9744-9965,9979-10529,10532-10545,10547-10551,10554-10567,10570-10584,10832-10837,11118-11132,11165-11176,11592-11601,11741-11874,12099-12258,12261-12264,12267-12271,12273-12275,12278-12281,12284-12286,12288-12290,12319-12330,12815-12824,12869-12886,12934-12947,13028-13050,13064-13072,13107-13112,13155-13169,13290-13323,13444,13495-13506,13520-13620,13778-13819,14264-14302,14316-14331,14524-14538,14685-14694
+dashboard/src/components/evilcharts/charts/echarts-radial-chart.test.tsx
+  s_8f341cb280b97b::t_edfc04c19b53a2 1-52
+dashboard/src/components/evilcharts/charts/echarts-radial-chart.tsx
+  s_8f341cb280b97b::t_df21a2f25b0681 69,138
+dashboard/src/pages/reports/details.test.tsx
+  s_8f341cb280b97b::t_52747cdebef10f 1-106
+dashboard/src/pages/reports/details.tsx
+  s_8f341cb280b97b::t_71b3077cd7df93 10
+docs/docker-implementation-plan.md
+  s_076e545a841c9c::t_7a64d01fd49f05 1-879
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "812735b075458313943b00df57f959aad9183f87",
+  "prompts": {},
+  "sessions": {
+    "s_076e545a841c9c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a00ca1-6c3e-76e3-926f-9de147911809",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_3a872f9e8a5261": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0189e-9a32-7f70-90c5-827e57e7e1d7",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_8f341cb280b97b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0089c-498e-7933-a521-75555b5f892e",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_9614a6332f4761": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01919-d710-7f82-9037-8d9fb3f6e9b6",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_cbdf16dfa1cab6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01950-ccac-7002-a7a3-a8c74dbd4280",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
