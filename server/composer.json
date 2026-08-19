@@ -11,12 +11,18 @@
     "require": {
         "php": "^8.3",
         "laravel/framework": "^13.8",
+        "laravel/horizon": "^5.48",
         "laravel/sanctum": "^4.0",
+        "laravel/telescope": "^5.22",
         "laravel/tinker": "^3.0",
         "propaganistas/laravel-phone": "^6.0",
-        "spatie/laravel-permission": "^8.0"
+        "spatie/laravel-activitylog": "^5.0",
+        "spatie/laravel-medialibrary": "^11.22",
+        "spatie/laravel-permission": "^8.0",
+        "spatie/simple-excel": "^3.10"
     },
     "require-dev": {
+        "albertoarena/laravel-truss": "^1.8",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/breeze": "^2.4",

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\AccountRepositoryInterface;
+use App\Http\Requests\Account\AccountIndexRequest;
 use App\Http\Requests\Account\AccountStoreRequest;
 use App\Http\Requests\Account\AccountUpdateRequest;
 use App\Http\Resources\AccountResource;
@@ -14,9 +15,9 @@ class AccountController extends Controller
     public function __construct(protected AccountRepositoryInterface $accountRepository) {}
 
     #[Authorize('viewAny', Account::class)]
-    public function index()
+    public function index(AccountIndexRequest $request)
     {
-        $data = $this->accountRepository->paginate();
+        $data = $this->accountRepository->paginate($request->validated());
 
         return AccountResource::collection($data);
     }
@@ -34,6 +35,8 @@ class AccountController extends Controller
     #[Authorize('view', 'account')]
     public function show(Account $account)
     {
+        $account->load('media')->loadCount('contacts');
+
         return response()->json([
             'account' => AccountResource::make($account),
         ]);
@@ -52,6 +55,8 @@ class AccountController extends Controller
     #[Authorize('delete', 'account')]
     public function destroy(Account $account)
     {
+        abort_if($account->contacts()->exists(), 404);
+
         $this->accountRepository->delete($account->id);
 
         return response()->json([], 204);

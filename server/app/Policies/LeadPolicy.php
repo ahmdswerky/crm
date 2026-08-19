@@ -60,6 +60,6 @@ class LeadPolicy
      */
     public function forceDelete(User $user, Lead $lead): bool
     {
-        return $user->is_super;
+        return false;
     }
 }

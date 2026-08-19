@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\ContactRepositoryInterface;
-use App\Http\Requests\Contact\ContactStoreRequest;
+use App\Http\Requests\Contact\ContactIndexRequest;
 use App\Http\Requests\Contact\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
@@ -11,29 +11,23 @@ use Illuminate\Routing\Attributes\Controllers\Authorize;
 
 class ContactController extends Controller
 {
-    public function __construct(protected ContactRepositoryInterface $contactRepository) {}
+    public function __construct(
+        protected ContactRepositoryInterface $contactRepository,
+    ) {}
 
     #[Authorize('viewAny', Contact::class)]
-    public function index()
+    public function index(ContactIndexRequest $request)
     {
-        $data = $this->contactRepository->paginate();
+        $data = $this->contactRepository->paginate($request->validated());
 
         return ContactResource::collection($data);
-    }
-
-    #[Authorize('create', Contact::class)]
-    public function store(ContactStoreRequest $request)
-    {
-        $contact = $this->contactRepository->store($request->validated());
-
-        return response()->json([
-            'contact' => ContactResource::make($contact),
-        ], 201);
     }
 
     #[Authorize('view', 'contact')]
     public function show(Contact $contact)
     {
+        $contact->load('account', 'lead');
+
         return response()->json([
             'contact' => ContactResource::make($contact),
         ]);

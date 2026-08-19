@@ -4,7 +4,9 @@ namespace Database\Factories;
 
 use App\Enums\LeadSource;
 use App\Enums\LeadStatus;
+use App\Models\Account;
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +21,14 @@ class LeadFactory extends Factory
      */
     public function definition(): array
     {
+        $companies = [
+            'Nike',
+            'IKEA',
+            'Apple',
+            'Google',
+            'Uber',
+        ];
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -26,9 +36,30 @@ class LeadFactory extends Factory
             'status' => fake()->randomElement(LeadStatus::cases()),
             'city' => fake()->city(),
             'address' => fake()->streetAddress(),
-            'company_name' => fake()->randomElement([fake()->company(), null]),
-            'source' => fake()->randomElement([...LeadSource::cases(), null]),
+            'company_name' => fake()->randomElement($companies),
+            'source' => fake()->randomElement(LeadSource::cases()),
+            'assigned_agent_id' => function (array $attributes) {
+                if (array_key_exists('assigned_agent_id', $attributes) && is_int($attributes['assigned_agent_id'])) {
+                    return $attributes['assigned_agent_id'];
+                }
+
+                return fake()->randomElement([
+                    null,
+                    User::query()->agents()->inRandomOrder()->value('id'),
+                ]);
+            },
+            'created_at' => $date = fake()->dateTimeBetween(now()->subMonths(18), now()->subDay()),
         ];
+    }
+
+    /**
+     * Indicate that the model's assigned agent should have value.
+     */
+    public function assigned(): static
+    {
+        return $this->state([
+            'assigned_agent_id' => User::query()->agents()->inRandomOrder()->value('id'),
+        ]);
     }
 
     /**

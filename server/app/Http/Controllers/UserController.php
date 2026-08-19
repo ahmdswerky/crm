@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\UserRepositoryInterface;
+use App\Http\Requests\User\UserIndexRequest;
 use App\Http\Requests\User\UserStoreRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
 
-#[Authorize('user', User::class)]
 class UserController extends Controller
 {
     public function __construct(protected UserRepositoryInterface $userRepository) {}
@@ -17,9 +17,17 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    #[Authorize('viewAny', User::class)]
+    public function index(UserIndexRequest $request)
     {
-        $data = $this->userRepository->paginate();
+        $data = $this->userRepository->paginate($request->validated());
+
+        if (! $request->user()->isAgent) {
+            $data->getCollection()->each->append([
+                'totalPotentialCommission',
+                'totalActualCommission',
+            ]);
+        }
 
         return UserResource::collection($data);
     }
@@ -27,6 +35,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[Authorize('create', User::class)]
     public function store(UserStoreRequest $request)
     {
         $user = $this->userRepository->store($request->validated());
@@ -39,8 +48,16 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
+    #[Authorize('view', 'user')]
     public function show(User $user)
     {
+        $user->load('media');
+
+        $user->append([
+            'totalPotentialCommission',
+            'totalActualCommission',
+        ]);
+
         return response()->json([
             'user' => UserResource::make($user),
         ]);
@@ -49,6 +66,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[Authorize('update', 'user')]
     public function update(UserUpdateRequest $request, User $user)
     {
         $user = $this->userRepository->update($user, $request->validated());
@@ -61,9 +79,12 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id)
+    #[Authorize('delete', 'user')]
+    public function destroy(User $user)
     {
-        $this->userRepository->delete($id);
+        abort_if($user->is_super, 404);
+
+        $this->userRepository->delete($user->id);
 
         return response()->json([], 204);
     }

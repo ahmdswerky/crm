@@ -34,7 +34,6 @@ class PropertyUpdateRequest extends FormRequest
             'address' => ['nullable', 'min:10', 'max:200'],
             'price' => ['required', 'numeric', 'min:5000', 'max:1000000000'],
             'type' => ['sometimes', 'required', Rule::enum(PropertyType::class)],
-            'status' => ['sometimes', 'required', Rule::enum(PropertyStatus::class)],
         ];
     }
 }

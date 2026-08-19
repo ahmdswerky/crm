@@ -7,7 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ContactRepositoryInterface
 {
-    public function paginate(): LengthAwarePaginator;
+    public function paginate(array $filters = []): LengthAwarePaginator;
 
     public function find(int $id): ?Contact;
 

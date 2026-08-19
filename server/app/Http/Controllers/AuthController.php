@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\PasswordUpdateRequest;
+use App\Http\Requests\Auth\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function __construct(protected AuthService $authService) {}
+    public function __construct(
+        protected AuthService $authService,
+        protected UserRepositoryInterface $userRepository,
+    ) {}
 
     public function login(LoginRequest $request)
     {
@@ -26,7 +31,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'user' => UserResource::make($attempt->user),
+            'user' => UserResource::make($attempt->user->load('media')),
             'token' => $attempt->access_token,
         ]);
     }
@@ -34,7 +39,20 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response([
-            'user' => UserResource::make($request->user()),
+            'user' => UserResource::make($request->user()->load('media')),
+        ]);
+    }
+
+    public function update(UserUpdateRequest $request)
+    {
+        $user = $this->userRepository->update($request->user(), $request->validated());
+
+        if ($request->filled('email') || $request->filled('username')) {
+            $this->authService->logout($request->user());
+        }
+
+        return response()->json([
+            'user' => UserResource::make($user),
         ]);
     }
 
@@ -59,9 +77,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $user = $request->user();
-
-        $user->currentAccessToken()->delete();
+        $this->authService->logout($request->user());
 
         return response()->json([], 204);
     }

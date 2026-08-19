@@ -7,9 +7,11 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface AccountRepositoryInterface
 {
-    public function paginate(): LengthAwarePaginator;
+    public function paginate(array $filters = []): LengthAwarePaginator;
 
-    public function find(int $id): ?Account;
+    public function findById(int $id): ?Account;
+
+    public function findOrCreateByName(string $name): Account;
 
     public function store(array $data): Account;
 

@@ -35,15 +35,21 @@ class UserPolicy
      */
     public function update(User $user): bool
     {
+        if ($user->is_super) {
+            return false;
+        }
+
         return $user->can('user.edit');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user): bool
+    public function delete(User $user, User $target): bool
     {
-        return $user->can('user.delete');
+        return $user->can('user.delete')
+            && $user->isNot($target)
+            && ! $target->is_super;
     }
 
     /**
@@ -59,6 +65,6 @@ class UserPolicy
      */
     public function forceDelete(User $user): bool
     {
-        return $user->is_super;
+        return false;
     }
 }

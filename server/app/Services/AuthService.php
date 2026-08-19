@@ -40,4 +40,9 @@ class AuthService
             $newPassword,
         );
     }
+
+    public function logout(User $user): void
+    {
+        $user->currentAccessToken()?->delete();
+    }
 }

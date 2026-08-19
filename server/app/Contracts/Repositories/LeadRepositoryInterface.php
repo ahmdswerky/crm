@@ -2,12 +2,13 @@
 
 namespace App\Contracts\Repositories;
 
+use App\Enums\LeadStatus;
 use App\Models\Lead;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface LeadRepositoryInterface
 {
-    public function paginate(): LengthAwarePaginator;
+    public function paginate(array $filters = []): LengthAwarePaginator;
 
     public function findById(int $id, array $with = []): ?Lead;
 
@@ -16,4 +17,8 @@ interface LeadRepositoryInterface
     public function update(Lead $lead, array $data): Lead;
 
     public function delete(int $id): bool;
+
+    public function updateStatus(int $id, LeadStatus $status): bool;
+
+    public function stats(): array;
 }

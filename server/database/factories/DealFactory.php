@@ -1,0 +1,42 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Enums\DealStatus;
+use App\Enums\PropertyStatus;
+use App\Models\Contact;
+use App\Models\Deal;
+use App\Models\Property;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Deal>
+ */
+class DealFactory extends Factory
+{
+    protected $model = Deal::class;
+
+    public function definition(): array
+    {
+        $property = Property::query()
+            ->whereStatus(PropertyStatus::PENDING)
+            ->inRandomOrder()
+            ->first();
+        $contact = Contact::select(['id', 'assigned_agent_id'])->inRandomOrder()->first();
+
+        $status = fake()->randomElement(DealStatus::cases());
+
+        return [
+            'value' => $value = $property->price,
+            'deal_value' => fake()->randomElement([$value, $value + (fake()->numberBetween(1, 10) * 10000 * fake()->randomElement([1, -1]))]),
+            'contact_id' => $contact->id,
+            'property_id' => $property->id,
+            'agent_id' => $contact->assigned_agent_id,
+            'status' => $status,
+            'commission_rate' => fake()->randomElement([2.5, 1.5]),
+            'created_at' => $date = fake()->dateTimeBetween(now()->subMonths(18), now()->subDay()),
+            'closed_at' => $status === DealStatus::WON ? $date : null,
+        ];
+    }
+}

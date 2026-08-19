@@ -2,35 +2,31 @@
 
 namespace App\Http\Requests\Lead;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Enums\LeadSource;
+use App\Enums\LeadStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LeadIndexRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'email' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'phone' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'status' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'city' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'address' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'company_name' => ['sometimes', 'required', 'min:2', 'max:200'],
-            'source' => ['sometimes', 'required', 'min:2', 'max:200'],
+            'q' => ['nullable', 'string', 'max:250'],
+            'status' => ['nullable', Rule::enum(LeadStatus::class)],
+            'source' => ['nullable', Rule::enum(LeadSource::class)],
+            'city' => ['nullable', 'string', 'max:200'],
+            'company' => ['nullable', 'string', 'max:250'],
+            'created_from' => ['nullable', 'date'],
+            'assigned_agent' => ['nullable', 'exists:users,id'],
+            'created_to' => ['nullable', 'date', 'after_or_equal:created_from'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 }

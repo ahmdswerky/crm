@@ -7,20 +7,35 @@ use App\Enums\PropertyPurpose;
 use App\Enums\PropertyStatus;
 use App\Models\Property;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class PropertyRepository implements PropertyRepositoryInterface
 {
     public function __construct(protected readonly Property $model) {}
 
-    public function paginate(): LengthAwarePaginator
+    public function paginate(array $filters = []): LengthAwarePaginator
     {
         return $this->model
             ->query()
-            ->with([
-                'owner',
-            ])
-            ->paginate();
+            ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query
+                        ->whereLike('title', "%{$search}%")
+                        ->orWhereLike('description', "%{$search}%")
+                        ->orWhereLike('city', "%{$search}%")
+                        ->orWhereLike('address', "%{$search}%");
+                });
+            })
+            ->when($filters['type'] ?? null, fn (Builder $query, string $type) => $query->where('type', $type))
+            ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->when($filters['city'] ?? null, fn (Builder $query, string $city) => $query->whereLike('city', "%{$city}%"))
+            ->when($filters['min_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '>=', $price))
+            ->when($filters['max_price'] ?? null, fn (Builder $query, float $price) => $query->where('price', '<=', $price))
+            ->with(['media'])
+            ->withCount('deals')
+            ->paginate(perPage: 12);
     }
 
     public function findById(int $id, array $with = []): ?Property
@@ -33,7 +48,7 @@ class PropertyRepository implements PropertyRepositoryInterface
     public function store(array $data): Property
     {
         $model = $this->model->create([
-            'owner_id' => $data['owner_id'],
+            'created_by' => $data['created_by'],
             'title' => $data['title'],
             'description' => $data['description'],
             'city' => $data['city'],
@@ -42,7 +57,7 @@ class PropertyRepository implements PropertyRepositoryInterface
             // 'purpose' => $data['purpose'] ?? PropertyPurpose::SALE,
             'type' => $data['type'],
             'status' => $data['status'] ?? PropertyStatus::PENDING,
-        ])->load(['owner']);
+        ])->load(['createdBy', 'media']);
 
         return $model;
     }
@@ -60,11 +75,47 @@ class PropertyRepository implements PropertyRepositoryInterface
             'status' => Arr::get($data, 'status', $property->status),
         ]);
 
-        return $property->fresh(['owner']);
+        return $property->fresh(['createdBy', 'media']);
     }
 
     public function delete(int $id): bool
     {
         return (bool) $this->model->destroy($id);
+    }
+
+    public function filtersInfo(): array
+    {
+        $priceRange = $this->model
+            ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
+            ->first()
+            ->toArray();
+
+        return [
+            ...$priceRange,
+        ];
+    }
+
+    public function updateStatus(int $id, PropertyStatus $status): bool
+    {
+        $property = $this->model->newQuery()->findOrFail($id);
+
+        if ($property->status === $status) {
+            return true;
+        }
+
+        return $property->update([
+            'status' => $status,
+        ]);
+    }
+
+    public function lockByIds(array $ids): Collection
+    {
+        return collect($ids)
+            ->map(static fn (int|string $id): int => (int) $id)
+            ->unique()
+            ->sort()
+            ->mapWithKeys(fn (int $id): array => [
+                $id => $this->model->newQuery()->lockForUpdate()->findOrFail($id),
+            ]);
     }
 }

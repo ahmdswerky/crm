@@ -2,8 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Enums\LeadStatus;
 use App\Models\Account;
 use App\Models\Contact;
+use App\Models\Lead;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,12 +20,25 @@ class ContactFactory extends Factory
      */
     public function definition(): array
     {
+        $lead = Lead::query()
+            ->pending()
+            ->assigned()
+            ->doesntHave('contact')
+            ->inRandomOrder()
+            ->first();
+
+        $accountId = $lead->company_name && Account::query()->where('name', $lead->company_name)->exists() ?
+            Account::query()->where('name', $lead->company_name)->value('id') :
+            Account::factory()->create(['name' => $lead->company_name])->id;
+
         return [
-            'name' => fake()->name(),
+            'name' => $lead->name,
             'title' => fake()->randomElement([fake()->jobTitle(), null]),
-            'email' => fake()->randomElement([fake()->unique()->safeEmail(), null]),
-            'phone' => fake()->unique()->e164PhoneNumber(),
-            'account_id' => Account::inRandomOrder()->first()->id,
+            'email' => $lead->email,
+            'phone' => $lead->phone,
+            'account_id' => $accountId,
+            'lead_id' => $lead->id,
+            'assigned_agent_id' => $lead->assigned_agent_id,
         ];
     }
 }

@@ -22,16 +22,23 @@ class RoleSeeder extends Seeder
         ]);
 
         $manager->syncPermissions([
-            'user.view', 'user.create', 'user.edit',
-            'lead.view', 'lead.create', 'lead.edit',
+            // 'role.view', 'role.create', 'role.edit', 'role.delete', 'role.restore',
+            'user.view', 'user.create', 'user.edit', 'user.delete',
+            'lead.view', 'lead.create', 'lead.edit', 'lead.delete',
             'property.view', 'property.create', 'property.edit', 'property.delete',
             'account.view', 'account.create', 'account.edit', 'account.delete',
             'contact.view', 'contact.create', 'contact.edit', 'contact.delete',
+            'deal.view', 'deal.create', 'deal.edit', 'deal.delete',
+            'activity-log.view', 'activity-log.revert',
+            'report.view',
         ]);
 
+        // Managers Assign
         User::query()
-            ->where('email', 'supervisor@crm.io')
-            ->first()
+            ->select(['id', 'email'])
+            ->whereIn('email', ['michael@crm.io', 'chris@crm.io'])
+            ->get()
+            ->map
             ->assignRole('manager');
 
         // ---- //
@@ -47,11 +54,19 @@ class RoleSeeder extends Seeder
             'property.view',
             'account.view', 'account.create', 'account.edit',
             'contact.view', 'contact.create', 'contact.edit',
+            'deal.view', 'deal.create',
+            'report.view',
         ]);
 
         User::query()
-            ->where('email', 'like', '%.agent@crm.io')
+            ->whereLike('email', '%.agent@crm.io')
             ->get()
-            ->map(fn (User $user) => $user->assignRole('agent'));
+            ->map
+            ->assignRole('agent');
+
+        // User::query()
+        //     ->where('email', 'owner@crm.io')
+        //     ->first()
+        //     ->givePermissionTo(['activity-log.view', 'activity-log.revert']);
     }
 }

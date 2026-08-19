@@ -20,7 +20,10 @@ class ContactResource extends JsonResource
             'title' => $this->resource->title,
             'email' => $this->resource->email,
             'phone' => $this->resource->phone,
+            'lead_id' => $this->resource->lead_id,
             'account' => $this->whenLoaded('account', fn () => AccountResource::make($this->account)),
+            'lead' => $this->whenLoaded('lead', fn () => LeadResource::make($this->lead)),
+            'agent' => $this->whenLoaded('agent', fn () => UserResource::make($this->agent)),
             'created_at' => $this->resource->created_at,
         ];
     }

@@ -24,6 +24,19 @@ class LeadResource extends JsonResource
             'address' => $this->resource->address,
             'company_name' => $this->resource->company_name,
             'source' => $this->resource->source,
+            'assigned_agent_id' => $this->resource->assigned_agent_id,
+            'has_contact' => $this->whenExistsLoaded(
+                'contact',
+                fn () => $this->resource->contact_exists,
+            ),
+            'assigned_agent' => $this->whenLoaded(
+                'assignedAgent',
+                fn () => UserResource::make($this->resource->assignedAgent),
+            ),
+            'contact' => $this->whenLoaded(
+                'contact',
+                fn () => ContactResource::make($this->resource->contact),
+            ),
             'created_at' => $this->resource->created_at,
         ];
     }

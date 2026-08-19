@@ -23,15 +23,16 @@ class UserStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $canManageRoles = $this->user()->can('role.edit');
+        $canManageRoles = (bool) $this->user()->is_super;
 
         return [
-            'name' => 'required|min:4|max:250',
-            'username' => 'required|min:4|unique:users,username|max:250',
-            'email' => 'required|email|unique:users,email|max:250',
-            'phone' => 'required|phone|unique:users,phone|max:30',
-            'password' => 'required|min:6|max:100',
-            'roles' => $canManageRoles ? 'array' : 'prohibited',
+            'name' => ['required', 'min:4', 'max:250'],
+            'username' => ['required', 'min:4', 'unique:users,username', 'max:250'],
+            'email' => ['required', 'email', 'unique:users,email', 'max:250'],
+            'phone' => ['required', 'phone', 'unique:users,phone', 'max:30'],
+            'password' => ['required', 'min:6', 'max:100'],
+            'direct_manager_id' => ['sometimes', 'nullable', 'exists:users,id'],
+            'roles' => $canManageRoles ? 'array|min:1' : 'prohibited',
             'roles.*' => [
                 'required',
                 Rule::exists(config('permission.table_names.roles'), 'name'),
