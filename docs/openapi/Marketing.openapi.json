@@ -1,0 +1,646 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Marketing",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "leads (list)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "assigned_agent",
+            "in": "query",
+            "description": "Filter leads by assigned user ID.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Lead"
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "null"
+                        },
+                        "next": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "first",
+                        "last",
+                        "prev",
+                        "next"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "page": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "page",
+                              "active"
+                            ]
+                          }
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "from",
+                        "last_page",
+                        "links",
+                        "path",
+                        "per_page",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "links",
+                    "meta"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "leads (store)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "+18629085911"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "contacted",
+                      "qualified",
+                      "unqualified"
+                    ]
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "Texas,"
+                  },
+                  "address": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "company_name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "whatsapp",
+                      "instagram",
+                      "x"
+                    ],
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "phone",
+                  "status",
+                  "city"
+                ]
+              },
+              "example": {
+                "name": "Gary Grady",
+                "email": "German49@hotmail.com",
+                "phone": "+18629085911",
+                "status": "pending",
+                "city": "Nevada",
+                "address": "35699 N Poplar Street",
+                "company_name": "Andrew Altenwerth",
+                "source": "instagram"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lead": {
+                      "$ref": "#/components/schemas/Lead"
+                    }
+                  },
+                  "required": ["lead"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{id}": {
+      "get": {
+        "summary": "leads (show)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "bignum"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lead": {
+                      "$ref": "#/components/schemas/Lead"
+                    }
+                  },
+                  "required": ["lead"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "leads (update)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "bignum"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "+18629085911"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "contacted",
+                      "qualified",
+                      "unqualified"
+                    ]
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "Texas,"
+                  },
+                  "address": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "company_name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "whatsapp",
+                      "instagram",
+                      "x"
+                    ],
+                    "nullable": true
+                  },
+                  "_method": {
+                    "type": "string",
+                    "default": "PUT"
+                  }
+                },
+                "required": [
+                  "_method",
+                  "name",
+                  "email",
+                  "phone",
+                  "status",
+                  "city"
+                ]
+              },
+              "example": {
+                "name": "Gary Grady",
+                "email": "German49@hotmail.com",
+                "phone": "+18629085911",
+                "status": "pending",
+                "city": "Nevada",
+                "address": "35699 N Poplar Street",
+                "company_name": "Andrew Altenwerth",
+                "source": "instagram"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lead": {
+                      "$ref": "#/components/schemas/Lead"
+                    }
+                  },
+                  "required": ["lead"]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "leads (destroy)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "bignum"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "example": "Bearer {{token}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Media": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "uuid": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "mime_type": { "type": "string" },
+          "size": { "type": "integer", "format": "int64" },
+          "url": { "type": "string", "format": "uri" },
+          "thumbnail_url": { "type": "string", "format": "uri" },
+          "order": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "uuid", "name", "mime_type", "size", "url", "thumbnail_url", "order", "created_at"]
+      },
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+18629085911"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "contacted",
+              "qualified",
+              "unqualified"
+            ]
+          },
+          "city": {
+            "type": "string",
+            "example": "Texas,"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "company_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "whatsapp",
+              "instagram",
+              "x"
+            ],
+            "nullable": true
+          },
+          "assigned_agent_id": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true
+          },
+          "assigned_agent": {
+            "$ref": "#/components/schemas/AssignedAgent",
+            "nullable": true,
+            "readOnly": true
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "phone",
+          "status",
+          "city"
+        ]
+      },
+      "AssignedAgent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string",
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/Media",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "username",
+          "email"
+        ]
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "bignum"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone"
+        ]
+      }
+    },
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1/leads",
+      "description": "Develop Env"
+    }
+  ],
+  "security": []
+}

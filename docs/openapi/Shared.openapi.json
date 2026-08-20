@@ -1,0 +1,22 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Shared",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {},
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Develop Env"
+    }
+  ],
+  "security": []
+}

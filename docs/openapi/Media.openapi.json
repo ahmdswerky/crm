@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Media",
+    "description": "Shared media management for supported CRM resources.",
+    "version": "1.0.0"
+  },
+  "tags": [
+    { "name": "Media" }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "List a record's media collection",
+        "tags": ["Media"],
+        "parameters": [
+          { "$ref": "#/components/parameters/OwnerType" },
+          { "$ref": "#/components/parameters/OwnerId" },
+          { "$ref": "#/components/parameters/Collection" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/MediaCollection" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      },
+      "post": {
+        "summary": "Upload media to a record collection",
+        "description": "The original file is stored immediately. Image conversions are processed asynchronously by the configured queue.",
+        "tags": ["Media"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["owner_type", "owner_id", "collection", "files"],
+                "properties": {
+                  "owner_type": { "$ref": "#/components/schemas/OwnerType" },
+                  "owner_id": { "type": "integer", "minimum": 1 },
+                  "collection": { "type": "string", "example": "gallery" },
+                  "files": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "items": { "type": "string", "format": "binary" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/MediaCollection" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/reorder": {
+      "post": {
+        "summary": "Set the order of a record's complete media collection",
+        "tags": ["Media"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["owner_type", "owner_id", "collection", "media_ids"],
+                "properties": {
+                  "owner_type": { "$ref": "#/components/schemas/OwnerType" },
+                  "owner_id": { "type": "integer", "minimum": 1 },
+                  "collection": { "type": "string", "example": "gallery" },
+                  "media_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/MediaCollection" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/{id}": {
+      "delete": {
+        "summary": "Delete a media item",
+        "tags": ["Media"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Media deleted." },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "OwnerType": {
+        "name": "owner_type",
+        "in": "query",
+        "required": true,
+        "schema": { "$ref": "#/components/schemas/OwnerType" }
+      },
+      "OwnerId": {
+        "name": "owner_id",
+        "in": "query",
+        "required": true,
+        "schema": { "type": "integer", "minimum": 1 }
+      },
+      "Collection": {
+        "name": "collection",
+        "in": "query",
+        "required": true,
+        "schema": { "type": "string", "example": "gallery" }
+      }
+    },
+    "schemas": {
+      "OwnerType": {
+        "type": "string",
+        "enum": ["account", "property", "user"]
+      },
+      "Media": {
+        "type": "object",
+        "required": ["id", "uuid", "name", "mime_type", "size", "url", "thumbnail_url", "order", "created_at"],
+        "properties": {
+          "id": { "type": "integer" },
+          "uuid": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "mime_type": { "type": "string" },
+          "size": { "type": "integer", "format": "int64" },
+          "url": { "type": "string", "format": "uri" },
+          "thumbnail_url": { "type": "string", "format": "uri" },
+          "order": { "type": "integer" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "errors": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+        }
+      }
+    },
+    "responses": {
+      "MediaCollection": {
+        "description": "Media collection.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["data"],
+              "properties": {
+                "data": { "type": "array", "items": { "$ref": "#/components/schemas/Media" } }
+              }
+            }
+          }
+        }
+      },
+      "Unauthenticated": {
+        "description": "Authentication is required.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Forbidden": {
+        "description": "You do not have permission to manage this record's media.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "NotFound": {
+        "description": "The record or media item was not found.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "ValidationError": {
+        "description": "The media request is invalid.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

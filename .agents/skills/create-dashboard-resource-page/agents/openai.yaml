@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Dashboard Resource Page"
+  short_description: "Build complete CRM resource workspaces"
+  default_prompt: "Use $create-dashboard-resource-page to build or upgrade the Deals dashboard workspace."

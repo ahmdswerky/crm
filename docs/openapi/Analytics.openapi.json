@@ -1,0 +1,238 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "CRM Analytics API", "version": "1.0.0" },
+  "servers": [{ "url": "http://localhost:8000/api/v1/analytics", "description": "Development" }],
+  "paths": {
+    "/overview": {
+      "get": {
+        "summary": "Live analytics overview",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Live overview", "content": { "application/json": { "schema": { "type": "object", "required": ["overview"], "properties": { "overview": { "$ref": "#/components/schemas/AnalyticsOverview" } } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "summary": "Overview KPI metrics",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Four KPI metrics with seven daily trend points", "content": { "application/json": { "schema": { "type": "object", "required": ["metrics"], "properties": { "metrics": { "$ref": "#/components/schemas/OverviewMetrics" } } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/leaderboard": {
+      "get": {
+        "summary": "Overview sales leaderboard",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "range", "in": "query", "schema": { "type": "string", "enum": ["year", "month", "week"], "default": "month" } }],
+        "responses": {
+          "200": { "description": "Every agent, including zero-sales agents, for the requested period", "content": { "application/json": { "schema": { "type": "object", "required": ["leaderboard"], "properties": { "leaderboard": { "$ref": "#/components/schemas/OverviewLeaderboard" } } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" }, "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/revenue": {
+      "get": {
+        "summary": "Overview revenue performance",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "range", "in": "query", "schema": { "type": "string", "enum": ["year", "month", "week"], "default": "month" } }],
+        "responses": {
+          "200": { "description": "Current and previous period revenue series", "content": { "application/json": { "schema": { "type": "object", "required": ["revenue"], "properties": { "revenue": { "$ref": "#/components/schemas/OverviewRevenue" } } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" }, "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "summary": "Overview qualified customers",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Five latest qualified leads", "content": { "application/json": { "schema": { "type": "object", "required": ["customers"], "properties": { "customers": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewCustomer" } } } } } } }, "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" } }
+      }
+    },
+    "/deals": {
+      "get": {
+        "summary": "Overview recent deals",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Five latest deals", "content": { "application/json": { "schema": { "type": "object", "required": ["deals"], "properties": { "deals": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewDeal" } } } } } } }, "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" } }
+      }
+    },
+    "/accounts": {
+      "get": {
+        "summary": "Overview top accounts",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Five accounts ranked by contact count", "content": { "application/json": { "schema": { "type": "object", "required": ["accounts"], "properties": { "accounts": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewAccount" } } } } } } }, "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" } }
+      }
+    },
+    "/properties": {
+      "get": {
+        "summary": "Overview recent properties",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Five latest properties", "content": { "application/json": { "schema": { "type": "object", "required": ["properties"], "properties": { "properties": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewProperty" } } } } } } }, "401": { "$ref": "#/components/responses/Unauthorized" }, "403": { "$ref": "#/components/responses/Forbidden" } }
+      }
+    },
+    "/reports": {
+      "get": {
+        "summary": "List saved analytics reports",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "cadence", "in": "query", "schema": { "type": "string", "enum": ["daily", "monthly"] } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["queued", "running", "completed", "failed"] } },
+          { "name": "period_from", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "period_to", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "minimum": 1 } },
+          { "name": "per_page", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100 } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated report archive", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReportRunPaginator" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/reports/{reportRun}": {
+      "get": {
+        "summary": "Show a saved analytics report",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "reportRun", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "Saved report", "content": { "application/json": { "schema": { "type": "object", "required": ["report"], "properties": { "report": { "$ref": "#/components/schemas/ReportRunDetail" } } } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "description": "Not found" }
+        }
+      }
+    },
+    "/reports/{reportRun}/download": {
+      "get": {
+        "summary": "Download a saved analytics report CSV",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "reportRun", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "CSV report", "content": { "text/csv": { "schema": { "type": "string", "format": "binary" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "description": "Not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": { "bearerAuth": { "type": "http", "scheme": "bearer" } },
+    "responses": {
+      "Unauthorized": { "description": "Unauthenticated" },
+      "Forbidden": { "description": "Forbidden" },
+      "ValidationError": { "description": "Invalid query parameters" }
+    },
+    "schemas": {
+      "AnalyticsOverview": {
+        "type": "object",
+        "required": ["as_of", "today", "month_to_date", "pipeline", "inventory"],
+        "properties": {
+          "as_of": { "type": "string", "format": "date-time" },
+          "today": { "$ref": "#/components/schemas/ReportSummary" },
+          "month_to_date": { "$ref": "#/components/schemas/ReportSummary" },
+          "pipeline": { "$ref": "#/components/schemas/Pipeline" },
+          "inventory": { "type": "array", "items": { "$ref": "#/components/schemas/InventoryRow" } }
+        }
+      },
+      "OverviewLeaderboard": {
+        "type": "object",
+        "required": ["range", "data"],
+        "properties": {
+          "range": { "type": "string", "enum": ["year", "month", "week"] },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewChartPoint" } }
+        }
+      },
+      "OverviewRevenue": {
+        "type": "object",
+        "required": ["range", "current", "previous"],
+        "properties": {
+          "range": { "type": "string", "enum": ["year", "month", "week"] },
+          "current": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewTrendPoint" } },
+          "previous": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewTrendPoint" } }
+        }
+      },
+      "OverviewMetrics": {
+        "type": "object",
+        "required": ["new_leads", "conversion_rate", "revenue", "properties"],
+        "properties": {
+          "new_leads": { "$ref": "#/components/schemas/OverviewMetric" },
+          "conversion_rate": { "$ref": "#/components/schemas/OverviewMetric" },
+          "revenue": { "$ref": "#/components/schemas/OverviewMetric" },
+          "properties": { "$ref": "#/components/schemas/OverviewMetric" }
+        }
+      },
+      "OverviewMetric": {
+        "type": "object",
+        "required": ["value", "change", "trend"],
+        "properties": {
+          "value": { "type": "number" },
+          "change": { "type": "number", "description": "Percentage change versus the previous calendar month." },
+          "trend": { "type": "array", "items": { "$ref": "#/components/schemas/OverviewTrendPoint" } }
+        }
+      },
+      "OverviewTrendPoint": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": { "label": { "type": "string" }, "value": { "type": "number" } }
+      },
+      "OverviewChartPoint": {
+        "type": "object",
+        "required": ["name", "value"],
+        "properties": { "name": { "type": "string" }, "value": { "type": "number" } }
+      },
+      "OverviewCustomer": {
+        "type": "object",
+        "required": ["id", "name", "company", "account_logo", "position"],
+        "properties": {
+          "id": { "type": "integer" }, "name": { "type": "string" }, "company": { "type": "string", "nullable": true },
+          "account_logo": { "type": "string", "format": "uri", "nullable": true }, "position": { "type": "string", "nullable": true }
+        }
+      },
+      "OverviewDeal": {
+        "type": "object",
+        "required": ["id", "name", "customer", "deal_value", "status"],
+        "properties": {
+          "id": { "type": "integer" }, "name": { "type": "string" }, "customer": { "type": "string", "nullable": true },
+          "deal_value": { "type": "number" }, "status": { "type": "string", "nullable": true }
+        }
+      },
+      "OverviewAccount": {
+        "type": "object",
+        "required": ["id", "name", "logo", "industry", "leads_count"],
+        "properties": {
+          "id": { "type": "integer" }, "name": { "type": "string" }, "logo": { "type": "string", "format": "uri", "nullable": true },
+          "industry": { "type": "string", "nullable": true }, "leads_count": { "type": "integer" }
+        }
+      },
+      "OverviewProperty": {
+        "type": "object",
+        "required": ["id", "name", "status", "price"],
+        "properties": {
+          "id": { "type": "integer" }, "name": { "type": "string" }, "status": { "type": "string", "nullable": true }, "price": { "type": "number" }
+        }
+      },
+      "ReportSummary": {
+        "type": "object",
+        "properties": {
+          "new_leads": { "type": "integer" }, "converted_leads": { "type": "integer" }, "lead_conversion_rate": { "type": "number" },
+          "opened_deals": { "type": "integer" }, "opened_deal_value": { "type": "number" }, "won_deals": { "type": "integer" }, "lost_deals": { "type": "integer" },
+          "won_value": { "type": "number" }, "lost_value": { "type": "number" }, "win_rate": { "type": "number" }, "final_commission": { "type": "number" }
+        }
+      },
+      "Pipeline": { "type": "object", "properties": { "active_count": { "type": "integer" }, "active_value": { "type": "number" }, "by_status": { "type": "array", "items": { "$ref": "#/components/schemas/PipelineRow" } } } },
+      "PipelineRow": { "type": "object", "required": ["status", "count", "value"], "properties": { "status": { "type": "string" }, "count": { "type": "integer" }, "value": { "type": "number" } } },
+      "InventoryRow": { "type": "object", "required": ["status", "purpose", "type", "count", "value"], "properties": { "status": { "type": "string" }, "purpose": { "type": "string" }, "type": { "type": "string" }, "count": { "type": "integer" }, "value": { "type": "number" } } },
+      "ReportRun": {
+        "type": "object", "required": ["id", "definition", "cadence", "status", "period_start", "period_end", "download_available"],
+        "properties": { "id": { "type": "string", "format": "uuid" }, "definition": { "type": "string" }, "cadence": { "type": "string", "enum": ["daily", "monthly"] }, "status": { "type": "string", "enum": ["queued", "running", "completed", "failed"] }, "period_start": { "type": "string", "format": "date-time" }, "period_end": { "type": "string", "format": "date-time" }, "generated_at": { "type": "string", "format": "date-time", "nullable": true }, "duration_ms": { "type": "integer", "nullable": true }, "download_available": { "type": "boolean" } }
+      },
+      "ReportRunDetail": { "allOf": [{ "$ref": "#/components/schemas/ReportRun" }, { "type": "object", "properties": { "snapshot": { "type": "object", "additionalProperties": true }, "failure": { "type": "object", "nullable": true, "properties": { "code": { "type": "string", "nullable": true }, "message": { "type": "string", "nullable": true } } } } }] },
+      "ReportRunPaginator": { "type": "object", "required": ["data", "links", "meta"], "properties": { "data": { "type": "array", "items": { "$ref": "#/components/schemas/ReportRun" } }, "links": { "type": "object", "additionalProperties": true }, "meta": { "type": "object", "additionalProperties": true } } }
+    }
+  }
+}

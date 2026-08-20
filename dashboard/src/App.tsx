@@ -51,6 +51,11 @@ function SuperOnly({ children }: { children: ReactNode }) {
   return isSuper ? children : <RolesPage />
 }
 
+function LegacyLeadsIndexRedirect() {
+  const location = useLocation()
+  return <Navigate to={{ pathname: "/pipeline", search: location.search, hash: location.hash }} replace />
+}
+
 export default function App() {
   return <BrowserRouter><AuthProvider><Routes>
     <Route path="/login" element={<LoginPage />} />
@@ -58,7 +63,8 @@ export default function App() {
       <Route index element={<LazyRoute><OverviewPage /></LazyRoute>} />
       <Route path="reports" element={<LazyRoute><ReportsPage /></LazyRoute>} />
       <Route path="reports/:reportRunId" element={<LazyRoute><ReportDetailsPage /></LazyRoute>} />
-      <Route path="leads" element={<LazyRoute><LeadsKanbanPage /></LazyRoute>} />
+      <Route path="pipeline" element={<LazyRoute><LeadsKanbanPage /></LazyRoute>} />
+      <Route path="leads" element={<LegacyLeadsIndexRedirect />} />
       <Route path="leads/create" element={<LazyRoute><LeadDetailsPage create /></LazyRoute>} />
       <Route path="leads/:leadId" element={<LazyRoute><LeadDetailsPage /></LazyRoute>} />
       <Route path="deals" element={<LazyRoute><DealsPage /></LazyRoute>} />
