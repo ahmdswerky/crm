@@ -1,0 +1,20 @@
+dashboard/src/App.tsx
+  s_cbdf16dfa1cab6::t_07d71456def87c 10
+  s_cbdf16dfa1cab6::t_f4671a6fb12077 60-61,90-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "5b440e82062a71cbf26735e0a14d8f4926d85039",
+  "prompts": {},
+  "sessions": {
+    "s_cbdf16dfa1cab6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01950-ccac-7002-a7a3-a8c74dbd4280",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
