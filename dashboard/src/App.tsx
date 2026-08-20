@@ -7,6 +7,7 @@ import { ErrorState } from "@/components/shared/error-state"
 const AppShell = lazy(() => import("@/components/shared/app-shell").then(({ AppShell }) => ({ default: AppShell })))
 const OverviewPage = lazy(() => import("@/pages/overview").then(({ OverviewPage }) => ({ default: OverviewPage })))
 const ReportsPage = lazy(() => import("@/pages/reports").then(({ ReportsPage }) => ({ default: ReportsPage })))
+const ApiDocsPage = lazy(() => import("@/pages/api-docs").then(({ ApiDocsPage }) => ({ default: ApiDocsPage })))
 const ReportDetailsPage = lazy(() => import("@/pages/reports/details").then(({ ReportDetailsPage }) => ({ default: ReportDetailsPage })))
 const LeadsKanbanPage = lazy(() => import("@/pages/leads").then(({ LeadsKanbanPage }) => ({ default: LeadsKanbanPage })))
 const LeadDetailsPage = lazy(() => import("@/pages/leads/details").then(({ LeadDetailsPage }) => ({ default: LeadDetailsPage })))
@@ -56,8 +57,8 @@ function LegacyLeadsIndexRedirect() {
   return <Navigate to={{ pathname: "/pipeline", search: location.search, hash: location.hash }} replace />
 }
 
-export default function App() {
-  return <BrowserRouter><AuthProvider><Routes>
+function AuthenticatedApp() {
+  return <AuthProvider><Routes>
     <Route path="/login" element={<LoginPage />} />
     <Route element={<Protected />}>
       <Route index element={<LazyRoute><OverviewPage /></LazyRoute>} />
@@ -86,5 +87,17 @@ export default function App() {
       <Route path="settings/roles/:resourceId" element={<LazyRoute><SuperOnly><ResourceDetailsPage title="Role details" eyebrow="CRM / Access" description="The role and its permissions." endpoint="/v1/roles" envelopeKey="role" backPath="/settings/roles" fields={[{ key: "name", label: "Name" }, { key: "guard_name", label: "Guard" }, { key: "permissions", label: "Permissions" }]} /></SuperOnly></LazyRoute>} />
     </Route>
     <Route path="*" element={<ErrorState kind="not-found" title="Page not found" description="The page you are looking for does not exist or may have moved." actionLabel="Return to overview" actionTo="/" />} />
-  </Routes></AuthProvider></BrowserRouter>
+  </Routes></AuthProvider>
+}
+
+function AppRoutes() {
+  const location = useLocation()
+
+  return location.pathname === "/api-docs"
+    ? <LazyRoute><ApiDocsPage /></LazyRoute>
+    : <AuthenticatedApp />
+}
+
+export default function App() {
+  return <BrowserRouter><AppRoutes /></BrowserRouter>
 }
