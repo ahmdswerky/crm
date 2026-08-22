@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Property;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
 
 class PropertySeeder extends Seeder
 {
@@ -13,36 +12,48 @@ class PropertySeeder extends Seeder
      */
     public function run(): void
     {
-        $count = config('crm.seeds.counts')[Property::class];
+        $batchCount = (int) config('crm.seeds.counts')[Property::class];
+        $maxTotal = (int) config('crm.seeds.max_counts')[Property::class];
+        $existingCount = Property::withTrashed()->count();
+        $count = min($batchCount, max($maxTotal - $existingCount, 0));
         $chunkSize = 200;
-        $operations = collect([]);
 
-        if ($existingCount = Property::count()) {
-            $count = max($count - $existingCount, 0);
-        }
-
-        if (!$count) {
+        if (! $count) {
             return;
         }
 
-        collect()->times(ceil($count / $chunkSize))->map(function () use ($chunkSize, &$operations) {
-            Property::factory($chunkSize)
+        $usedTitles = Property::withTrashed()->pluck('title')->flip();
+        $progressBar = $this->command->getOutput()->createProgressBar($count);
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%%');
+        $progressBar->start();
+
+        for ($offset = 0; $offset < $count; $offset += $chunkSize) {
+            $batchSize = min($chunkSize, $count - $offset);
+
+            $rows = collect(Property::factory()
+                ->count($batchSize)
                 ->make()
-                ->chunk(50)
-                ->map(function (Collection $chunked) use (&$operations) {
-                    $operations[] = (int) Property::insert($chunked->toArray());
-                });
-        });
+                ->toArray())
+                ->map(function (array $row) use ($usedTitles): array {
+                    do {
+                        $title = fake()->catchPhrase();
+                    } while ($usedTitles->has($title));
 
-        $counts = [
-            'failed' => $operations->filter(fn ($v) => $v !== 1)->count() * 50,
-            'succeed' => $operations->filter(fn ($v) => $v === 1)->count() * 50,
-        ];
+                    $usedTitles->put($title, true);
 
-        if ($counts['failed']) {
-            $this->command->outputComponents()->error("  " . ($count - $counts['failed']) . ' properties failed');
+                    return [
+                        ...$row,
+                        'title' => $title,
+                    ];
+                })->all();
+
+            Property::insert($rows);
+            $progressBar->advance($batchSize);
         }
 
-        $this->command->outputComponents()->success('  ' . Property::count() . ' properties generated successfully.');
+        $progressBar->finish();
+        $progressBar->clear();
+
+        $this->command->outputComponents()->success("  {$count} properties generated successfully.");
     }
 }

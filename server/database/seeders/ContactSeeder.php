@@ -2,59 +2,76 @@
 
 namespace Database\Seeders;
 
-use App\Enums\LeadStatus;
+use App\Models\Account;
 use App\Models\Contact;
 use App\Models\Lead;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class ContactSeeder extends Seeder
 {
     public function run(): void
     {
-        $count = config('crm.seeds.counts')[Lead::class];
         $chunkSize = 200;
-        $operations = collect([]);
+        $startInDays = config('crm.seeds.period.start');
+        $inserted = 0;
+        $eligibleLeads = Lead::query()
+            ->qualified()
+            ->assigned()
+            ->whereNotNull('company_name')
+            ->whereDoesntHave('contact', fn ($query) => $query->withTrashed());
+        $count = (clone $eligibleLeads)->count();
 
-        if ($existingCount = Contact::count()) {
-            $count = max($count - $existingCount, 0);
-        }
-
-        if (!$count) {
+        if (! $count) {
             return;
         }
 
-        collect()->times(ceil($count * .8 / $chunkSize))->map(function () use ($chunkSize, &$operations) {
-            $perTime = 20;
+        $accountIds = Account::query()->pluck('id', 'name');
+        $progressBar = $this->command->getOutput()->createProgressBar($count);
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%%');
+        $progressBar->start();
 
-            collect()
-                ->times($chunkSize)
-                ->map(function () use (&$operations, $perTime) {
-                    Contact::factory()->create();
+        $eligibleLeads
+            ->select([
+                'id',
+                'name',
+                'email',
+                'phone',
+                'company_name',
+                'assigned_agent_id',
+            ])
+            ->chunkById($chunkSize, function (Collection $leads) use (&$inserted, $startInDays, $accountIds, $progressBar): void {
+                $now = now();
 
-                    $operations->push(1);
-                    // $operations = $operations->merge(
-                    //     array_fill(0, $perTime, 1),
-                    // );
-                });
-        });
+                $rows = $leads->map(function (Lead $lead) use ($accountIds, $startInDays, $now): array {
+                    $accountId = $accountIds->get($lead->company_name);
 
-        Contact::pluck('lead_id')->chunk(50)->map(function (Collection $ids) {
-            Lead::whereIn('id', $ids)
-                ->update([
-                    'status' => LeadStatus::QUALIFIED,
-                ]);
-        });
+                    if (! $accountId) {
+                        throw new RuntimeException("Cannot seed contact because account [{$lead->company_name}] does not exist.");
+                    }
 
-        $counts = [
-            'failed' => $operations->filter(fn ($v) => $v !== 1)->count() * 50,
-            'succeed' => $operations->filter(fn ($v) => $v === 1)->count() * 50,
-        ];
+                    return [
+                        'account_id' => $accountId,
+                        'lead_id' => $lead->id,
+                        'name' => $lead->name,
+                        'title' => fake()->randomElement([fake()->jobTitle(), null]),
+                        'email' => $lead->email,
+                        'phone' => $lead->phone,
+                        'assigned_agent_id' => $lead->assigned_agent_id,
+                        'created_at' => fake()->dateTimeBetween(now()->subDays($startInDays), $now),
+                        'updated_at' => $now,
+                    ];
+                })->all();
 
-        if ($counts['failed']) {
-            $this->command->outputComponents()->error("  " . ($count - $counts['failed']) . ' contacts failed');
-        }
+                Contact::insert($rows);
+                $inserted += count($rows);
+                $progressBar->advance(count($rows));
+            });
 
-        $this->command->outputComponents()->success('  ' . $counts['succeed'] . ' contacts generated successfully.');
+        $progressBar->finish();
+        $progressBar->clear();
+
+        $this->command->outputComponents()->success("  {$inserted} contacts generated successfully.");
     }
 }
