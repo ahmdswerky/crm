@@ -20,6 +20,7 @@ class ContactFactory extends Factory
      */
     public function definition(): array
     {
+        $startInDays = config('crm.seeds.period.start');
         $lead = Lead::query()
             ->pending()
             ->assigned()
@@ -39,6 +40,7 @@ class ContactFactory extends Factory
             'account_id' => $accountId,
             'lead_id' => $lead->id,
             'assigned_agent_id' => $lead->assigned_agent_id,
+            'created_at' => fake()->dateTimeBetween(now()->subDays($startInDays), now()),
         ];
     }
 }

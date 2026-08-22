@@ -21,6 +21,7 @@ class LeadFactory extends Factory
      */
     public function definition(): array
     {
+        $startInDays = config('crm.seeds.period.start');
         $companies = [
             'Nike',
             'IKEA',
@@ -48,7 +49,7 @@ class LeadFactory extends Factory
                     User::query()->agents()->inRandomOrder()->value('id'),
                 ]);
             },
-            'created_at' => $date = fake()->dateTimeBetween(now()->subMonths(18), now()->subDay()),
+            'created_at' => $date = fake()->dateTimeBetween(now()->subDays($startInDays), now()->subDay()),
         ];
     }
 

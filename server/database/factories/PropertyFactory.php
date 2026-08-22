@@ -20,6 +20,8 @@ class PropertyFactory extends Factory
      */
     public function definition(): array
     {
+        $startInDays = config('crm.seeds.period.start');
+
         return [
             'created_by' => fake()->randomElement([3, 4]), // supervisor id
             'title' => fake()->unique()->catchPhrase(),
@@ -28,7 +30,7 @@ class PropertyFactory extends Factory
             'city' => fake()->city(),
             'address' => fake()->streetAddress(),
             'type' => fake()->randomElement(PropertyType::cases()),
-            'created_at' => $date = fake()->dateTimeBetween(now()->subMonths(18), now()->subDay()),
+            'created_at' => $date = fake()->dateTimeBetween(now()->subDays($startInDays), now()->subDay()),
         ];
     }
 }

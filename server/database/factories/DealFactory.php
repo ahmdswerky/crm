@@ -7,7 +7,6 @@ use App\Enums\PropertyStatus;
 use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Property;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,11 +18,12 @@ class DealFactory extends Factory
 
     public function definition(): array
     {
+        $startInDays = config('crm.seeds.period.start');
+        $contact = Contact::select(['id', 'assigned_agent_id'])->inRandomOrder()->first();
         $property = Property::query()
             ->whereStatus(PropertyStatus::PENDING)
             ->inRandomOrder()
             ->first();
-        $contact = Contact::select(['id', 'assigned_agent_id'])->inRandomOrder()->first();
 
         $status = fake()->randomElement(DealStatus::cases());
 
@@ -35,7 +35,8 @@ class DealFactory extends Factory
             'agent_id' => $contact->assigned_agent_id,
             'status' => $status,
             'commission_rate' => fake()->randomElement([2.5, 1.5]),
-            'created_at' => $date = fake()->dateTimeBetween(now()->subMonths(18), now()->subDay()),
+            'created_at' => $date = fake()->dateTimeBetween(now()->subDays($startInDays), now()),
+            'status_updated_at' => $date,
             'closed_at' => $status === DealStatus::WON ? $date : null,
         ];
     }
