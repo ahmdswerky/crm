@@ -1,0 +1,42 @@
+server/app/Console/Commands/DispatchDueAnalyticsReportsCommand.php
+  s_179fd30a747c9d::t_cfc0e1988b6546 21-22,27-28
+server/app/Console/Commands/RecalculateCommissionsCommand.php
+  s_045cf3fec206ad::t_20680dc1234681 5,9-10,14,16,21,30-43,45-49
+server/app/Models/Deal.php
+  s_179fd30a747c9d::t_5a48fe9db309e4 54
+server/app/Observers/DealObserver.php
+  s_179fd30a747c9d::t_d67498918d0d08 1-22
+server/app/Providers/AppServiceProvider.php
+  s_179fd30a747c9d::t_eebabbddc87433 14,16,52
+server/app/Services/AnalyticsService.php
+  s_179fd30a747c9d::t_126b82393d0099 27,42,79-91,94,100-105,108-110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "e783dc330e4749f40954e2140989986c6798f35c",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_045cf3fec206ad": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fff93-31be-7ff1-be11-b60309fd2420",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_179fd30a747c9d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a003cc-ee0c-7d71-83bc-1ad3a19ebfea",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
