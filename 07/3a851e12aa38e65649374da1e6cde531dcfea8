@@ -1,0 +1,54 @@
+server/database/seeders/DealSeeder.php
+  s_887f863f778c92::t_6d12ab5757ee4d 70-85,87,91-96
+  s_887f863f778c92::t_80c5fcd7fb6748 21-24
+  s_887f863f778c92::t_a39330d5182727 107
+  s_887f863f778c92::t_6c19d499b09f9e 5-7,9,14-15,31-37,39-41,43-44,47-48,53-61,98-106,108-112,114-129
+  s_887f863f778c92::t_0a4d512fd40eb3 49-52,63-66
+  s_887f863f778c92::t_e13249e58c780b 27
+  s_887f863f778c92::t_96e6a2f63e2394 62
+  s_887f863f778c92::t_c1329643cb57bf 97
+server/database/seeders/PropertySeeder.php
+  s_887f863f778c92::t_60723f3918af13 21
+  s_887f863f778c92::t_80c5fcd7fb6748 15-18
+  s_887f863f778c92::t_29c61bef434b28 25-34,36-51,54-57
+server/database/seeders/LeadSeeder.php
+  s_887f863f778c92::t_e399f83b5d057a 10,20-23,34-35,43-45,49-50,55,59-60,64-67,76-84,88-95,99-103,107
+  s_887f863f778c92::t_9826bc7113aed5 31-32,85-86,96-97,110-111,130-131,139,146-164
+  s_887f863f778c92::t_ca6e34a6d3bd5b 11,71-73,87,98,112,116,118,132,168
+  s_887f863f778c92::t_1b9fda00aba936 117
+server/database/seeders/ContactSeeder.php
+  s_887f863f778c92::t_7062953d28ebe5 19,23-24,26,30-35,69,72-73,75
+  s_887f863f778c92::t_1eed3a7332146f 44,63
+  s_887f863f778c92::t_916d6da7ee84b1 5,10,17-18,20-22,36-43,45-62,64-68,70-71
+server/database/factories/DealFactory.php
+  s_179fd30a747c9d::t_f3ba3a6f5997e1 21-22,38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "073a851e12aa38e65649374da1e6cde531dcfea8",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_179fd30a747c9d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a003cc-ee0c-7d71-83bc-1ad3a19ebfea",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_887f863f778c92": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01f49-1cf5-7640-91eb-b6dbee85a222",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
