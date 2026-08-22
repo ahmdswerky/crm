@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Repositories\LeadRepositoryInterface;
+use App\Enums\LeadStatus;
 use App\Http\Requests\Lead\LeadIndexRequest;
 use App\Http\Requests\Lead\LeadStoreRequest;
 use App\Http\Requests\Lead\LeadUpdateRequest;
@@ -27,6 +28,37 @@ class LeadController extends Controller
             ->additional([...$stats]);
     }
 
+    #[Authorize('viewAny', Lead::class)]
+    public function board(LeadIndexRequest $request)
+    {
+        $board = $this->leadRepository->board($request->validated());
+
+        return response()->json([
+            'stats' => $board['stats'],
+            'columns' => collect($board['columns'])->map(fn (array $column): array => [
+                'data' => LeadResource::collection($column['data'])->resolve(),
+                'total' => $column['total'],
+                'next_cursor' => $column['next_cursor'],
+                'has_more' => $column['has_more'],
+            ])->all(),
+        ]);
+    }
+
+    #[Authorize('viewAny', Lead::class)]
+    public function boardColumn(LeadIndexRequest $request, LeadStatus $status)
+    {
+        $page = $this->leadRepository->cursorPaginate([
+            ...$request->validated(),
+            'status' => $status->value,
+        ]);
+
+        return response()->json([
+            'data' => LeadResource::collection($page->items())->resolve(),
+            'next_cursor' => $page->nextCursor()?->encode(),
+            'has_more' => $page->hasMorePages(),
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -46,7 +78,7 @@ class LeadController extends Controller
     #[Authorize('view', 'lead')]
     public function show(Lead $lead)
     {
-        $lead->load('contact.account.media', 'assignedAgent');
+        $lead->load('contact.account.media', 'assignedAgent.media');
 
         return response()->json([
             'lead' => LeadResource::make($lead),
