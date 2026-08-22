@@ -9,6 +9,7 @@ use App\Models\CommissionAllocation;
 use App\Models\Deal;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CommissionService
@@ -17,15 +18,56 @@ class CommissionService
 
     public function recalculate(Deal $deal): Deal
     {
+        try {
+            return $this->recalculateDeal(
+                $deal,
+                function (array $userIds): void {
+                    $this->refreshUserCommissionTotals($userIds);
+                },
+            );
+        } finally {
+            $this->rateResolver->clearCache();
+        }
+    }
+
+    public function recalculateBatch(iterable $deals): void
+    {
+        $affectedUserIds = [];
+
+        try {
+            foreach ($deals as $deal) {
+                $this->recalculateDeal(
+                    $deal,
+                    function (array $userIds) use (&$affectedUserIds): void {
+                        $affectedUserIds = array_values(array_unique([
+                            ...$affectedUserIds,
+                            ...$userIds,
+                        ]));
+                    },
+                    false,
+                );
+            }
+
+            $this->refreshUserCommissionTotals($affectedUserIds);
+        } finally {
+            $this->rateResolver->clearCache();
+        }
+    }
+
+    protected function recalculateDeal(
+        Deal $deal,
+        callable $refreshTotals,
+        bool $fresh = true,
+    ): Deal {
         $deal = Deal::query()->lockForUpdate()->findOrFail($deal->id);
 
         if ($deal->status === DealStatus::LOST) {
-            return $this->voidDeal($deal);
+            return $this->voidDealInternal($deal, $refreshTotals, $fresh);
         }
 
-        $agent = User::query()->with('roles')->findOrFail($deal->agent_id);
+        $agent = User::query()->findOrFail($deal->agent_id);
         $manager = $agent->direct_manager_id
-            ? User::query()->with('roles')->find($agent->direct_manager_id)
+            ? User::query()->find($agent->direct_manager_id)
             : null;
         $affectedUserIds = $this->recipientUserIdsForDeal($deal->id);
         $affectedUserIds = array_values(array_unique([
@@ -35,17 +77,28 @@ class CommissionService
         ]));
         $isFinal = $deal->status === DealStatus::WON;
         $currentState = $this->currentState($deal);
-        $version = (int) $deal->commission_version;
+        $version = max(0, (int) $deal->commission_version);
+        $canReuseFinalSnapshot = $isFinal
+            && $currentState === CommissionAllocationState::FINAL
+            && $this->allocationsMatchCurrentVersion($deal, $version, $agent, $manager);
 
-        if ($version === 0 || $isFinal || in_array($currentState, [
+        if ($version === 0) {
+            $version = 1;
+        } elseif (! $canReuseFinalSnapshot && ($isFinal || in_array($currentState, [
             CommissionAllocationState::FINAL,
             CommissionAllocationState::VOID,
-        ], true)) {
+        ], true))) {
             $version++;
         }
 
-        if ($version > 1 && ($isFinal || $currentState === CommissionAllocationState::FINAL)) {
+        if (! $canReuseFinalSnapshot && $version > 1 && ($isFinal || $currentState === CommissionAllocationState::FINAL)) {
             $this->supersedeCurrent($deal);
+        }
+
+        if ($canReuseFinalSnapshot) {
+            $refreshTotals($affectedUserIds);
+
+            return $fresh ? $deal->fresh() : $deal;
         }
 
         $snapshotDate = Carbon::now();
@@ -90,37 +143,58 @@ class CommissionService
             'commission_finalized_at' => $isFinal ? $snapshotDate : null,
         ])->save();
 
-        $this->refreshUserCommissionTotals($affectedUserIds);
+        $refreshTotals($affectedUserIds);
 
-        return $deal->fresh();
+        return $fresh ? $deal->fresh() : $deal;
     }
 
     public function recalculateForUser(User $user): void
     {
-        DB::transaction(function () use ($user): void {
-            Deal::query()
-                ->where(function ($query) use ($user): void {
-                    $query
-                        ->where('agent_id', $user->id)
-                        ->orWhereHas('agent', fn ($agent) => $agent->where('direct_manager_id', $user->id));
-                })
-                ->whereIn('status', [
-                    DealStatus::INQUIRY->value,
-                    DealStatus::VIEWING->value,
-                    DealStatus::OFFER_MADE->value,
-                    DealStatus::LEGAL->value,
-                ])
-                ->get()
-                ->each(fn (Deal $deal) => $this->recalculate($deal));
-        }, 3);
+        Deal::query()
+            ->select('deals.id')
+            ->where(function ($query) use ($user): void {
+                $query
+                    ->where('agent_id', $user->id)
+                    ->orWhereHas('agent', fn ($agent) => $agent->where('direct_manager_id', $user->id));
+            })
+            ->whereIn('status', [
+                DealStatus::INQUIRY->value,
+                DealStatus::VIEWING->value,
+                DealStatus::OFFER_MADE->value,
+                DealStatus::LEGAL->value,
+            ])
+            ->orderBy('deals.id')
+            ->chunkById(100, function (Collection $deals): void {
+                DB::transaction(function () use ($deals): void {
+                    $this->recalculateBatch($deals);
+                }, 3);
+            });
     }
 
     public function voidDeal(Deal $deal): Deal
     {
+        try {
+            return $this->voidDealInternal(
+                $deal,
+                function (array $userIds): void {
+                    $this->refreshUserCommissionTotals($userIds);
+                },
+            );
+        } finally {
+            $this->rateResolver->clearCache();
+        }
+    }
+
+    /** @param callable(array<int, int>): void $refreshTotals */
+    protected function voidDealInternal(
+        Deal $deal,
+        callable $refreshTotals,
+        bool $fresh = true,
+    ): Deal {
         $affectedUserIds = $this->recipientUserIdsForDeal($deal->id);
-        $agent = User::query()->with('roles')->findOrFail($deal->agent_id);
+        $agent = User::query()->findOrFail($deal->agent_id);
         $manager = $agent->direct_manager_id
-            ? User::query()->with('roles')->find($agent->direct_manager_id)
+            ? User::query()->find($agent->direct_manager_id)
             : null;
         $version = max(1, (int) $deal->commission_version);
         $snapshotDate = Carbon::now();
@@ -167,9 +241,53 @@ class CommissionService
             'commission_finalized_at' => null,
         ])->save();
 
-        $this->refreshUserCommissionTotals($affectedUserIds);
+        $refreshTotals($affectedUserIds);
 
-        return $deal->fresh();
+        return $fresh ? $deal->fresh() : $deal;
+    }
+
+    protected function allocationsMatchCurrentVersion(
+        Deal $deal,
+        int $version,
+        User $agent,
+        ?User $manager,
+    ): bool {
+        $snapshotDate = Carbon::now();
+        $expected = collect([
+            $this->allocationData($deal, $version, CommissionRecipientType::AGENT, $agent, $snapshotDate),
+            $manager ? $this->allocationData($deal, $version, CommissionRecipientType::MANAGER, $manager, $snapshotDate) : null,
+            $this->allocationData($deal, $version, CommissionRecipientType::COMPANY, null, $snapshotDate),
+        ])->filter()->values();
+
+        $current = CommissionAllocation::query()
+            ->where('deal_id', $deal->id)
+            ->where('version', $version)
+            ->get()
+            ->keyBy(fn (CommissionAllocation $allocation): string => (string) $allocation->getRawOriginal('recipient_type'));
+
+        if ($current->count() !== $expected->count()) {
+            return false;
+        }
+
+        foreach ($expected as $allocation) {
+            $existing = $current->get($allocation['recipient_type']);
+
+            if (! $existing
+                || (int) $existing->recipient_user_id !== (int) ($allocation['recipient_user_id'] ?? 0)
+                || (int) $existing->commission_policy_id !== (int) ($allocation['commission_policy_id'] ?? 0)
+                || ! $this->sameAmount($existing->base_amount, $allocation['base_amount'])
+                || ! $this->sameAmount($existing->rate, $allocation['rate'])
+                || ! $this->sameAmount($existing->amount, $allocation['amount'])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function sameAmount(float|int|null $left, float|int|null $right): bool
+    {
+        return abs((float) $left - (float) $right) < 0.0001;
     }
 
     /** @return array<int, int> */

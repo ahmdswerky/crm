@@ -11,8 +11,9 @@ use App\Models\Property;
 use App\Models\ReportRun;
 use App\Models\Role;
 use App\Models\User;
-use App\Observers\OverviewAnalyticsObserver;
+use App\Observers\DealObserver;
 use App\Observers\LeadObserver;
+use App\Observers\OverviewAnalyticsObserver;
 use App\Policies\AccountPolicy;
 use App\Policies\ActivityLogPolicy;
 use App\Policies\ContactPolicy;
@@ -48,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Lead::observe(LeadObserver::class);
+        Deal::observe(DealObserver::class);
 
         foreach ([Account::class, Contact::class, Deal::class, Lead::class, Property::class] as $model) {
             $model::observe(OverviewAnalyticsObserver::class);

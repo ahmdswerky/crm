@@ -51,6 +51,7 @@ class Deal extends Model
             'commission_calculated_at' => 'datetime',
             'commission_finalized_at' => 'datetime',
             'closed_at' => 'date',
+            'status_updated_at' => 'datetime',
         ];
     }
 

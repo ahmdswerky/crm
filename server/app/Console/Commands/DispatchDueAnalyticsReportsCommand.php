@@ -18,12 +18,14 @@ class DispatchDueAnalyticsReportsCommand extends Command
 
         if ($now->greaterThanOrEqualTo($dailyReadyAt)) {
             $end = $now->copy()->startOfDay();
-            $reports->queue('sales_pipeline', 'daily', $end->copy()->subDay(), $end);
+            $start = $end->copy()->subDay();
+            $reports->queue('sales_pipeline', 'daily', $start, $end);
         }
 
         if ($now->day === 1 && $now->greaterThanOrEqualTo($dailyReadyAt)) {
             $end = $now->copy()->startOfMonth();
-            $reports->queue('sales_pipeline', 'monthly', $end->copy()->subMonthNoOverflow(), $end);
+            $start = $end->copy()->subMonthNoOverflow();
+            $reports->queue('sales_pipeline', 'monthly', $start, $end);
         }
 
         return self::SUCCESS;
