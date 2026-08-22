@@ -24,7 +24,7 @@ class AnalyticsService
             'as_of' => $now->toIso8601String(),
             'today' => $this->summary($now->copy()->startOfDay(), $now),
             'month_to_date' => $this->summary($now->copy()->startOfMonth(), $now),
-            'pipeline' => $this->pipeline(),
+            'pipeline' => $this->currentPipeline(),
             'inventory' => $this->inventory(),
         ];
     }
@@ -39,7 +39,7 @@ class AnalyticsService
                 'timezone' => 'UTC',
             ],
             'summary' => $this->summary($start, $end),
-            'pipeline' => $this->pipeline(),
+            'pipeline' => $this->periodPipeline($start, $end),
             'agent_performance' => $this->agentPerformance($start, $end),
             'inventory' => $this->inventory(),
         ];
@@ -76,24 +76,38 @@ class AnalyticsService
     }
 
     /** @return array<string, mixed> */
-    private function pipeline(): array
+    private function currentPipeline(): array
+    {
+        return $this->pipeline(Deal::query());
+    }
+
+    /** @return array<string, mixed> */
+    private function periodPipeline(CarbonInterface $start, CarbonInterface $end): array
+    {
+        return $this->pipeline($this->inPeriod(Deal::query(), 'status_updated_at', $start, $end));
+    }
+
+    /** @return array<string, mixed> */
+    private function pipeline(Builder $query): array
     {
         $statuses = array_map(static fn (DealStatus $status): string => $status->value, DealStatus::cases());
-        $rows = Deal::query()
+        $rows = $query
             ->selectRaw('status, COUNT(*) as count, COALESCE(SUM(deal_value), 0) as value')
             ->groupBy('status')
             ->get()
             ->keyBy('status');
         $activeStatuses = [DealStatus::INQUIRY->value, DealStatus::VIEWING->value, DealStatus::OFFER_MADE->value, DealStatus::LEGAL->value];
+        $byStatus = array_map(static fn (string $status): array => [
+            'status' => $status,
+            'count' => (int) ($rows->get($status)?->count ?? 0),
+            'value' => (float) ($rows->get($status)?->value ?? 0),
+        ], $statuses);
+        $active = collect($byStatus)->whereIn('status', $activeStatuses);
 
         return [
-            'active_count' => (int) Deal::query()->whereIn('status', $activeStatuses)->count(),
-            'active_value' => (float) Deal::query()->whereIn('status', $activeStatuses)->sum('deal_value'),
-            'by_status' => array_map(static fn (string $status): array => [
-                'status' => $status,
-                'count' => (int) ($rows->get($status)?->count ?? 0),
-                'value' => (float) ($rows->get($status)?->value ?? 0),
-            ], $statuses),
+            'active_count' => (int) $active->sum('count'),
+            'active_value' => (float) $active->sum('value'),
+            'by_status' => $byStatus,
         ];
     }
 
