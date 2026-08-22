@@ -6,7 +6,7 @@
 <br />
 
 <p align="center">
-  <a href="./overview.gif"><img src="./overview.gif" alt="CRM dashboard overview" width="640" /></a>
+  <a href="./github/assets/overview.gif"><img src="./github/assets/overview.gif" alt="CRM dashboard overview" width="640" /></a>
 </p>
 
 <br />
