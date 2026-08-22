@@ -15,19 +15,22 @@ return new class extends Migration
             $table->id();
             $table->decimal('value', 12, 2);
             $table->decimal('deal_value', 12, 2);
-            $table->foreignIdFor(Contact::class)->constrained();
-            $table->foreignIdFor(Property::class)->constrained();
+            $table->foreignIdFor(Contact::class)->index()->constrained();
+            $table->foreignIdFor(Property::class)->index()->constrained();
             $table->foreignIdFor(User::class, 'agent_id')
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->string('status');
+            $table->timestamp('status_updated_at');
             $table->decimal('commission_rate', 12, 2);
             $table->timestamp('closed_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
             $table->index('created_at');
+            $table->index(['status_updated_at', 'status']);
             $table->index(['status', 'closed_at']);
+            $table->index(['agent_id', 'status', 'id']);
         });
     }
 
