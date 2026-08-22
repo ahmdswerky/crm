@@ -9,10 +9,25 @@ use Illuminate\Support\Carbon;
 
 class CommissionRateResolver
 {
-    /** @return array{rate: float, policy_id: int|null} */
+    protected array $resolvedRates = [];
+
+    public function clearCache(): void
+    {
+        $this->resolvedRates = [];
+    }
+
     public function resolve(CommissionRecipientType $recipientType, ?User $user, ?Carbon $date = null): array
     {
         $date ??= now();
+        $cacheKey = implode(':', [
+            $recipientType->value,
+            $user?->id ?? 'company',
+            $date->toDateString(),
+        ]);
+
+        if (isset($this->resolvedRates[$cacheKey])) {
+            return $this->resolvedRates[$cacheKey];
+        }
 
         $policy = CommissionPolicy::query()
             ->where('recipient_type', $recipientType->value)
@@ -30,7 +45,7 @@ class CommissionRateResolver
             ->first();
 
         if ($policy) {
-            return [
+            return $this->resolvedRates[$cacheKey] = [
                 'rate' => (float) $policy->rate,
                 'policy_id' => $policy->id,
             ];
@@ -42,7 +57,7 @@ class CommissionRateResolver
             CommissionRecipientType::COMPANY => 'company',
         };
 
-        return [
+        return $this->resolvedRates[$cacheKey] = [
             'rate' => (float) config("crm.commission_rates.{$configKey}", 0),
             'policy_id' => null,
         ];
