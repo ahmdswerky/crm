@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class MediaResource extends JsonResource
 {
@@ -11,7 +12,7 @@ class MediaResource extends JsonResource
     {
         $seedImagePath = $this->resource->getCustomProperty('seed_image_path');
         $url = $seedImagePath !== null
-            ? asset($seedImagePath)
+            ? Storage::disk($this->resource->disk ?: config('media-library.disk_name'))->url($seedImagePath)
             : $this->resource->getFullUrl();
 
         return [

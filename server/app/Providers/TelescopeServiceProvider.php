@@ -21,6 +21,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         $isLocal = $this->app->environment('local');
 
+        Telescope::avatar(function (?string $id, ?string $email) {
+              return User::select(['id'])->find($id)?->media?->first()?->original_url;
+          });
+
         Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
             return $isLocal ||
                    $entry->isReportableException() ||

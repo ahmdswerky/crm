@@ -98,6 +98,7 @@ class DealRepository implements DealRepositoryInterface
             'property:id,title,description,city,address,price,purpose,type,status,created_at',
             'property.media',
             'agent:id,name,username,email,phone,created_at',
+            'agent.media',
             'allocations.recipient:id,name,username,email,phone,created_at',
         ];
     }
@@ -105,7 +106,7 @@ class DealRepository implements DealRepositoryInterface
     public function filtersInfo(): array
     {
         $valuesRange = $this->model
-            ->selectRaw('MIN(value) as min_value, MAX(value) as max_value, MIN(deal_value) as min_deal_value, MAX(deal_value) as max_deal_value')
+            ->selectRaw('MIN(value) as min_value, MAX(value) as max_value, MIN(deal_value) as min_deal_value, MAX(deal_value) as max_deal_value, MIN(created_at) as min_created_at, MAX(created_at) as max_created_at')
             ->first()
             ->toArray();
 
