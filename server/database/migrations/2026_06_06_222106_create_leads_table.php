@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('company_name', 150)->nullable();
             $table->string('source', 50)->nullable();
             $table->foreignIdFor(User::class, 'assigned_agent_id')
+                ->index()
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
@@ -31,7 +32,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('created_at');
-            $table->index(['status', 'created_at']);
+            $table->index(['status', 'created_at', 'id']);
+            $table->index(['assigned_agent_id', 'status', 'created_at', 'id']);
         });
     }
 

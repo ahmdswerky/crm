@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Account::class)->constrained();
-            $table->foreignIdFor(Lead::class)->constrained();
-            $table->unique('lead_id');
+            $table->foreignIdFor(Account::class)->index()->constrained();
+            $table->foreignIdFor(Lead::class)->unique()->constrained();
             $table->string('name')->index();
             $table->string('title')->nullable();
             $table->string('email')->nullable();
             $table->string('phone', 30)->unique();
-            $table->foreignIdFor(User::class, 'assigned_agent_id')->constrained();
+            $table->foreignIdFor(User::class, 'assigned_agent_id')->index()->constrained();
             $table->softDeletes();
             $table->timestamps();
 
