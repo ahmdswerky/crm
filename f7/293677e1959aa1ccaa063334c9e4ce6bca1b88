@@ -1,0 +1,46 @@
+server/app/Http/Requests/Lead/LeadIndexRequest.php
+  s_6593d6d0208ac1::t_c4bd4182853cab 30
+server/routes/api/v1/leads.php
+  s_6593d6d0208ac1::t_5a898c79e02732 8-10
+  s_6593d6d0208ac1::t_c4bd4182853cab 6-7,11
+server/app/Repositories/LeadRepository.php
+  s_3a872f9e8a5261::t_9f913cea243659 100,133
+  s_6593d6d0208ac1::t_ec0e19c2bf5741 94
+  s_6593d6d0208ac1::t_c4bd4182853cab 8,11,13,21,23-25,29-93,173-193,195-200
+  s_6593d6d0208ac1::t_957371236418c4 194
+server/app/Http/Controllers/LeadController.php
+  s_6593d6d0208ac1::t_c4bd4182853cab 31-33,35-43,59-61
+  s_3a872f9e8a5261::t_9f913cea243659 81
+  s_6593d6d0208ac1::t_5a898c79e02732 6,34,44-58
+server/app/Contracts/Repositories/LeadRepositoryInterface.php
+  s_6593d6d0208ac1::t_1f76281761b184 7,14-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "f7293677e1959aa1ccaa063334c9e4ce6bca1b88",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_3a872f9e8a5261": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0189e-9a32-7f70-90c5-827e57e7e1d7",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_6593d6d0208ac1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0219f-f473-73f3-b2ec-4e1906a33612",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
