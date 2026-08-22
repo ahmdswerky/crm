@@ -1,0 +1,19 @@
+server/tests/Feature/DealApiTest.php
+  s_15dff749f3ea20::t_3b67ee10801118 3,6-8,11,13-50,62-66,68-70,100,102-103,109-111,119-120,139-289
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "02b06c0a54962f3e2c20a12a49e9a0d70aa21d81",
+  "prompts": {},
+  "sessions": {
+    "s_15dff749f3ea20": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01f84-f0d4-7542-89ba-9c47bfbe6202",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
