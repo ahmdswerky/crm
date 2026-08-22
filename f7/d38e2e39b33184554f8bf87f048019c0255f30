@@ -1,0 +1,55 @@
+server/config/crm.php
+  s_887f863f778c92::t_e399f83b5d057a 30,32
+  s_887f863f778c92::t_80c5fcd7fb6748 31,33-34
+  s_887f863f778c92::t_b6682fb4c2b453 27-29
+server/database/seeders/PropertyMediaSeeder.php
+  s_887f863f778c92::t_c5af8da973a2da 38,53,68
+  s_e57af60b96d726::t_692231c2f702e5 8,18-19,81-87,102,111-140,146
+  s_887f863f778c92::t_2b40ba3532900c 26-36,39-40,51
+  s_887f863f778c92::t_be52eca082dcbe 59-65
+  s_887f863f778c92::t_4973ba2656e711 37,41-48,70-74
+  s_887f863f778c92::t_212b73a9defe22 49
+server/app/Http/Resources/MediaResource.php
+  s_e57af60b96d726::t_692231c2f702e5 7,15
+server/app/Repositories/UserRepository.php
+  s_2d4a609db137dc::t_7f7e166a559283 28,46
+server/database/seeders/UserSeeder.php
+  s_2d4a609db137dc::t_2515a31d8709a4 7-8,12-13,19-24,26-31,33-37,39-43,45-50,52-57,59-64,66-71,73-78,80-86,88-104,107-110,112-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "f7d38e2e39b33184554f8bf87f048019c0255f30",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_2d4a609db137dc": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fff66-d609-76f3-8f7b-4ac00c0aa95a",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_887f863f778c92": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01f49-1cf5-7640-91eb-b6dbee85a222",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_e57af60b96d726": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01df0-7341-78a2-9c75-52ca6ba9e206",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
