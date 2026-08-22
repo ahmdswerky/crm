@@ -25,7 +25,7 @@ class UserRepository implements UserRepositoryInterface
 
         return $this->model
             ->query()
-            ->when(($filters['with'] ?? null) === 'manager', fn (Builder $query) => $query->with('manager'))
+            ->when(($filters['with'] ?? null) === 'manager', fn (Builder $query) => $query->with('manager.media'))
             ->when(! $isSuperAdmin, fn (Builder $query) => $query->where('is_super', false))
             ->when($filters['q'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
@@ -43,6 +43,7 @@ class UserRepository implements UserRepositoryInterface
             ->when($filters['created_from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
             ->when($filters['created_to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to))
             ->whereNot('email', config('app.dev_email'))
+            ->with('media')
             ->paginate();
     }
 
