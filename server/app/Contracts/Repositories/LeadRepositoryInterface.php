@@ -4,11 +4,17 @@ namespace App\Contracts\Repositories;
 
 use App\Enums\LeadStatus;
 use App\Models\Lead;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface LeadRepositoryInterface
 {
     public function paginate(array $filters = []): LengthAwarePaginator;
+
+    /** @return array{stats: array<string, int>, columns: array<string, array{data: \Illuminate\Support\Collection<int, Lead>, total: int, next_cursor: string|null, has_more: bool}>} */
+    public function board(array $filters = []): array;
+
+    public function cursorPaginate(array $filters = []): CursorPaginator;
 
     public function findById(int $id, array $with = []): ?Lead;
 

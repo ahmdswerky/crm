@@ -27,6 +27,7 @@ class LeadIndexRequest extends FormRequest
             'created_to' => ['nullable', 'date', 'after_or_equal:created_from'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'cursor' => ['nullable', 'string', 'max:2048'],
         ];
     }
 }
