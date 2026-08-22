@@ -21,7 +21,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_super')->default(false);
-            $table->foreignIdFor(User::class, 'direct_manager_id')->nullable()->constrained();
+            $table->foreignIdFor(User::class, 'direct_manager_id')
+                ->index()
+                ->nullable()
+                ->constrained();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
