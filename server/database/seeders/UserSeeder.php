@@ -4,104 +4,115 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
+use RuntimeException;
 
 class UserSeeder extends Seeder
 {
+    private const AVATAR_DIRECTORY = 'seed-images/avatars';
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        if (! User::whereEmail($email = 'owner@crm.io')->exists()) {
-            User::factory()->create([
-                'name' => 'Owner',
-                'username' => 'owner',
-                'is_super' => true,
-                'email' => $email,
-            ]);
+        $owner = $this->findOrCreateUser('owner@crm.io', [
+            'name' => 'Owner',
+            'username' => 'owner',
+            'is_super' => true,
+        ]);
+        $this->attachSeedAvatar($owner, '1-male.jpg');
+
+        $developer = $this->findOrCreateUser(config('app.dev_email'), [
+            'name' => 'Developer',
+            'username' => 'dev',
+            'is_super' => true,
+        ]);
+        $this->attachSeedAvatar($developer, '2-male.jpg');
+
+        $supervisor1 = $this->findOrCreateUser('michael@crm.io', [
+            'name' => 'Michael Smith',
+            'username' => 'michael',
+        ]);
+        $this->attachSeedAvatar($supervisor1, '3-male.jpg');
+
+        $supervisor2 = $this->findOrCreateUser('chris@crm.io', [
+            'name' => 'Chris Anderson',
+            'username' => 'chris',
+        ]);
+        $this->attachSeedAvatar($supervisor2, '1-male.jpg');
+
+        $jack = $this->findOrCreateUser('j.ryan.agent@crm.io', [
+            'name' => 'Jack Ryan',
+            'username' => 'j.ryan',
+            'direct_manager_id' => $supervisor1->id,
+        ]);
+        $this->attachSeedAvatar($jack, '2-male.jpg');
+
+        $maya = $this->findOrCreateUser('m.hassan.agent@crm.io', [
+            'name' => 'Maya Hassan',
+            'username' => 'm.hassan',
+            'direct_manager_id' => $supervisor1->id,
+        ]);
+        $this->attachSeedAvatar($maya, '1-female.jpg');
+
+        $omar = $this->findOrCreateUser('o.khalil.agent@crm.io', [
+            'name' => 'Omar Khalil',
+            'username' => 'o.khalil',
+            'direct_manager_id' => $supervisor1->id,
+        ]);
+        $this->attachSeedAvatar($omar, '3-male.jpg');
+
+        $lina = $this->findOrCreateUser('l.adel.agent@crm.io', [
+            'name' => 'Lina Adel',
+            'username' => 'l.adel',
+            'direct_manager_id' => $supervisor2->id,
+        ]);
+        $this->attachSeedAvatar($lina, '2-female.jpg');
+
+        $karim = $this->findOrCreateUser('k.nassar.agent@crm.io', [
+            'name' => 'Karim Nassar',
+            'username' => 'k.nassar',
+            'direct_manager_id' => $supervisor2->id,
+        ]);
+        $this->attachSeedAvatar($karim, '1-male.jpg');
+
+        $nour = $this->findOrCreateUser('n.samir.agent@crm.io', [
+            'name' => 'Nour Samir',
+            'username' => 'n.samir',
+            'direct_manager_id' => $supervisor2->id,
+        ]);
+        $this->attachSeedAvatar($nour, '3-female.jpg');
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    private function findOrCreateUser(string $email, array $attributes): User
+    {
+        $user = User::query()->where('email', $email)->first();
+
+        return $user ?? User::factory()->create([
+            ...$attributes,
+            'email' => $email,
+        ]);
+    }
+
+    private function attachSeedAvatar(User $user, string $filename): void
+    {
+        if ($user->getFirstMedia('main')) {
+            return;
         }
 
-        if (! User::whereEmail($email = config('app.dev_email'))->exists()) {
-            User::factory()->create([
-                'name' => 'Developer',
-                'username' => 'dev',
-                'is_super' => true,
-                'email' => $email,
-            ]);
+        $path = public_path(self::AVATAR_DIRECTORY.'/'.$filename);
+
+        if (! File::isFile($path)) {
+            throw new RuntimeException("The seed avatar is missing: {$path}");
         }
 
-        $superviros1 = User::whereEmail($email = 'michael@crm.io')->first();
-
-        if (! $superviros1) {
-            $superviros1 = User::factory()->create([
-                'name' => 'Michael Smith',
-                'username' => 'michael',
-                'email' => $email,
-            ]);
-        }
-
-        $superviros2 = User::whereEmail($email = 'chris@crm.io')->first();
-
-        if (! $superviros2) {
-            $superviros2 = User::factory()->create([
-                'name' => 'Chris Anderson',
-                'username' => 'chris',
-                'email' => $email,
-            ]);
-        }
-
-        if (! User::whereEmail($email = 'j.ryan.agent@crm.io')->exists()) {
-            User::factory()->create([
-                'email' => $email,
-                'name' => 'Jack Ryan',
-                'username' => 'j.ryan',
-                'direct_manager_id' => $superviros1->id,
-            ]);
-        }
-
-        if (! User::whereEmail($email = 'm.hassan.agent@crm.io')->exists()) {
-            User::factory()->create([
-                'email' => $email,
-                'name' => 'Maya Hassan',
-                'username' => 'm.hassan',
-                'direct_manager_id' => $superviros1->id,
-            ]);
-        }
-
-        if (! User::whereEmail($email = 'o.khalil.agent@crm.io')->exists()) {
-            User::factory()->create([
-                'email' => $email,
-                'name' => 'Omar Khalil',
-                'username' => 'o.khalil',
-                'direct_manager_id' => $superviros1->id,
-            ]);
-        }
-
-        if (! User::whereEmail($email = 'l.adel.agent@crm.io')->exists()) {
-            User::factory()->create([
-                'email' => $email,
-                'name' => 'Lina Adel',
-                'username' => 'l.adel',
-                'direct_manager_id' => $superviros2->id,
-            ]);
-        }
-
-        if (! User::whereEmail($email = 'k.nassar.agent@crm.io')->exists()) {
-            User::factory()->create([
-                'email' => $email,
-                'name' => 'Karim Nassar',
-                'username' => 'k.nassar',
-                'direct_manager_id' => $superviros2->id,
-            ]);
-        }
-
-        if (! User::whereEmail($email = 'n.samir.agent@crm.io')->exists()) {
-            User::factory()->create([
-                'email' => $email,
-                'name' => 'Nour Samir',
-                'username' => 'n.samir',
-                'direct_manager_id' => $superviros2->id,
-            ]);
-        }
+        $user
+            ->addMedia($path)
+            ->preservingOriginal()
+            ->toMediaCollection('main');
     }
 }
