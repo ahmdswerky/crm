@@ -1,0 +1,34 @@
+server/database/migrations/2026_06_06_222106_create_leads_table.php
+  s_6593d6d0208ac1::t_c4bd4182853cab 27,35-36
+server/database/migrations/2026_07_17_104845_create_deals_table.php
+  s_179fd30a747c9d::t_6b0433f1f82411 18-19,24,31,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "ec847b69ba1294f5f48eacb06d68a6c6c42369a2",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_179fd30a747c9d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a003cc-ee0c-7d71-83bc-1ad3a19ebfea",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_6593d6d0208ac1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0219f-f473-73f3-b2ec-4e1906a33612",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
