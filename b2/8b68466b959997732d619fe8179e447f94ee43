@@ -1,0 +1,19 @@
+dashboard/src/pages/agents/shared.tsx
+  s_ae28bd2c9b214a::t_e4e36b70401c16 215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "b28b68466b959997732d619fe8179e447f94ee43",
+  "prompts": {},
+  "sessions": {
+    "s_ae28bd2c9b214a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02d08-f306-72e1-be60-c0d52cb3e8e7",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
