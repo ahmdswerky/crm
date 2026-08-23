@@ -50,9 +50,11 @@ describe("AgentsPage", () => {
 
     await screen.findByText(agent.name)
     expect(screen.getByLabelText(`${agent.name} avatar`).querySelector('[data-slot="avatar-image"]')).toHaveAttribute("src", agent.avatar.thumbnail_url)
+    expect(screen.getByLabelText(`${agent.name} avatar`).querySelector('[data-slot="avatar-fallback"]')).not.toBeInTheDocument()
     expect(screen.getByRole("columnheader", { name: "Manager" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Sara Manager" })).toHaveAttribute("href", "/agents/3")
     expect(screen.getByLabelText("Sara Manager avatar").querySelector('[data-slot="avatar-image"]')).toHaveAttribute("src", agent.manager.avatar.thumbnail_url)
+    expect(screen.getByLabelText("Sara Manager avatar").querySelector('[data-slot="avatar-fallback"]')).not.toBeInTheDocument()
     expect(new URL(String((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0])).searchParams.get("with")).toBe("manager")
     expect(screen.getByTestId("agents-table-surface").className).not.toContain("grid")
     await user.click(screen.getByText(agent.name))

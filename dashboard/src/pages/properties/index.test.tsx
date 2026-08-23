@@ -34,11 +34,11 @@ const property = {
 }
 
 function renderPage(entry = "/properties/7") {
-  return render(<TooltipProvider><MemoryRouter initialEntries={[entry]}><Routes><Route path="/properties/create" element={<PropertyCreatePage />} /><Route path="/properties/edit/:propertyId" element={<PropertyEditPage />} /><Route path="/properties/:propertyId" element={<PropertyDetailsPage />} /></Routes></MemoryRouter></TooltipProvider>)
+  return render(<TooltipProvider><MemoryRouter initialEntries={[entry]}><Routes><Route path="/properties/create" element={<PropertyCreatePage />} /><Route path="/properties/:propertyId/edit" element={<PropertyEditPage />} /><Route path="/properties/:propertyId" element={<PropertyDetailsPage />} /></Routes></MemoryRouter></TooltipProvider>)
 }
 
 function renderIndex(entry = "/properties") {
-  return render(<TooltipProvider><MemoryRouter initialEntries={[entry]}><Routes><Route path="/properties" element={<PropertiesPage />} /><Route path="/properties/create" element={<PropertyCreatePage />} /><Route path="/properties/edit/:propertyId" element={<PropertyEditPage />} /><Route path="/properties/:propertyId" element={<PropertyDetailsPage />} /></Routes></MemoryRouter></TooltipProvider>)
+  return render(<TooltipProvider><MemoryRouter initialEntries={[entry]}><Routes><Route path="/properties" element={<PropertiesPage />} /><Route path="/properties/create" element={<PropertyCreatePage />} /><Route path="/properties/:propertyId/edit" element={<PropertyEditPage />} /><Route path="/properties/:propertyId" element={<PropertyDetailsPage />} /></Routes></MemoryRouter></TooltipProvider>)
 }
 
 function listBody() {
@@ -92,7 +92,7 @@ describe("PropertyDetailsPage", () => {
     expect(await screen.findByRole("heading", { name: "New property" })).toBeInTheDocument()
     expect(screen.queryByRole("heading", { name: "Listing information" })).not.toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Create" })).toBeInTheDocument()
-    expect(screen.getAllByRole("group").filter((group) => group.getAttribute("data-slot") === "input-group")).toHaveLength(7)
+    expect(screen.getAllByRole("group").filter((group) => group.getAttribute("data-slot") === "input-group")).toHaveLength(6)
     expect(screen.getByRole("button", { name: "Property images" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Back to properties" })).toHaveAttribute("href", "/properties?page=2&q=Garden")
   })
@@ -365,7 +365,7 @@ describe("PropertiesPage", () => {
     expect(screen.queryByText("Property record")).not.toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "Inspect 27 Garden Street" })).not.toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Open details for 27 Garden Street" })).toHaveAttribute("href", "/properties/7?page=2&q=Garden")
-    expect(screen.getByRole("link", { name: "Edit 27 Garden Street" })).toHaveAttribute("href", "/properties/edit/7?page=2&q=Garden")
+    expect(screen.getByRole("link", { name: "Edit 27 Garden Street" })).toHaveAttribute("href", "/properties/7/edit?page=2&q=Garden")
   })
 
   it("links new properties to the dedicated create page with return context", async () => {

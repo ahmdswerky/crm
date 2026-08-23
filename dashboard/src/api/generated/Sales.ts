@@ -998,6 +998,7 @@ export interface components {
             /** Format: email */
             email: string;
             phone: string;
+            readonly avatar?: components["schemas"]["Media"];
             /** Format: password */
             password?: string;
             roles?: {
