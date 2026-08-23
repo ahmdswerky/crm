@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_7465163c0b25f7::t_ee6d4db28cba1f 212,214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "ae1753309e9acf2714c73d682973576b860998ba",
+  "prompts": {},
+  "sessions": {
+    "s_7465163c0b25f7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02e7c-6a21-7460-b8c5-5992e644d6e4",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
