@@ -47,20 +47,16 @@ type LeadStats = Partial<Record<"pending_count" | "contacted_count" | "qualified
 type LeadAccount = Pick<Account, "id" | "name" | "image">
 type LeadDetail = Lead & { contact?: (NonNullable<Lead["contact"]> & { account?: LeadAccount | null }) | null }
 type LeadInfoValues = { name: string; email: string; phone: string; title: string; city: string; address: string; companyName: string }
-type LeadResponse = {
-  data: Lead[]
-  meta?: { current_page?: number; last_page?: number; total?: number }
-  analytics?: { stats?: LeadStats }
-  stats?: LeadStats
-}
+type LeadResponse = MarketingPaths["/board/{status}"]["get"]["responses"][200]["content"]["application/json"]
+type LeadBoardResponse = MarketingPaths["/board"]["get"]["responses"][200]["content"]["application/json"]
 type LeadEnvelope = { lead: LeadDetail }
 type DealListResponse = { data: Deal[]; meta?: { current_page?: number; last_page?: number; total?: number } }
 type AccountListResponse = { data?: Account[]; accounts?: Account[]; meta?: { current_page?: number; last_page?: number; total?: number } }
 type LeadStatusState = Record<LeadStatus, Lead[]>
-type LeadPageState = Record<LeadStatus, number>
-type LeadLastPageState = Record<LeadStatus, number>
 type LeadLoadingState = Record<LeadStatus, boolean>
 type LeadTotalState = Record<LeadStatus, number>
+type LeadCursorState = Record<LeadStatus, string | null>
+type LeadHasMoreState = Record<LeadStatus, boolean>
 
 const filterMotionTransition = { type: "spring", stiffness: 500, damping: 42, mass: 0.65 } as const
 const filterSlideTransition = { duration: 0.18, ease: [0.22, 1, 0.36, 1] as const }
@@ -84,11 +80,11 @@ const dealStatusPillClass: Record<Deal["status"], string> = {
 }
 
 function emptyLeadState(): LeadStatusState { return { pending: [], contacted: [], unqualified: [], qualified: [] } }
-function emptyPageState(): LeadPageState { return { pending: 0, contacted: 0, unqualified: 0, qualified: 0 } }
-function firstPageState(): LeadPageState { return { pending: 1, contacted: 1, unqualified: 1, qualified: 1 } }
-function lastPageState(): LeadLastPageState { return { pending: 1, contacted: 1, unqualified: 1, qualified: 1 } }
 function emptyLoadingState(): LeadLoadingState { return { pending: false, contacted: false, unqualified: false, qualified: false } }
+function loadingState(): LeadLoadingState { return { pending: true, contacted: true, unqualified: true, qualified: true } }
 function emptyTotalState(): LeadTotalState { return { pending: 0, contacted: 0, unqualified: 0, qualified: 0 } }
+function emptyCursorState(): LeadCursorState { return { pending: null, contacted: null, unqualified: null, qualified: null } }
+function emptyHasMoreState(): LeadHasMoreState { return { pending: false, contacted: false, unqualified: false, qualified: false } }
 function uniqueLeads(leads: Lead[]) {
   const seen = new Set<number>()
   return leads.filter((lead) => {
@@ -123,11 +119,11 @@ export function LeadsKanbanPage() {
   const [leads, setLeads] = useState<LeadStatusState>(() => emptyLeadState())
   const [stats, setStats] = useState<LeadStats>({})
   const [statsLoading, setStatsLoading] = useState(true)
-  const [pages, setPages] = useState<LeadPageState>(() => emptyPageState())
-  const [lastPages, setLastPages] = useState<LeadLastPageState>(() => lastPageState())
   const [loading, setLoading] = useState<LeadLoadingState>(() => emptyLoadingState())
   const [loadingMore, setLoadingMore] = useState<LeadLoadingState>(() => emptyLoadingState())
   const [totals, setTotals] = useState<LeadTotalState>(() => emptyTotalState())
+  const [cursors, setCursors] = useState<LeadCursorState>(() => emptyCursorState())
+  const [hasMore, setHasMore] = useState<LeadHasMoreState>(() => emptyHasMoreState())
   const [error, setError] = useState("")
   const [movingId, setMovingId] = useState<number | null>(null)
   const [selectedLead, setSelectedLead] = useState<LeadDetail | null>(null)
@@ -149,44 +145,61 @@ export function LeadsKanbanPage() {
   const [createError, setCreateError] = useState("")
   const createForm = useForm<LeadFormValues>({ resolver: zodResolver(leadSchema), defaultValues: emptyValues })
 
-  const loadColumn = useCallback(async (status: LeadStatus, nextPage: number, append: boolean, signal?: AbortSignal) => {
-    const loadingSetter = append ? setLoadingMore : setLoading
-    loadingSetter((current) => ({ ...current, [status]: true }))
+  const boardFilters = useMemo(() => ({ per_page: 5, q: query, source: sourceFilter, assigned_agent: assignedAgentId || undefined }), [assignedAgentId, query, sourceFilter])
+
+  const loadBoard = useCallback(async (signal?: AbortSignal) => {
+    setLoading(loadingState())
     setError("")
     try {
-      const endpoint = listUrl(`${API_BASE_URL}/v1/leads`, { page: nextPage, per_page: 5, q: query, status, source: sourceFilter, assigned_agent: assignedAgentId || undefined })
-      const body = await apiJson<LeadResponse>(endpoint, { signal })
-      setLeads((current) => ({ ...current, [status]: uniqueLeads(append ? [...current[status], ...body.data] : body.data) }))
-      setPages((current) => ({ ...current, [status]: body.meta?.current_page ?? nextPage }))
-      setLastPages((current) => ({ ...current, [status]: body.meta?.last_page ?? nextPage }))
-      setTotals((current) => ({ ...current, [status]: body.meta?.total ?? body.data.length }))
-      setStats(body.analytics?.stats ?? body.stats ?? {})
+      const body = await apiJson<LeadBoardResponse>(listUrl(`${API_BASE_URL}/v1/leads/board`, boardFilters), { signal })
+      setLeads(Object.fromEntries(statuses.map((status) => [status.value, uniqueLeads(body.columns[status.value]?.data ?? [])])) as LeadStatusState)
+      setTotals(Object.fromEntries(statuses.map((status) => [status.value, body.columns[status.value]?.total ?? 0])) as LeadTotalState)
+      setCursors(Object.fromEntries(statuses.map((status) => [status.value, body.columns[status.value]?.next_cursor ?? null])) as LeadCursorState)
+      setHasMore(Object.fromEntries(statuses.map((status) => [status.value, body.columns[status.value]?.has_more ?? false])) as LeadHasMoreState)
+      setStats(body.stats ?? {})
     } catch (caught) {
       if (!(caught instanceof DOMException && caught.name === "AbortError")) setError(caught instanceof Error ? caught.message : "Unable to load leads.")
     } finally {
-      if (!signal?.aborted) loadingSetter((current) => ({ ...current, [status]: false }))
+      if (!signal?.aborted) setLoading(emptyLoadingState())
     }
-  }, [assignedAgentId, query, sourceFilter])
+  }, [boardFilters])
+
+  const loadColumn = useCallback(async (status: LeadStatus) => {
+    const cursor = cursors[status]
+    if (!hasMore[status] || !cursor || loadingMore[status]) return
+    setLoadingMore((current) => ({ ...current, [status]: true }))
+    setError("")
+    try {
+      const body = await apiJson<LeadResponse>(listUrl(`${API_BASE_URL}/v1/leads/board/${status}`, { ...boardFilters, cursor }), {})
+      setLeads((current) => ({ ...current, [status]: uniqueLeads([...current[status], ...body.data]) }))
+      setCursors((current) => ({ ...current, [status]: body.next_cursor ?? null }))
+      setHasMore((current) => ({ ...current, [status]: body.has_more ?? false }))
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to load leads.")
+    } finally {
+      setLoadingMore((current) => ({ ...current, [status]: false }))
+    }
+  }, [boardFilters, cursors, hasMore, loadingMore])
 
   const refreshLeads = () => {
     setStatsLoading(true)
-    void Promise.all(statuses.map((status) => loadColumn(status.value, 1, false))).finally(() => setStatsLoading(false))
+    void loadBoard().finally(() => setStatsLoading(false))
   }
 
   useEffect(() => {
     if (!can("lead.view")) return
     const controller = new AbortController()
     setLeads(emptyLeadState())
-    setPages(firstPageState())
-    setLastPages(lastPageState())
     setTotals(emptyTotalState())
+    setCursors(emptyCursorState())
+    setHasMore(emptyHasMoreState())
     setStats({})
     setStatsLoading(true)
-    void Promise.all(statuses.map((status) => loadColumn(status.value, 1, false, controller.signal))).finally(() => {
+    void loadBoard(controller.signal).finally(() => {
       if (!controller.signal.aborted) setStatsLoading(false)
     })
     return () => controller.abort()
-  }, [can, loadColumn])
+  }, [can, loadBoard])
 
   useEffect(() => {
     if (selectedLeadId === null) return
@@ -509,7 +522,7 @@ export function LeadsKanbanPage() {
       await apiJson<{ lead: Lead }>(`${API_BASE_URL}/v1/leads`, { method: "POST", body: JSON.stringify(payload) })
       setCreateOpen(false)
       createForm.reset(emptyValues)
-      await Promise.all(statuses.map((status) => loadColumn(status.value, 1, false)))
+      await loadBoard()
       toast.success("Lead created.")
     } catch (caught) {
       if (caught instanceof ApiError) Object.entries(caught.fields).forEach(([field, messages]) => createForm.setError(field as keyof LeadFormValues, { message: messages[0] }))
@@ -566,8 +579,8 @@ export function LeadsKanbanPage() {
         </div>
       </motion.div>
     </div>
-    {error && <div role="alert" className="bg-destructive/5 p-3 text-sm text-destructive">{error}<Button variant="link" size="sm" className="ms-2 h-auto px-0 text-destructive" onClick={() => statuses.forEach((status) => void loadColumn(status.value, 1, false))}>Try again</Button></div>}
-    <Kanban value={leads} onValueChange={() => {}} getItemValue={(item) => String(item.id)} onMove={(event) => void moveLead(event)}><KanbanBoard>{displayedStatuses.map((status) => <LeadColumn key={status.value} status={status} leads={leads[status.value]} total={totals[status.value]} loading={loading[status.value]} loadingMore={loadingMore[status.value]} canLoadMore={pages[status.value] < lastPages[status.value]} onLoadMore={() => void loadColumn(status.value, pages[status.value] + 1, true)} movingId={movingId} canEdit={can("lead.edit")} onOpenLead={openLeadPreview} />)}</KanbanBoard><KanbanOverlay>{({ value, width }) => { const lead = allLeads.find((item) => String(item.id) === value); return lead ? <LeadCardOverlay lead={lead} width={width} /> : null }}</KanbanOverlay></Kanban>
+    {error && <div role="alert" className="bg-destructive/5 p-3 text-sm text-destructive">{error}<Button variant="link" size="sm" className="ms-2 h-auto px-0 text-destructive" onClick={() => void refreshLeads()}>Try again</Button></div>}
+    <Kanban value={leads} onValueChange={() => {}} getItemValue={(item) => String(item.id)} onMove={(event) => void moveLead(event)}><KanbanBoard>{displayedStatuses.map((status) => <LeadColumn key={status.value} status={status} leads={leads[status.value]} total={totals[status.value]} loading={loading[status.value]} loadingMore={loadingMore[status.value]} canLoadMore={hasMore[status.value]} onLoadMore={() => void loadColumn(status.value)} movingId={movingId} canEdit={can("lead.edit")} onOpenLead={openLeadPreview} />)}</KanbanBoard><KanbanOverlay>{({ value, width }) => { const lead = allLeads.find((item) => String(item.id) === value); return lead ? <LeadCardOverlay lead={lead} width={width} /> : null }}</KanbanOverlay></Kanban>
     <LeadPreviewDialog open={selectedLeadId !== null} lead={selectedLead} loading={selectedLeadLoading} error={selectedLeadError} deals={previewDeals} dealsTotal={previewDealsTotal} dealsLoading={previewDealsLoading} dealsError={previewDealsError} isSuper={isSuper} canEdit={can("lead.edit")} canDelete={can("lead.delete")} canEditInfo={selectedLead?.contact ? can("contact.edit") : can("lead.edit")} canEditAccount={can("contact.edit")} updatingStatus={updatingLeadStatus === selectedLead?.id} updatingAgent={updatingLeadAgent === selectedLead?.id} updatingAccount={updatingLeadAccount === selectedLead?.id} updatingInfo={updatingLeadInfo} deleting={deletingLead} loadAgentOptions={loadAgentOptions} loadAccountOptions={loadAccountOptions} onStatusChange={(status) => void updateLeadStatus(status)} onAgentChange={(agentId, option) => void updateLeadAgent(agentId, option)} onAccountChange={(accountId, option) => void updateLeadAccount(accountId, option)} onInfoSave={updateLeadInfo} onNameSave={updateLeadName} onDelete={requestDeleteLead} onOpenChange={(open) => { if (!open) closeLeadPreview() }} />
     <Dialog open={createOpen} onOpenChange={(open) => open ? setCreateOpen(true) : closeCreateLead()}>
       <DialogContent className="grid-rows-[auto_minmax(0,1fr)_auto] max-h-[80vh] min-w-3xl max-w-5xl overflow-hidden">
@@ -728,7 +741,7 @@ function LeadStatusMenu({ status, canEdit, canQualify, updating, onChange }: { s
 function LeadAgentCard({ lead, canEdit, updating, loadOptions, onChange }: { lead: LeadDetail; canEdit: boolean; updating: boolean; loadOptions: (query: string, page: number, signal: AbortSignal) => Promise<SearchableResourcePage>; onChange: (agentId: number, option?: SearchableResourceOption) => void }) {
   const agent = lead.assigned_agent
   const emptyState = <div className="mt-3 flex items-center gap-2 rounded-md bg-background/60 p-2.5 text-sm text-muted-foreground"><span className="flex size-7 items-center justify-center rounded-full bg-muted"><UserRound className="size-3.5" aria-hidden="true" /></span><span>Unassigned</span></div>
-  const currentOption = agent ? { id: agent.id, label: agent.name, description: `@${agent.username}`, data: agent } : undefined
+  const currentOption = agent ? { id: agent.id, label: agent.name, data: agent } : undefined
   return <section className="rounded-lg bg-muted/40 p-3">{canEdit ? <div className={updating ? "pointer-events-none opacity-60" : undefined}><SearchableResourcePicker id={`lead-dialog-agent-${lead.id}`} label="Agent" labelStyle="plain" value={lead.assigned_agent_id ?? agent?.id ?? 0} selectedOption={currentOption} onChange={onChange} loadOptions={loadOptions} placeholder="Choose an agent" searchPlaceholder="Search agents…" loadingLabel="Searching agents…" emptyLabel="No agents found." noResultsLabel="No agents match your search." renderOption={(option) => <AgentOption option={option} />} renderSelectedOption={(option) => <AgentOption option={option} />} /></div> : agent ? <div className="mt-3 flex items-center gap-2"><PersonAvatar name={agent.name} size="sm" /><span className="truncate text-sm font-medium">{agent.name}</span></div> : emptyState}</section>
 }
 

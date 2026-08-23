@@ -249,7 +249,7 @@ export function DealsPage() {
   const optionDeals = deals
   const contactOptions = Array.from(new Map(optionDeals.filter((deal) => deal.contact.id !== undefined).map((deal) => [String(deal.contact.id), deal.contact])).values())
   const propertyOptions = Array.from(new Map(optionDeals.filter((deal) => deal.property.id !== undefined).map((deal) => [String(deal.property.id), deal.property])).values())
-  const dealAgentOptions = Array.from(new Map(optionDeals.filter((deal) => deal.agent?.id !== undefined).map((deal) => [String(deal.agent?.id), deal.agent])).values()).filter((agent): agent is NonNullable<Deal["agent"]> => Boolean(agent)).map((agent) => ({ id: agent.id as number, name: agent.name, username: agent.username }))
+  const dealAgentOptions = Array.from(new Map(optionDeals.filter((deal) => deal.agent?.id !== undefined).map((deal) => [String(deal.agent?.id), deal.agent])).values()).filter((agent): agent is NonNullable<Deal["agent"]> => Boolean(agent)).map((agent) => ({ id: agent.id as number, name: agent.name, username: agent.username, avatar: agent.avatar }))
   const agentOptions = Array.from(new Map([...dealAgentOptions, ...userOptions].map((agent) => [String(agent.id), agent])).values())
   const selectedContactOption = contactOptions.find((contact) => contact.id === Number(contactFilter))
   const selectedPropertyOption = propertyOptions.find((property) => property.id === Number(propertyFilter))

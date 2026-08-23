@@ -4,7 +4,7 @@ import path from "node:path"
 const dashboardRoot = path.resolve(import.meta.dirname, "..")
 const repositoryRoot = path.resolve(dashboardRoot, "..")
 const sourceRoot = path.resolve(repositoryRoot, "docs/openapi")
-const outputPath = path.resolve(dashboardRoot, "public/openapi.json")
+const outputPath = path.resolve(process.env.OPENAPI_OUTPUT_PATH ?? path.resolve(dashboardRoot, "public/openapi.json"))
 const productionServer = "https://api-crm.swerky.dev/api"
 
 const sources = [
@@ -20,6 +20,22 @@ const sources = [
 ]
 
 const methods = new Set(["get", "put", "post", "delete", "options", "head", "patch", "trace"])
+
+// These schemas represent one public model across multiple source exports.
+// The selected source owns the canonical definition; all other local refs are
+// rewritten to that definition. Standalone schema models keep their own names;
+// only non-schema components remain namespaced to avoid collisions.
+const canonicalSchemaSources = {
+  Account: "Contact.openapi.json",
+  Contact: "Contact.openapi.json",
+  Lead: "Marketing.openapi.json",
+  Media: "Media.openapi.json",
+  OverviewProperty: "Analytics.openapi.json",
+  Permission: "Auth.openapi.json",
+  Property: "Listing.openapi.json",
+  Role: "Auth.openapi.json",
+  User: "Auth.openapi.json",
+}
 
 function rewriteReferences(value, componentNames) {
   if (typeof value === "string") {
@@ -37,24 +53,28 @@ function rewriteReferences(value, componentNames) {
   )
 }
 
-function namespacedComponents(document, namespace) {
+function namespacedComponents(document, namespace, sourceFile) {
   const componentNames = new Map()
   const components = document.components ?? {}
 
   for (const [section, entries] of Object.entries(components)) {
     if (!entries || typeof entries !== "object" || Array.isArray(entries)) continue
-    for (const name of Object.keys(entries)) componentNames.set(`${section}/${name}`, `${namespace}_${name}`)
+    for (const name of Object.keys(entries)) {
+      const outputName = section === "schemas" ? name : `${namespace}_${name}`
+      componentNames.set(`${section}/${name}`, outputName)
+    }
   }
 
   const output = {}
   for (const [section, entries] of Object.entries(components)) {
     if (!entries || typeof entries !== "object" || Array.isArray(entries)) continue
-    output[section] = Object.fromEntries(
-      Object.entries(entries).map(([name, value]) => [
-        `${namespace}_${name}`,
-        rewriteReferences(value, componentNames),
-      ]),
-    )
+    output[section] = {}
+    for (const [name, value] of Object.entries(entries)) {
+      const canonicalSource = section === "schemas" && canonicalSchemaSources[name]
+      if (canonicalSource && canonicalSource !== sourceFile) continue
+      const outputName = componentNames.get(`${section}/${name}`)
+      output[section][outputName] = rewriteReferences(value, componentNames)
+    }
   }
 
   return { components: output, componentNames }
@@ -95,7 +115,7 @@ for (const source of sources) {
   }
 
   const namespace = source.slug.replace(/[^a-zA-Z0-9]/g, "_")
-  const { components, componentNames } = namespacedComponents(document, namespace)
+  const { components, componentNames } = namespacedComponents(document, namespace, source.file)
   const paths = rewriteReferences(document.paths ?? {}, componentNames)
 
   for (const [sourcePath, pathItem] of Object.entries(paths)) {

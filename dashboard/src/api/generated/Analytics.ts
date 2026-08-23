@@ -27,6 +27,59 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "overview": {
+                         *         "as_of": "2026-08-20T12:00:00.000000Z",
+                         *         "today": {
+                         *           "new_leads": 1,
+                         *           "converted_leads": 1,
+                         *           "lead_conversion_rate": 12.5,
+                         *           "opened_deals": 1,
+                         *           "opened_deal_value": 240000,
+                         *           "won_deals": 1,
+                         *           "lost_deals": 1,
+                         *           "won_value": 240000,
+                         *           "lost_value": 240000,
+                         *           "win_rate": 12.5,
+                         *           "final_commission": 100
+                         *         },
+                         *         "month_to_date": {
+                         *           "new_leads": 1,
+                         *           "converted_leads": 1,
+                         *           "lead_conversion_rate": 12.5,
+                         *           "opened_deals": 1,
+                         *           "opened_deal_value": 240000,
+                         *           "won_deals": 1,
+                         *           "lost_deals": 1,
+                         *           "won_value": 240000,
+                         *           "lost_value": 240000,
+                         *           "win_rate": 12.5,
+                         *           "final_commission": 100
+                         *         },
+                         *         "pipeline": {
+                         *           "active_count": 3,
+                         *           "active_value": 240000,
+                         *           "by_status": [
+                         *             {
+                         *               "status": "pending",
+                         *               "count": 3,
+                         *               "value": 240000
+                         *             }
+                         *           ]
+                         *         },
+                         *         "inventory": [
+                         *           {
+                         *             "status": "pending",
+                         *             "purpose": "sale",
+                         *             "type": "villa",
+                         *             "count": 3,
+                         *             "value": 240000
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             overview: components["schemas"]["AnalyticsOverview"];
                         };
@@ -67,6 +120,52 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "metrics": {
+                         *         "new_leads": {
+                         *           "value": 240000,
+                         *           "change": 12.5,
+                         *           "trend": [
+                         *             {
+                         *               "label": "Mon",
+                         *               "value": 240000
+                         *             }
+                         *           ]
+                         *         },
+                         *         "conversion_rate": {
+                         *           "value": 240000,
+                         *           "change": 12.5,
+                         *           "trend": [
+                         *             {
+                         *               "label": "Mon",
+                         *               "value": 240000
+                         *             }
+                         *           ]
+                         *         },
+                         *         "revenue": {
+                         *           "value": 240000,
+                         *           "change": 12.5,
+                         *           "trend": [
+                         *             {
+                         *               "label": "Mon",
+                         *               "value": 240000
+                         *             }
+                         *           ]
+                         *         },
+                         *         "properties": {
+                         *           "value": 240000,
+                         *           "change": 12.5,
+                         *           "trend": [
+                         *             {
+                         *               "label": "Mon",
+                         *               "value": 240000
+                         *             }
+                         *           ]
+                         *         }
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             metrics: components["schemas"]["OverviewMetrics"];
                         };
@@ -95,6 +194,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @example month */
                     range?: "year" | "month" | "week";
                 };
                 header?: never;
@@ -109,6 +209,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "leaderboard": {
+                         *         "range": "year",
+                         *         "data": [
+                         *           {
+                         *             "name": "Example record",
+                         *             "value": 240000
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             leaderboard: components["schemas"]["OverviewLeaderboard"];
                         };
@@ -138,6 +251,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @example month */
                     range?: "year" | "month" | "week";
                 };
                 header?: never;
@@ -152,6 +266,25 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "revenue": {
+                         *         "range": "year",
+                         *         "current": [
+                         *           {
+                         *             "label": "Mon",
+                         *             "value": 240000
+                         *           }
+                         *         ],
+                         *         "previous": [
+                         *           {
+                         *             "label": "Mon",
+                         *             "value": 240000
+                         *           }
+                         *         ]
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             revenue: components["schemas"]["OverviewRevenue"];
                         };
@@ -193,6 +326,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "customers": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "company": "Northstar Development",
+                         *           "account_logo": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "position": "example"
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         "application/json": {
                             customers: components["schemas"]["OverviewCustomer"][];
                         };
@@ -233,6 +379,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "deals": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "customer": "example",
+                         *           "deal_value": 240000,
+                         *           "status": "pending"
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         "application/json": {
                             deals: components["schemas"]["OverviewDeal"][];
                         };
@@ -273,6 +432,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "accounts": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "logo": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "industry": "example",
+                         *           "leads_count": 3
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         "application/json": {
                             accounts: components["schemas"]["OverviewAccount"][];
                         };
@@ -313,6 +485,18 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "properties": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "status": "pending",
+                         *           "price": 240000
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         "application/json": {
                             properties: components["schemas"]["OverviewProperty"][];
                         };
@@ -341,11 +525,17 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @example daily */
                     cadence?: "daily" | "monthly";
+                    /** @example queued */
                     status?: "queued" | "running" | "completed" | "failed";
+                    /** @example 2026-08-01T00:00:00.000000Z */
                     period_from?: string;
+                    /** @example 2026-08-01T00:00:00.000000Z */
                     period_to?: string;
+                    /** @example 1 */
                     page?: number;
+                    /** @example 1 */
                     per_page?: number;
                 };
                 header?: never;
@@ -360,6 +550,25 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "definition": "sales-pipeline",
+                         *           "cadence": "daily",
+                         *           "status": "queued",
+                         *           "period_start": "2026-08-20T12:00:00.000000Z",
+                         *           "period_end": "2026-08-20T12:00:00.000000Z",
+                         *           "generated_at": "2026-08-20T12:00:00.000000Z",
+                         *           "duration_ms": 1,
+                         *           "download_available": true
+                         *         }
+                         *       ],
+                         *       "links": {},
+                         *       "meta": {}
+                         *     }
+                         */
                         "application/json": components["schemas"]["ReportRunPaginator"];
                     };
                 };
@@ -388,6 +597,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
+                    /** @example 550e8400-e29b-41d4-a716-446655440000 */
                     reportRun: string;
                 };
                 cookie?: never;
@@ -400,6 +610,26 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "report": {
+                         *         "id": "550e8400-e29b-41d4-a716-446655440000",
+                         *         "definition": "sales-pipeline",
+                         *         "cadence": "daily",
+                         *         "status": "queued",
+                         *         "period_start": "2026-08-20T12:00:00.000000Z",
+                         *         "period_end": "2026-08-20T12:00:00.000000Z",
+                         *         "generated_at": "2026-08-20T12:00:00.000000Z",
+                         *         "duration_ms": 1,
+                         *         "download_available": true,
+                         *         "snapshot": {},
+                         *         "failure": {
+                         *           "code": "example",
+                         *           "message": "Request completed successfully."
+                         *         }
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             report: components["schemas"]["ReportRunDetail"];
                         };
@@ -437,6 +667,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
+                    /** @example 550e8400-e29b-41d4-a716-446655440000 */
                     reportRun: string;
                 };
                 cookie?: never;
@@ -449,6 +680,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example id,definition,status
+                         *     550e8400-e29b-41d4-a716-446655440000,sales-pipeline,completed
+                         */
                         "text/csv": string;
                     };
                 };

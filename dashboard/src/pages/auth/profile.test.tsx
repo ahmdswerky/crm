@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { ProfilePage } from "./profile"
 
 let isSuper = false
+let canGenerateSecureToken = false
 
 const profile = {
   id: 9,
@@ -14,6 +15,7 @@ const profile = {
   phone: "+201000000000",
   permissions: [],
   is_super: false,
+  can_generate_secure_token: false,
 }
 
 vi.mock("@/auth/auth-provider", () => ({
@@ -42,10 +44,17 @@ function json(body: unknown) {
 describe("ProfilePage", () => {
   beforeEach(() => {
     isSuper = false
+    canGenerateSecureToken = false
     vi.clearAllMocks()
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
-      if (String(input).endsWith("/secure-token")) return json({ token: "$2y$generated-secure-token" })
-      return json({ user: { ...profile, is_super: isSuper } })
+      if (String(input).endsWith("/secure-token")) {
+        return json({
+          token: "$2y$generated-secure-token",
+          horizon: "/api/secure-login?secure_token=generated-token&user=9&destination=horizon",
+          telescope: "/api/secure-login?secure_token=generated-token&user=9&destination=telescope",
+        })
+      }
+      return json({ user: { ...profile, is_super: isSuper, can_generate_secure_token: canGenerateSecureToken } })
     }))
   })
 
@@ -60,6 +69,7 @@ describe("ProfilePage", () => {
   it("generates and exposes a copyable token for a super admin", async () => {
     const user = userEvent.setup()
     isSuper = true
+    canGenerateSecureToken = true
     render(<ProfilePage />)
 
     await screen.findByRole("heading", { name: "Generate Secure Token" })
@@ -76,11 +86,21 @@ describe("ProfilePage", () => {
     expect(token).toHaveAttribute("readonly")
     expect(cardBody).not.toHaveClass("blur-[1.5px]")
     expect(screen.getByRole("button", { name: "Copy secure token" })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Horizon" })).toHaveAttribute("href", "/api/secure-login?secure_token=generated-token&user=9&destination=horizon")
+    expect(screen.getByRole("link", { name: "Telescope" })).toHaveAttribute("href", "/api/secure-login?secure_token=generated-token&user=9&destination=telescope")
 
     const writeText = vi.fn(async () => undefined)
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } })
     await user.click(token)
     expect(writeText).toHaveBeenCalledWith("$2y$generated-secure-token")
     expect(toast.success).toHaveBeenCalledWith("Secure token copied to clipboard.")
+  })
+
+  it("hides secure token controls from a super admin who is not the developer", async () => {
+    isSuper = true
+    render(<ProfilePage />)
+
+    await screen.findByRole("heading", { name: "Profile" })
+    expect(screen.queryByRole("heading", { name: "Generate Secure Token" })).not.toBeInTheDocument()
   })
 })

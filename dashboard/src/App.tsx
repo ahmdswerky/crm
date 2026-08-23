@@ -7,6 +7,7 @@ import { ErrorState } from "@/components/shared/error-state"
 const AppShell = lazy(() => import("@/components/shared/app-shell").then(({ AppShell }) => ({ default: AppShell })))
 const OverviewPage = lazy(() => import("@/pages/overview").then(({ OverviewPage }) => ({ default: OverviewPage })))
 const ReportsPage = lazy(() => import("@/pages/reports").then(({ ReportsPage }) => ({ default: ReportsPage })))
+const InvoicesPage = lazy(() => import("@/pages/invoices").then(({ InvoicesPage }) => ({ default: InvoicesPage })))
 const ApiDocsPage = lazy(() => import("@/pages/api-docs").then(({ ApiDocsPage }) => ({ default: ApiDocsPage })))
 const ReportDetailsPage = lazy(() => import("@/pages/reports/details").then(({ ReportDetailsPage }) => ({ default: ReportDetailsPage })))
 const LeadsKanbanPage = lazy(() => import("@/pages/leads").then(({ LeadsKanbanPage }) => ({ default: LeadsKanbanPage })))
@@ -63,6 +64,7 @@ function AuthenticatedApp() {
     <Route element={<Protected />}>
       <Route index element={<LazyRoute><OverviewPage /></LazyRoute>} />
       <Route path="reports" element={<LazyRoute><ReportsPage /></LazyRoute>} />
+      <Route path="invoices" element={<LazyRoute><InvoicesPage /></LazyRoute>} />
       <Route path="reports/:reportRunId" element={<LazyRoute><ReportDetailsPage /></LazyRoute>} />
       <Route path="pipeline" element={<LazyRoute><LeadsKanbanPage /></LazyRoute>} />
       <Route path="leads" element={<LegacyLeadsIndexRedirect />} />

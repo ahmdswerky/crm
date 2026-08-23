@@ -28,16 +28,16 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "username": "",
-                     *       "password": ""
+                     *       "username": "supervisor",
+                     *       "password": "password"
                      *     }
                      */
                     "multipart/form-data": {
-                        /** @example  */
+                        /** @example Example record */
                         username: string;
                         /**
                          * @default password
-                         * @example
+                         * @example Password123!
                          */
                         password: string;
                     };
@@ -52,48 +52,42 @@ export interface paths {
                         /**
                          * @example {
                          *       "user": {
-                         *         "id": 2,
-                         *         "name": "Supervisor",
-                         *         "username": "supervisor",
-                         *         "email": "supervisor@crm.io",
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "username": "Example record",
+                         *         "email": "person@example.com",
                          *         "phone": "+19292932176",
+                         *         "commission_rate": 12.5,
+                         *         "total_potential_commission": 100,
+                         *         "total_actual_commission": 100,
+                         *         "avatar": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "manager": null,
                          *         "roles": [
                          *           {
                          *             "id": 1,
-                         *             "name": "manager",
-                         *             "permissions": [
-                         *               {
-                         *                 "id": 6,
-                         *                 "name": "user.view"
-                         *               },
-                         *               {
-                         *                 "id": 7,
-                         *                 "name": "user.create"
-                         *               },
-                         *               {
-                         *                 "id": 8,
-                         *                 "name": "user.edit"
-                         *               }
-                         *             ]
+                         *             "name": "Example record"
                          *           }
                          *         ],
                          *         "permissions": [
                          *           {
-                         *             "id": 6,
-                         *             "name": "user.view"
-                         *           },
-                         *           {
-                         *             "id": 7,
-                         *             "name": "user.create"
-                         *           },
-                         *           {
-                         *             "id": 8,
-                         *             "name": "user.edit"
+                         *             "id": 1,
+                         *             "name": "Example record"
                          *           }
                          *         ],
-                         *         "created_at": "2026-06-02T04:01:46.000000Z"
+                         *         "is_super": true,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
                          *       },
-                         *       "token": "1|IGRqnVQmVCGKT7Domd1W9NHMw3tQ3Y57YlgM9YLa9416ea18"
+                         *       "token": "{{token}}"
                          *     }
                          */
                         "application/json": {
@@ -135,6 +129,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "user": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "username": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "commission_rate": 12.5,
+                         *         "total_potential_commission": 100,
+                         *         "total_actual_commission": 100,
+                         *         "avatar": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "manager": null,
+                         *         "roles": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "is_super": true,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             user: components["schemas"]["User"];
                         };
@@ -158,6 +192,14 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "name": "Supervisor",
+                     *       "username": "supervisor",
+                     *       "email": "supervisor@example.com",
+                     *       "phone": "+19292932176"
+                     *     }
+                     */
                     "application/json": {
                         name?: string;
                         username?: string;
@@ -173,6 +215,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "user": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "username": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "commission_rate": 12.5,
+                         *         "total_potential_commission": 100,
+                         *         "total_actual_commission": 100,
+                         *         "avatar": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "manager": null,
+                         *         "roles": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "is_super": true,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             user: components["schemas"]["User"];
                         };
@@ -196,7 +278,7 @@ export interface paths {
         };
         /**
          * Generate secure token
-         * @description Generate a secure token for the authenticated super admin.
+         * @description Generate a secure token and developer-only Horizon and Telescope paths for the configured developer.
          */
         get: {
             parameters: {
@@ -216,12 +298,21 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "token": "{{token}}",
+                         *       "horizon": "https://api-crm.swerky.dev/api/secure-login?secure_token={{token}}&user=1&destination=horizon",
+                         *       "telescope": "https://api-crm.swerky.dev/api/secure-login?secure_token={{token}}&user=1&destination=telescope"
+                         *     }
+                         */
                         "application/json": {
                             token: string;
+                            horizon: string;
+                            telescope: string;
                         };
                     };
                 };
-                /** @description Only super admins can generate secure tokens. */
+                /** @description Only the configured developer can generate secure tokens. */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -273,7 +364,7 @@ export interface paths {
                      * @example {
                      *       "_method": "PUT",
                      *       "current_password": "password",
-                     *       "new_password": "password"
+                     *       "new_password": "NewPassword123!"
                      *     }
                      */
                     "multipart/form-data": {
@@ -295,7 +386,14 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        /**
+                         * @example {
+                         *       "message": "password updated"
+                         *     }
+                         */
+                        "application/json": {
+                            message: string;
+                        };
                     };
                 };
             };
@@ -329,11 +427,11 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "email": ""
+                     *       "email": "supervisor@example.com"
                      *     }
                      */
                     "multipart/form-data": {
-                        /** @example  */
+                        /** @example person@example.com */
                         email: string;
                     };
                 };
@@ -346,55 +444,11 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "user": {
-                         *         "id": 2,
-                         *         "name": "Supervisor",
-                         *         "username": "supervisor",
-                         *         "email": "supervisor@crm.io",
-                         *         "phone": "+19292932176",
-                         *         "roles": [
-                         *           {
-                         *             "id": 1,
-                         *             "name": "manager",
-                         *             "permissions": [
-                         *               {
-                         *                 "id": 6,
-                         *                 "name": "user.view"
-                         *               },
-                         *               {
-                         *                 "id": 7,
-                         *                 "name": "user.create"
-                         *               },
-                         *               {
-                         *                 "id": 8,
-                         *                 "name": "user.edit"
-                         *               }
-                         *             ]
-                         *           }
-                         *         ],
-                         *         "permissions": [
-                         *           {
-                         *             "id": 6,
-                         *             "name": "user.view"
-                         *           },
-                         *           {
-                         *             "id": 7,
-                         *             "name": "user.create"
-                         *           },
-                         *           {
-                         *             "id": 8,
-                         *             "name": "user.edit"
-                         *           }
-                         *         ],
-                         *         "created_at": "2026-06-02T04:01:46.000000Z"
-                         *       },
-                         *       "token": "1|IGRqnVQmVCGKT7Domd1W9NHMw3tQ3Y57YlgM9YLa9416ea18"
+                         *       "status": "passwords.sent"
                          *     }
                          */
                         "application/json": {
-                            data: components["schemas"]["User"][];
-                            links: components["schemas"]["PaginationLinks"];
-                            meta: components["schemas"]["PaginationMeta"];
+                            status: string;
                         };
                     };
                 };
@@ -431,17 +485,17 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "email": "",
-                     *       "token": "",
-                     *       "password": ""
+                     *       "email": "supervisor@example.com",
+                     *       "token": "reset-token",
+                     *       "password": "NewPassword123!"
                      *     }
                      */
                     "multipart/form-data": {
-                        /** @example  */
+                        /** @example person@example.com */
                         email: string;
-                        /** @example  */
+                        /** @example {{token}} */
                         token: string;
-                        /** @example  */
+                        /** @example Password123! */
                         password: string;
                     };
                 };
@@ -454,52 +508,12 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "user": {
-                         *         "id": 2,
-                         *         "name": "Supervisor",
-                         *         "username": "supervisor",
-                         *         "email": "supervisor@crm.io",
-                         *         "phone": "+19292932176",
-                         *         "roles": [
-                         *           {
-                         *             "id": 1,
-                         *             "name": "manager",
-                         *             "permissions": [
-                         *               {
-                         *                 "id": 6,
-                         *                 "name": "user.view"
-                         *               },
-                         *               {
-                         *                 "id": 7,
-                         *                 "name": "user.create"
-                         *               },
-                         *               {
-                         *                 "id": 8,
-                         *                 "name": "user.edit"
-                         *               }
-                         *             ]
-                         *           }
-                         *         ],
-                         *         "permissions": [
-                         *           {
-                         *             "id": 6,
-                         *             "name": "user.view"
-                         *           },
-                         *           {
-                         *             "id": 7,
-                         *             "name": "user.create"
-                         *           },
-                         *           {
-                         *             "id": 8,
-                         *             "name": "user.edit"
-                         *           }
-                         *         ],
-                         *         "created_at": "2026-06-02T04:01:46.000000Z"
-                         *       },
-                         *       "token": "1|IGRqnVQmVCGKT7Domd1W9NHMw3tQ3Y57YlgM9YLa9416ea18"
+                         *       "status": "passwords.reset"
                          *     }
                          */
-                        "application/json": Record<string, never>;
+                        "application/json": {
+                            status: string;
+                        };
                     };
                 };
             };
@@ -533,6 +547,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /** @example {} */
                     "multipart/form-data": Record<string, never>;
                 };
             };
@@ -575,6 +590,15 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example [
+                         *       {
+                         *         "username": "Example record",
+                         *         "role": "manager",
+                         *         "is_super": true
+                         *       }
+                         *     ]
+                         */
                         "application/json": components["schemas"]["LoginUser"][];
                     };
                 };
@@ -599,7 +623,10 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Relations to include in each user record. */
+                    /**
+                     * @description Relations to include in each user record.
+                     * @example manager
+                     */
                     with?: "manager";
                 };
                 header?: {
@@ -618,277 +645,62 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "message": "Route [login] not defined.",
-                         *       "exception": "Symfony\\Component\\Routing\\Exception\\RouteNotFoundException",
-                         *       "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php",
-                         *       "line": 546,
-                         *       "trace": [
+                         *       "data": [
                          *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php",
-                         *           "line": 870,
-                         *           "function": "route",
-                         *           "class": "Illuminate\\Routing\\UrlGenerator",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php",
-                         *           "line": 291,
-                         *           "function": "route"
-                         *         },
-                         *         {
-                         *           "function": "{closure:{closure:Illuminate\\Foundation\\Configuration\\ApplicationBuilder::withMiddleware():289}:291}",
-                         *           "class": "Illuminate\\Foundation\\Configuration\\ApplicationBuilder",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php",
-                         *           "line": 117,
-                         *           "function": "call_user_func"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php",
-                         *           "line": 104,
-                         *           "function": "redirectTo",
-                         *           "class": "Illuminate\\Auth\\Middleware\\Authenticate",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php",
-                         *           "line": 87,
-                         *           "function": "unauthenticated",
-                         *           "class": "Illuminate\\Auth\\Middleware\\Authenticate",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php",
-                         *           "line": 61,
-                         *           "function": "authenticate",
-                         *           "class": "Illuminate\\Auth\\Middleware\\Authenticate",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Auth\\Middleware\\Authenticate",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 137,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
-                         *           "line": 821,
-                         *           "function": "then",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
-                         *           "line": 800,
-                         *           "function": "runRouteWithinStack",
-                         *           "class": "Illuminate\\Routing\\Router",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
-                         *           "line": 764,
-                         *           "function": "runRoute",
-                         *           "class": "Illuminate\\Routing\\Router",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
-                         *           "line": 753,
-                         *           "function": "dispatchToRoute",
-                         *           "class": "Illuminate\\Routing\\Router",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
-                         *           "line": 200,
-                         *           "function": "dispatch",
-                         *           "class": "Illuminate\\Routing\\Router",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 180,
-                         *           "function": "{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}",
-                         *           "class": "Illuminate\\Foundation\\Http\\Kernel",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
-                         *           "line": 21,
-                         *           "function": "{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php",
-                         *           "line": 31,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
-                         *           "line": 21,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php",
-                         *           "line": 51,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php",
-                         *           "line": 27,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php",
-                         *           "line": 109,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php",
-                         *           "line": 74,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Http\\Middleware\\HandleCors",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php",
-                         *           "line": 58,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Http\\Middleware\\TrustProxies",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php",
-                         *           "line": 22,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php",
-                         *           "line": 28,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 219,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
-                         *           "line": 137,
-                         *           "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
-                         *           "line": 175,
-                         *           "function": "then",
-                         *           "class": "Illuminate\\Pipeline\\Pipeline",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
-                         *           "line": 144,
-                         *           "function": "sendRequestThroughRouter",
-                         *           "class": "Illuminate\\Foundation\\Http\\Kernel",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/Application.php",
-                         *           "line": 1220,
-                         *           "function": "handle",
-                         *           "class": "Illuminate\\Foundation\\Http\\Kernel",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/public/index.php",
-                         *           "line": 20,
-                         *           "function": "handleRequest",
-                         *           "class": "Illuminate\\Foundation\\Application",
-                         *           "type": "->"
-                         *         },
-                         *         {
-                         *           "file": "/home/swerky/dev/projects/crm/server/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php",
-                         *           "line": 23,
-                         *           "function": "require_once"
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "commission_rate": 12.5,
+                         *           "total_potential_commission": 100,
+                         *           "total_actual_commission": 100,
+                         *           "avatar": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           },
+                         *           "manager": null,
+                         *           "roles": [
+                         *             {
+                         *               "id": 1,
+                         *               "name": "Example record"
+                         *             }
+                         *           ],
+                         *           "permissions": [
+                         *             {
+                         *               "id": 1,
+                         *               "name": "Example record"
+                         *             }
+                         *           ],
+                         *           "is_super": true,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
                          *         }
-                         *       ]
+                         *       ],
+                         *       "links": {
+                         *         "first": "example",
+                         *         "last": "example",
+                         *         "prev": "example",
+                         *         "next": "example"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "from": 1,
+                         *         "last_page": 1,
+                         *         "links": [
+                         *           {}
+                         *         ],
+                         *         "path": "https://api-crm.swerky.dev/api/example",
+                         *         "per_page": 1,
+                         *         "to": 1,
+                         *         "total": 1
+                         *       }
                          *     }
                          */
                         "application/json": {
@@ -914,6 +726,20 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "user": {
+                     *         "name": "Maya Carter",
+                     *         "username": "maya.carter",
+                     *         "email": "maya.carter@example.com",
+                     *         "phone": "+19292932177",
+                     *         "password": "Password123!",
+                     *         "roles": [
+                     *           "sales-agent"
+                     *         ]
+                     *       }
+                     *     }
+                     */
                     "application/json": {
                         user: {
                             name: string;
@@ -934,6 +760,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "user": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "username": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "commission_rate": 12.5,
+                         *         "total_potential_commission": 100,
+                         *         "total_actual_commission": 100,
+                         *         "avatar": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "manager": null,
+                         *         "roles": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "is_super": true,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             user: components["schemas"]["User"];
                         };
@@ -975,6 +841,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "user": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "username": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "commission_rate": 12.5,
+                         *         "total_potential_commission": 100,
+                         *         "total_actual_commission": 100,
+                         *         "avatar": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "manager": null,
+                         *         "roles": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "is_super": true,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             user: components["schemas"]["User"];
                         };
@@ -992,15 +898,28 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: string;
                 };
                 cookie?: never;
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "_method": "PUT",
+                     *       "name": "Maya Carter",
+                     *       "username": "maya.carter",
+                     *       "email": "maya.carter@example.com",
+                     *       "phone": "+19292932177",
+                     *       "roles": [
+                     *         "sales-agent"
+                     *       ]
+                     *     }
+                     */
                     "application/json": {
-                        /** @constant */
-                        _method: "PUT";
+                        /** @default PUT */
+                        _method: string;
                         name: string;
                         username: string;
                         /** Format: email */
@@ -1016,6 +935,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "user": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "username": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "commission_rate": 12.5,
+                         *         "total_potential_commission": 100,
+                         *         "total_actual_commission": 100,
+                         *         "avatar": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "manager": null,
+                         *         "roles": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "is_super": true,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             user: components["schemas"]["User"];
                         };
@@ -1032,6 +991,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: string;
                 };
                 cookie?: never;
@@ -1076,6 +1036,43 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "guard_name": "sanctum",
+                         *           "permissions": [
+                         *             {
+                         *               "id": 1,
+                         *               "name": "Example record"
+                         *             }
+                         *           ],
+                         *           "permissions_count": 3,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         }
+                         *       ],
+                         *       "links": {
+                         *         "first": "example",
+                         *         "last": "example",
+                         *         "prev": "example",
+                         *         "next": "example"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "from": 1,
+                         *         "last_page": 1,
+                         *         "links": [
+                         *           {}
+                         *         ],
+                         *         "path": "https://api-crm.swerky.dev/api/example",
+                         *         "per_page": 1,
+                         *         "to": 1,
+                         *         "total": 1
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             data: components["schemas"]["Role"][];
                             links: components["schemas"]["PaginationLinks"];
@@ -1101,11 +1098,10 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "name": "manager",
-                     *       "guard_name": "sanctum",
+                     *       "name": "sales-manager",
                      *       "permissions": [
-                     *         "user.view",
-                     *         "contact.view"
+                     *         "deal.view",
+                     *         "deal.create"
                      *       ]
                      *     }
                      */
@@ -1118,6 +1114,23 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "role": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "guard_name": "sanctum",
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions_count": 3,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             role: components["schemas"]["Role"];
                         };
@@ -1147,6 +1160,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -1158,6 +1172,23 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "role": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "guard_name": "sanctum",
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions_count": 3,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             role: components["schemas"]["Role"];
                         };
@@ -1175,6 +1206,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -1200,6 +1232,23 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "role": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "guard_name": "sanctum",
+                         *         "permissions": [
+                         *           {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           }
+                         *         ],
+                         *         "permissions_count": 3,
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             role: components["schemas"]["Role"];
                         };
@@ -1216,6 +1265,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -1260,6 +1310,16 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record"
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         "application/json": {
                             data: components["schemas"]["Permission"][];
                         };
@@ -1327,6 +1387,7 @@ export interface components {
             }[];
             permissions: components["schemas"]["Permission"][];
             readonly is_super: boolean;
+            readonly can_generate_secure_token?: boolean;
             /** Format: date-time */
             readonly created_at?: string;
         };

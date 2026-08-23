@@ -21,7 +21,7 @@ const deal = {
   contact: { id: 3, name: "Layla Nasser", title: "Buyer", email: "layla@example.com", phone: "+201001234567", account: { id: 4, name: "Nasser Holdings" }, lead_id: 18 },
   property: { id: 8, images: [], title: "Palm Hills Villa", description: "A bright villa with a private garden and generous entertaining space.", city: "Cairo", address: "Palm Hills", price: 780000, type: "villa" as const, status: "showing" as const, owner: { id: 12, name: "Mona Hassan", username: "mona", email: "mona@example.com", phone: "+201009999999" } },
   agent_id: 9,
-  agent: { id: 9, name: "Amina Saleh", username: "amina" },
+  agent: { id: 9, name: "Amina Saleh", username: "amina", avatar: { id: 31, uuid: "avatar-31", name: "amina", mime_type: "image/jpeg", size: 1234, url: "/avatars/amina.jpg", thumbnail_url: "/avatars/amina-thumb.jpg", order: 1, created_at: "2026-07-01T12:00:00Z" } },
   status: "inquiry" as const,
   commission_rate: 2.5,
   commission: { total_amount: 18375 },
@@ -55,6 +55,17 @@ function renderIndex(entry = "/deals?page=2&q=palm") {
   return render(<TooltipProvider><MemoryRouter initialEntries={[entry]}><Routes><Route path="/deals" element={<DealsPage />} /><Route path="/deals/create" element={<DealCreatePage />} /><Route path="/deals/:dealId" element={<LocationProbe />} /></Routes></MemoryRouter></TooltipProvider>)
 }
 
+function stubLoadedImages() {
+  const NativeImage = window.Image
+  vi.stubGlobal("Image", class extends NativeImage {
+    constructor() {
+      super()
+      Object.defineProperty(this, "complete", { configurable: true, value: true })
+      Object.defineProperty(this, "naturalWidth", { configurable: true, value: 1 })
+    }
+  })
+}
+
 function listResponse() {
   return {
     data: [deal],
@@ -71,6 +82,10 @@ describe("DealDetailsPage", () => {
     currentUser.id = 9
     currentUser.roles = []
     vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} })
+    stubLoadedImages()
+    Object.defineProperty(HTMLElement.prototype, "hasPointerCapture", { configurable: true, value: () => false })
+    Object.defineProperty(HTMLElement.prototype, "setPointerCapture", { configurable: true, value: () => undefined })
+    Object.defineProperty(HTMLElement.prototype, "releasePointerCapture", { configurable: true, value: () => undefined })
     Object.defineProperty(HTMLElement.prototype, "scrollIntoView", { configurable: true, value: vi.fn() })
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       if (init?.method === "POST") return new Response(JSON.stringify({ deal: { ...deal, status: "viewing" } }), { status: 200, headers: { "Content-Type": "application/json" } })
@@ -94,6 +109,7 @@ describe("DealDetailsPage", () => {
     expect(screen.getByRole("link", { name: "+201001234567" })).toHaveAttribute("href", "tel:+201001234567")
     expect(screen.getByRole("link", { name: "layla@example.com" })).toHaveAttribute("href", "mailto:layla@example.com")
     expect(screen.getByRole("link", { name: "Edit" })).toHaveAttribute("href", "/deals/27/edit")
+    expect(screen.getByLabelText("Amina Saleh avatar").querySelector('[data-slot="avatar-image"]')).toHaveAttribute("src", "/avatars/amina-thumb.jpg")
 
     await user.click(screen.getByRole("button", { name: "viewing" }))
 
@@ -160,6 +176,36 @@ describe("DealDetailsPage", () => {
     await waitFor(() => expect(fetchSpy.mock.calls.some(([, init]) => (init as RequestInit | undefined)?.method === "POST" && String((init as RequestInit).body).includes('"_method":"PUT"'))).toBe(true))
   })
 
+  it("renders returned agent avatars in create and edit selectors", async () => {
+    const user = userEvent.setup()
+    permissions = new Set(["deal.view", "deal.create", "deal.update", "property.view", "user.view"])
+    const createView = renderCreate()
+
+    await screen.findByRole("button", { name: "Select Palm Hills Villa" })
+    const createAgentSelect = screen.getByRole("combobox", { name: /Agent/ })
+    await waitFor(() => expect(createAgentSelect).not.toBeDisabled())
+    await user.click(createAgentSelect)
+    const createAgentOption = await waitFor(() => {
+      const option = document.querySelector('[data-slot="select-item"]')
+      if (!option) throw new Error("Agent option did not render")
+      return option
+    })
+    expect(createAgentOption).toHaveTextContent("Amina Saleh")
+    expect(createAgentOption.querySelector('[data-slot="avatar-image"]')).toHaveAttribute("src", "/avatars/amina-thumb.jpg")
+    createView.unmount()
+
+    renderEdit()
+    await screen.findByRole("heading", { name: "Edit deal" })
+    await user.click(screen.getByRole("combobox", { name: /Agent/ }))
+    const editAgentOption = await waitFor(() => {
+      const option = document.querySelector('[data-slot="select-item"]')
+      if (!option) throw new Error("Agent option did not render")
+      return option
+    })
+    expect(editAgentOption).toHaveTextContent("Amina Saleh")
+    expect(editAgentOption.querySelector('[data-slot="avatar-image"]')).toHaveAttribute("src", "/avatars/amina-thumb.jpg")
+  })
+
   it("renders the create form for the legacy edit URL", async () => {
     permissions = new Set(["deal.view", "deal.update", "property.view"])
     const fetchSpy = globalThis.fetch as ReturnType<typeof vi.fn>
@@ -195,8 +241,8 @@ describe("DealDetailsPage", () => {
     expect(screen.getByRole("spinbutton", { name: "Value" })).toHaveValue(780000)
     expect(screen.getByRole("spinbutton", { name: "Deal value(required)" })).toHaveValue(780000)
     expect(screen.queryByRole("spinbutton", { name: /Commission rate/ })).not.toBeInTheDocument()
-    const commissionAddon = screen.getByText("Commission").closest('[data-align="inline-end"]')
-    expect(commissionAddon).toHaveTextContent("$19,500.00")
+    expect(screen.queryByText("Commission")).not.toBeInTheDocument()
+    expect(screen.getByRole("spinbutton", { name: "Value" }).closest('[data-slot="input-group"]')).toHaveClass("bg-muted/40")
 
     await user.click(propertyCard)
     expect(propertyCard).toHaveAttribute("aria-pressed", "true")
@@ -309,6 +355,10 @@ describe("DealDetailsPage", () => {
 describe("DealsPage table interactions", () => {
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", class { observe() {} unobserve() {} disconnect() {} })
+    stubLoadedImages()
+    Object.defineProperty(HTMLElement.prototype, "hasPointerCapture", { configurable: true, value: () => false })
+    Object.defineProperty(HTMLElement.prototype, "setPointerCapture", { configurable: true, value: () => undefined })
+    Object.defineProperty(HTMLElement.prototype, "releasePointerCapture", { configurable: true, value: () => undefined })
     permissions = new Set(["deal.view", "contact.view", "property.view"])
     isSuper = false
     currentUser.id = 9
@@ -381,7 +431,9 @@ describe("DealsPage table interactions", () => {
     expect(within(row).getByRole("link", { name: "Palm Hills Villa" })).toHaveClass("text-foreground", "hover:text-primary")
     expect(within(row).getByRole("link", { name: "Open Palm Hills Villa" })).toHaveAttribute("href", "/properties/8")
     expect(within(row).getByRole("link", { name: "Amina Saleh" })).toHaveClass("text-foreground", "hover:text-primary")
-    expect(within(row).getByRole("link", { name: "Amina Saleh avatar" })).toHaveAttribute("href", "/agents/9")
+    const agentAvatarLink = within(row).getByRole("link", { name: "Amina Saleh avatar" })
+    expect(agentAvatarLink).toHaveAttribute("href", "/agents/9")
+    expect(agentAvatarLink.querySelector('[data-slot="avatar-image"]')).toHaveAttribute("src", "/avatars/amina-thumb.jpg")
     expect(within(row).getByRole("link", { name: "Edit deal 27" })).toHaveAttribute("href", "/deals/27/edit?return=page%3D2")
   })
 
