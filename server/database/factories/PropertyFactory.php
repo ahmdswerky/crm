@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\PropertyPurpose;
-use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use App\Models\Property;
 use Illuminate\Database\Eloquent\Factories\Factory;

@@ -22,6 +22,7 @@ class MediaController extends Controller
         $owner = $this->owners->resolve($request->string('owner_type')->toString(), $request->integer('owner_id'));
         $collection = $request->string('collection')->toString();
         $this->owners->assertSupportsCollection($owner, $collection);
+
         return MediaResource::collection($owner->getMedia($collection));
     }
 

@@ -158,8 +158,8 @@ class LeadRepository implements LeadRepositoryInterface
             LeadStatus::QUALIFIED->value,
             LeadStatus::UNQUALIFIED->value,
         ])
-        ->when($isAgent, fn (Builder $query) => $query->where('assigned_agent_id', $userId))
-        ->first();
+            ->when($isAgent, fn (Builder $query) => $query->where('assigned_agent_id', $userId))
+            ->first();
 
         return [
             'stats' => [
