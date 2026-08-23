@@ -13,7 +13,6 @@ console.log(`Changed files: ${files.length}; projects: ${selection.projects.join
 if (selection.projects.includes('server')) {
   run('composer', ['validate', '--strict', '--no-check-publish'], { cwd: 'server' })
   run('./vendor/bin/pint', ['--test'], { cwd: 'server' })
-  // run('composer', ['quality:larastan'], { cwd: 'server' })
   run('composer', ['quality:insights'], { cwd: 'server' })
   run('composer', ['test'], { cwd: 'server' })
 }
