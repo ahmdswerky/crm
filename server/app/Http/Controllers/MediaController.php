@@ -8,7 +8,6 @@ use App\Http\Requests\Media\MediaStoreRequest;
 use App\Http\Resources\MediaResource;
 use App\Services\MediaOwnerRegistry;
 use App\Services\MediaService;
-use Illuminate\Support\Facades\Gate;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends Controller
@@ -23,8 +22,6 @@ class MediaController extends Controller
         $owner = $this->owners->resolve($request->string('owner_type')->toString(), $request->integer('owner_id'));
         $collection = $request->string('collection')->toString();
         $this->owners->assertSupportsCollection($owner, $collection);
-        Gate::authorize('view', $owner);
-
         return MediaResource::collection($owner->getMedia($collection));
     }
 
@@ -33,8 +30,6 @@ class MediaController extends Controller
         $owner = $this->owners->resolve($request->string('owner_type')->toString(), $request->integer('owner_id'));
         $collection = $request->string('collection')->toString();
         $this->owners->assertSupportsCollection($owner, $collection);
-        Gate::authorize('update', $owner);
-
         $media = $this->mediaService->attach($owner, $request->file('files'), $collection, $request->user());
 
         return MediaResource::collection($media)
@@ -47,8 +42,6 @@ class MediaController extends Controller
         $owner = $this->owners->resolve($request->string('owner_type')->toString(), $request->integer('owner_id'));
         $collection = $request->string('collection')->toString();
         $this->owners->assertSupportsCollection($owner, $collection);
-        Gate::authorize('update', $owner);
-
         $this->mediaService->reorder($owner, $request->validated('media_ids'), $collection, $request->user());
 
         $owner->unsetRelation('media');
@@ -59,8 +52,6 @@ class MediaController extends Controller
     public function destroy(Media $media)
     {
         $owner = $this->owners->resolveMediaOwner($media);
-        Gate::authorize('update', $owner);
-
         $this->mediaService->delete($owner, $media, $media->collection_name, request()->user());
 
         return response()->noContent();
