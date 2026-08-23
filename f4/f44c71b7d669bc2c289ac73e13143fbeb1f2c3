@@ -1,0 +1,40 @@
+server/app/Http/Resources/UserResource.php
+  s_4d05d42a46412c::t_7e15a49d8d27fd 40-43
+server/app/Http/Controllers/AuthController.php
+  s_4d05d42a46412c::t_38e97c487a47be 52-76,78,81
+  s_4d05d42a46412c::t_78f0f3f780a2d3 77,79-80
+  s_841f69504a4383::t_2deec6b7590f36 14
+  s_4d05d42a46412c::t_252b7e4a11c742 49-51
+  s_4d05d42a46412c::t_504ef30412f954 82-83
+  s_4d05d42a46412c::t_ee5c07e9a56070 10,12,42-48
+server/routes/api/auth.php
+  s_4d05d42a46412c::t_b77099af531008 6-7,23-28
+server/config/telescope.php
+  s_4d05d42a46412c::t_9e3bdd1ec97154 97
+server/routes/api/v1/helpers.php
+  s_841f69504a4383::t_e68bbda54aafe2 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "f4f44c71b7d669bc2c289ac73e13143fbeb1f2c3",
+  "prompts": {},
+  "sessions": {
+    "s_4d05d42a46412c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02c80-8002-7051-b945-916ea1cf97f3",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_841f69504a4383": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02c6a-fe46-7492-9808-9cbeba1e6fc8",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
