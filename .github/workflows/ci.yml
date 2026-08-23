@@ -209,9 +209,9 @@ jobs:
         working-directory: server
         run: ./vendor/bin/pint --test
 
-      - name: Run static analysis
+      - name: Run PHP Insights
         working-directory: server
-        run: composer analyze
+        run: composer quality:insights
 
       - name: Run Laravel tests
         working-directory: server
