@@ -1,0 +1,128 @@
+payment-server/.dockerignore
+  h_aa9d2f4bca268e 1-6
+payment-server/.gitignore
+  h_aa9d2f4bca268e 1-56
+payment-server/.prettierrc
+  h_aa9d2f4bca268e 1-4
+payment-server/README.md
+  h_aa9d2f4bca268e 1-120
+payment-server/eslint.config.mjs
+  h_aa9d2f4bca268e 1-35
+payment-server/nest-cli.json
+  h_aa9d2f4bca268e 1-9
+payment-server/package-lock.json
+  h_aa9d2f4bca268e 1-13037
+payment-server/package.json
+  h_aa9d2f4bca268e 1-94
+payment-server/src/app.controller.spec.ts
+  h_aa9d2f4bca268e 1-22
+payment-server/src/app.controller.ts
+  h_aa9d2f4bca268e 1-14
+payment-server/src/app.module.ts
+  h_aa9d2f4bca268e 1-51
+payment-server/src/app.service.ts
+  h_aa9d2f4bca268e 1-8
+payment-server/src/database/data-source.ts
+  h_aa9d2f4bca268e 1-17
+payment-server/src/database/migrations/20260821120000-CreatePaymentTables.ts
+  h_aa9d2f4bca268e 1-43
+payment-server/src/health.controller.ts
+  h_aa9d2f4bca268e 1-55
+payment-server/src/main.ts
+  h_aa9d2f4bca268e 1-19
+payment-server/src/messaging/payment-messages.ts
+  h_aa9d2f4bca268e 1-28
+payment-server/src/messaging/rabbitmq.service.ts
+  h_aa9d2f4bca268e 1-216
+payment-server/src/modules/auth/auth.constants.ts
+  h_aa9d2f4bca268e 1-5
+payment-server/src/modules/auth/auth.module.ts
+  h_aa9d2f4bca268e 1-21
+payment-server/src/modules/auth/auth.types.ts
+  h_aa9d2f4bca268e 1-13
+payment-server/src/modules/auth/crm-auth.guard.ts
+  h_aa9d2f4bca268e 1-70
+payment-server/src/modules/auth/crm-auth.repository.spec.ts
+  h_aa9d2f4bca268e 1-154
+payment-server/src/modules/auth/crm-auth.repository.ts
+  h_aa9d2f4bca268e 1-169
+payment-server/src/modules/auth/crm-auth.service.ts
+  h_aa9d2f4bca268e 1-11
+payment-server/src/modules/auth/entities/index.ts
+  h_aa9d2f4bca268e 1-26
+payment-server/src/modules/auth/entities/model-has-permission.entity.ts
+  h_aa9d2f4bca268e 1-17
+payment-server/src/modules/auth/entities/model-has-role.entity.ts
+  h_aa9d2f4bca268e 1-14
+payment-server/src/modules/auth/entities/permission.entity.ts
+  h_aa9d2f4bca268e 1-25
+payment-server/src/modules/auth/entities/personal-access-token.entity.ts
+  h_aa9d2f4bca268e 1-42
+payment-server/src/modules/auth/entities/role-has-permission.entity.ts
+  h_aa9d2f4bca268e 1-10
+payment-server/src/modules/auth/entities/role.entity.ts
+  h_aa9d2f4bca268e 1-25
+payment-server/src/modules/auth/payment-permission-seeder.spec.ts
+  h_aa9d2f4bca268e 1-116
+payment-server/src/modules/auth/payment-permission-seeder.ts
+  h_aa9d2f4bca268e 1-166
+payment-server/src/modules/auth/payment-permissions.ts
+  h_aa9d2f4bca268e 1-15
+payment-server/src/modules/auth/permission.guard.spec.ts
+  h_aa9d2f4bca268e 1-67
+payment-server/src/modules/auth/permission.guard.ts
+  h_aa9d2f4bca268e 1-50
+payment-server/src/modules/auth/public.decorator.ts
+  h_aa9d2f4bca268e 1-4
+payment-server/src/modules/auth/require-permission.decorator.ts
+  h_aa9d2f4bca268e 1-5
+payment-server/src/modules/invoice/dto/create-invoice.dto.ts
+  h_aa9d2f4bca268e 1
+payment-server/src/modules/invoice/dto/update-invoice.dto.ts
+  h_aa9d2f4bca268e 1-4
+payment-server/src/modules/invoice/entities/invoice.entity.ts
+  h_aa9d2f4bca268e 1-29
+payment-server/src/modules/invoice/entities/payment-job-receipt.entity.ts
+  h_aa9d2f4bca268e 1-40
+payment-server/src/modules/invoice/invoice-command.consumer.ts
+  h_aa9d2f4bca268e 1-18
+payment-server/src/modules/invoice/invoice.controller.spec.ts
+  h_aa9d2f4bca268e 1-32
+payment-server/src/modules/invoice/invoice.controller.ts
+  h_aa9d2f4bca268e 1-43
+payment-server/src/modules/invoice/invoice.module.ts
+  h_aa9d2f4bca268e 1-15
+payment-server/src/modules/invoice/invoice.service.spec.ts
+  h_aa9d2f4bca268e 1-112
+payment-server/src/modules/invoice/invoice.service.ts
+  h_aa9d2f4bca268e 1-176
+payment-server/src/modules/user/entities/user.entity.ts
+  h_aa9d2f4bca268e 1-50
+payment-server/src/modules/user/user.module.ts
+  h_aa9d2f4bca268e 1-9
+payment-server/src/modules/user/user.repository.spec.ts
+  h_aa9d2f4bca268e 1-28
+payment-server/src/modules/user/user.repository.ts
+  h_aa9d2f4bca268e 1-23
+payment-server/src/modules/user/user.service.ts
+  h_aa9d2f4bca268e 1-12
+payment-server/src/redis-health.service.ts
+  h_aa9d2f4bca268e 1-42
+payment-server/src/seed-auth.ts
+  h_aa9d2f4bca268e 1-10
+payment-server/tsconfig.build.json
+  h_aa9d2f4bca268e 1-4
+payment-server/tsconfig.json
+  h_aa9d2f4bca268e 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "bdf3f92bb932d36165a70b1223c0a768829b8def",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
