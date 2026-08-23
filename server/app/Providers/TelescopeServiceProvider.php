@@ -22,8 +22,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         $isLocal = $this->app->environment('local');
 
         Telescope::avatar(function (?string $id, ?string $email) {
-              return User::select(['id'])->find($id)?->media?->first()?->original_url;
-          });
+            return config('media-library.media_model')::where(['model_type' => User::class, 'model_id' => $id])
+                ->select(['id', 'model_type', 'model_id', 'disk', 'file_name'])
+                ->value('original_url');
+        });
 
         Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
             return $isLocal ||

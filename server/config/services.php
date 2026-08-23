@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    'rabbitmq' => [
+        'host' => env('RABBITMQ_HOST', '127.0.0.1'),
+        'port' => (int) env('RABBITMQ_PORT', 5672),
+        'user' => env('RABBITMQ_USER', 'crm'),
+        'password' => env('RABBITMQ_PASSWORD'),
+        'vhost' => env('RABBITMQ_VHOST', '/'),
+        'connection_timeout' => (float) env('RABBITMQ_CONNECTION_TIMEOUT', 3),
+        'read_write_timeout' => (float) env('RABBITMQ_READ_WRITE_TIMEOUT', 5),
+        'heartbeat' => (int) env('RABBITMQ_HEARTBEAT', 30),
+        'commands_exchange' => env('RABBITMQ_COMMANDS_EXCHANGE', 'payments.commands'),
+        'commands_queue' => env('RABBITMQ_COMMANDS_QUEUE', 'payments'),
+        'events_exchange' => env('RABBITMQ_EVENTS_EXCHANGE', 'payments.events'),
+        'events_queue' => env('RABBITMQ_EVENTS_QUEUE', 'crm.payment-events'),
+    ],
+
 ];

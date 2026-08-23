@@ -1,0 +1,23 @@
+{
+  "name": "crm-repository-tooling",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "prepare": "node .husky/install.mjs",
+    "hooks:commit": "node scripts/quality/commit-check.mjs",
+    "hooks:push": "node scripts/quality/push-check.mjs",
+    "quality:projects": "node scripts/quality/check-projects.mjs",
+    "quality:docker": "node scripts/quality/validate-docker.mjs",
+    "quality:outdated": "node scripts/quality/check-outdated.mjs",
+    "quality:test": "node scripts/quality/project-map.test.mjs"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6"
+  }
+}

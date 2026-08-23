@@ -31,7 +31,8 @@
               "type": "number",
               "format": "double",
               "minimum": 0
-            }
+            },
+            "example": "example"
           },
           {
             "name": "max_price",
@@ -41,7 +42,8 @@
               "type": "number",
               "format": "double",
               "minimum": 0
-            }
+            },
+            "example": "example"
           }
         ],
         "responses": {
@@ -265,6 +267,55 @@
                     "meta",
                     "filter"
                   ]
+                },
+                "example": {
+                  "data": [
+                    {
+                      "title": "Director of Operations",
+                      "description": "A representative CRM record.",
+                      "city": "Austin",
+                      "address": "88 Riverside Drive",
+                      "price": 240000,
+                      "type": "land",
+                      "status": "pending",
+                      "owner": {
+                        "id": 1,
+                        "name": "Example record",
+                        "username": "Example record",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    }
+                  ],
+                  "links": {
+                    "first": "example",
+                    "last": "example",
+                    "prev": "example",
+                    "next": "example"
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": "https://api-crm.swerky.dev/api/example",
+                        "label": "Mon",
+                        "page": 1,
+                        "active": true
+                      }
+                    ],
+                    "path": "https://api-crm.swerky.dev/api/example",
+                    "per_page": 1,
+                    "to": 1,
+                    "total": 1
+                  },
+                  "filter": {
+                    "min_price": 240000,
+                    "max_price": 240000
+                  }
                 }
               }
             },
@@ -347,7 +398,14 @@
                   "created_at"
                 ]
               },
-              "examples": {}
+              "example": {
+                "title": "Riverside Villa",
+                "description": "A modern villa near the river.",
+                "city": "Austin",
+                "address": "88 Riverside Drive",
+                "price": 420000,
+                "type": "villa"
+              }
             }
           },
           "required": true
@@ -367,6 +425,41 @@
                   "required": [
                     "property"
                   ]
+                },
+                "example": {
+                  "property": {
+                    "id": 1,
+                    "images": [
+                      {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      }
+                    ],
+                    "title": "Director of Operations",
+                    "description": "A representative CRM record.",
+                    "city": "Austin",
+                    "address": "88 Riverside Drive",
+                    "price": 240000,
+                    "type": "land",
+                    "status": "pending",
+                    "deals_count": 3,
+                    "owner": {
+                      "id": 1,
+                      "name": "Example record",
+                      "username": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "created_at": "2026-08-20T12:00:00.000000Z"
+                  }
                 }
               }
             },
@@ -388,7 +481,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "",
+            "example": 1,
             "schema": {
               "type": "integer"
             }
@@ -418,6 +511,41 @@
                   "required": [
                     "property"
                   ]
+                },
+                "example": {
+                  "property": {
+                    "id": 1,
+                    "images": [
+                      {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      }
+                    ],
+                    "title": "Director of Operations",
+                    "description": "A representative CRM record.",
+                    "city": "Austin",
+                    "address": "88 Riverside Drive",
+                    "price": 240000,
+                    "type": "land",
+                    "status": "pending",
+                    "deals_count": 3,
+                    "owner": {
+                      "id": 1,
+                      "name": "Example record",
+                      "username": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "created_at": "2026-08-20T12:00:00.000000Z"
+                  }
                 }
               }
             },
@@ -439,7 +567,8 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -500,7 +629,7 @@
                   },
                   "_method": {
                     "type": "string",
-                    "const": "PUT"
+                    "default": "PUT"
                   }
                 },
                 "required": [
@@ -514,7 +643,15 @@
                   "created_at"
                 ]
               },
-              "examples": {}
+              "example": {
+                "_method": "PUT",
+                "title": "Riverside Villa",
+                "description": "A modern villa near the river.",
+                "city": "Austin",
+                "address": "88 Riverside Drive",
+                "price": 435000,
+                "type": "villa"
+              }
             }
           },
           "required": true
@@ -534,6 +671,41 @@
                   "required": [
                     "property"
                   ]
+                },
+                "example": {
+                  "property": {
+                    "id": 1,
+                    "images": [
+                      {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      }
+                    ],
+                    "title": "Director of Operations",
+                    "description": "A representative CRM record.",
+                    "city": "Austin",
+                    "address": "88 Riverside Drive",
+                    "price": 240000,
+                    "type": "land",
+                    "status": "pending",
+                    "deals_count": 3,
+                    "owner": {
+                      "id": 1,
+                      "name": "Example record",
+                      "username": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "created_at": "2026-08-20T12:00:00.000000Z"
+                  }
                 }
               }
             },
@@ -555,7 +727,8 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -582,17 +755,50 @@
       "Media": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "uuid": { "type": "string", "format": "uuid" },
-          "name": { "type": "string" },
-          "mime_type": { "type": "string" },
-          "size": { "type": "integer", "format": "int64" },
-          "url": { "type": "string", "format": "uri" },
-          "thumbnail_url": { "type": "string", "format": "uri" },
-          "order": { "type": "integer" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "integer"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         },
-        "required": ["id", "uuid", "name", "mime_type", "size", "url", "thumbnail_url", "order", "created_at"]
+        "required": [
+          "id",
+          "uuid",
+          "name",
+          "mime_type",
+          "size",
+          "url",
+          "thumbnail_url",
+          "order",
+          "created_at"
+        ]
       },
       "Property": {
         "type": "object",
@@ -603,7 +809,9 @@
           },
           "images": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Media" },
+            "items": {
+              "$ref": "#/components/schemas/Media"
+            },
             "readOnly": true
           },
           "title": {

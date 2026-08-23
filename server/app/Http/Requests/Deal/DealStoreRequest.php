@@ -5,7 +5,6 @@ namespace App\Http\Requests\Deal;
 use App\Enums\DealStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Override;
 
 class DealStoreRequest extends FormRequest
 {
