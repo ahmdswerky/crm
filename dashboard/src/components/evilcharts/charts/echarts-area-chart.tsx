@@ -1562,6 +1562,9 @@ export function EChartsAreaChart<TData extends Record<string, unknown>>({
   // only job was to trigger the option push — the "chain of computations"
   // react.dev/learn/you-might-not-need-an-effect warns about. The object
   // identity is stable for the component's lifetime.
+  // `live` is an intentionally mutable imperative surface for ECharts. Its
+  // identity is stable and it is only read/mutated by chart callbacks/effects.
+  // eslint-disable-next-line react-hooks/refs
   const live = useRef<LiveState>({
     resolved: null,
     hoveredKey: null,
@@ -2164,7 +2167,6 @@ export function EChartsAreaChart<TData extends Record<string, unknown>>({
       push(false);
     };
   }, [
-    live,
     buildOption,
     chartOptions,
     isLoading,
@@ -2270,7 +2272,7 @@ export function EChartsAreaChart<TData extends Record<string, unknown>>({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [live, isLoading, loadingPoints, loadingData]);
+  }, [isLoading, loadingPoints, loadingData]);
 
   // ── Legend overlay position ──────────────────────────────────────────────────
   // Insets match the Recharts legend's breathing room inside the plot frame.
