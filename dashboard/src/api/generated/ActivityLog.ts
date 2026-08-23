@@ -26,13 +26,23 @@ export interface paths {
                      *     ]
                      */
                     "subjects[]"?: string[];
+                    /** @example created */
                     event?: "created" | "updated" | "deleted" | "restored" | "reverted" | "roles_updated" | "password_updated";
+                    /** @example 1 */
                     causer_id?: number;
-                    /** @description Include activities created at or after this date-time. */
+                    /**
+                     * @description Include activities created at or after this date-time.
+                     * @example 2026-08-01T00:00:00.000000Z
+                     */
                     from?: string;
-                    /** @description Include activities created at or before this date-time. */
+                    /**
+                     * @description Include activities created at or before this date-time.
+                     * @example 2026-08-01T00:00:00.000000Z
+                     */
                     to?: string;
+                    /** @example 1 */
                     per_page?: number;
+                    /** @example 1 */
                     page?: number;
                 };
                 header?: {
@@ -49,6 +59,64 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 100,
+                         *           "event": "created",
+                         *           "description": "A representative CRM record.",
+                         *           "subject": {
+                         *             "type": "account",
+                         *             "id": 1,
+                         *             "label": "Mon"
+                         *           },
+                         *           "causer": {
+                         *             "id": 1,
+                         *             "name": "Example record"
+                         *           },
+                         *           "changes": {
+                         *             "before": {},
+                         *             "after": {}
+                         *           },
+                         *           "metadata": {
+                         *             "reverted_activity_id": 1,
+                         *             "reason": "The record was updated by mistake.",
+                         *             "restored_attributes": [
+                         *               "example"
+                         *             ]
+                         *           },
+                         *           "revert": {
+                         *             "allowed": true
+                         *           },
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         }
+                         *       ],
+                         *       "links": {
+                         *         "first": "example",
+                         *         "last": "example",
+                         *         "prev": null,
+                         *         "next": "example"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "from": 1,
+                         *         "last_page": 1,
+                         *         "links": [
+                         *           {
+                         *             "url": "https://api-crm.swerky.dev/api/example",
+                         *             "label": "Mon",
+                         *             "page": 1,
+                         *             "active": true
+                         *           }
+                         *         ],
+                         *         "path": "https://api-crm.swerky.dev/api/example",
+                         *         "per_page": 1,
+                         *         "to": 1,
+                         *         "total": 1
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             data: components["schemas"]["ActivityLog"][];
                             links: {
@@ -101,6 +169,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -112,6 +181,39 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "activity_log": {
+                         *         "id": 100,
+                         *         "event": "created",
+                         *         "description": "A representative CRM record.",
+                         *         "subject": {
+                         *           "type": "account",
+                         *           "id": 1,
+                         *           "label": "Mon"
+                         *         },
+                         *         "causer": {
+                         *           "id": 1,
+                         *           "name": "Example record"
+                         *         },
+                         *         "changes": {
+                         *           "before": {},
+                         *           "after": {}
+                         *         },
+                         *         "metadata": {
+                         *           "reverted_activity_id": 1,
+                         *           "reason": "The record was updated by mistake.",
+                         *           "restored_attributes": [
+                         *             "example"
+                         *           ]
+                         *         },
+                         *         "revert": {
+                         *           "allowed": true
+                         *         },
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             activity_log: components["schemas"]["ActivityLog"];
                         };
@@ -148,6 +250,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -156,7 +259,7 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "reason": "The lead was updated by mistake."
+                     *       "reason": "The lead status was updated by mistake."
                      *     }
                      */
                     "application/json": {
@@ -170,6 +273,39 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "activity_log": {
+                         *         "id": 100,
+                         *         "event": "created",
+                         *         "description": "A representative CRM record.",
+                         *         "subject": {
+                         *           "type": "account",
+                         *           "id": 1,
+                         *           "label": "Mon"
+                         *         },
+                         *         "causer": {
+                         *           "id": 1,
+                         *           "name": "Example record"
+                         *         },
+                         *         "changes": {
+                         *           "before": {},
+                         *           "after": {}
+                         *         },
+                         *         "metadata": {
+                         *           "reverted_activity_id": 1,
+                         *           "reason": "The record was updated by mistake.",
+                         *           "restored_attributes": [
+                         *             "example"
+                         *           ]
+                         *         },
+                         *         "revert": {
+                         *           "allowed": true
+                         *         },
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             activity_log: components["schemas"]["ActivityLog"];
                         };

@@ -15,9 +15,15 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Lowest property price to include. */
+                    /**
+                     * @description Lowest property price to include.
+                     * @example example
+                     */
                     min_price?: number;
-                    /** @description Highest property price to include. */
+                    /**
+                     * @description Highest property price to include.
+                     * @example example
+                     */
                     max_price?: number;
                 };
                 header?: {
@@ -34,6 +40,57 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "title": "Director of Operations",
+                         *           "description": "A representative CRM record.",
+                         *           "city": "Austin",
+                         *           "address": "88 Riverside Drive",
+                         *           "price": 240000,
+                         *           "type": "land",
+                         *           "status": "pending",
+                         *           "owner": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "username": "Example record",
+                         *             "email": "person@example.com",
+                         *             "phone": "+19292932176",
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           },
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         }
+                         *       ],
+                         *       "links": {
+                         *         "first": "example",
+                         *         "last": "example",
+                         *         "prev": "example",
+                         *         "next": "example"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "from": 1,
+                         *         "last_page": 1,
+                         *         "links": [
+                         *           {
+                         *             "url": "https://api-crm.swerky.dev/api/example",
+                         *             "label": "Mon",
+                         *             "page": 1,
+                         *             "active": true
+                         *           }
+                         *         ],
+                         *         "path": "https://api-crm.swerky.dev/api/example",
+                         *         "per_page": 1,
+                         *         "to": 1,
+                         *         "total": 1
+                         *       },
+                         *       "filter": {
+                         *         "min_price": 240000,
+                         *         "max_price": 240000
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             data: {
                                 title: string;
@@ -112,6 +169,16 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "title": "Riverside Villa",
+                     *       "description": "A modern villa near the river.",
+                     *       "city": "Austin",
+                     *       "address": "88 Riverside Drive",
+                     *       "price": 420000,
+                     *       "type": "villa"
+                     *     }
+                     */
                     "application/json": {
                         title: string;
                         description: string;
@@ -134,6 +201,43 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "property": {
+                         *         "id": 1,
+                         *         "images": [
+                         *           {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           }
+                         *         ],
+                         *         "title": "Director of Operations",
+                         *         "description": "A representative CRM record.",
+                         *         "city": "Austin",
+                         *         "address": "88 Riverside Drive",
+                         *         "price": 240000,
+                         *         "type": "land",
+                         *         "status": "pending",
+                         *         "deals_count": 3,
+                         *         "owner": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             property: components["schemas"]["Property"];
                         };
@@ -163,7 +267,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
-                    /** @example  */
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -175,6 +279,43 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "property": {
+                         *         "id": 1,
+                         *         "images": [
+                         *           {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           }
+                         *         ],
+                         *         "title": "Director of Operations",
+                         *         "description": "A representative CRM record.",
+                         *         "city": "Austin",
+                         *         "address": "88 Riverside Drive",
+                         *         "price": 240000,
+                         *         "type": "land",
+                         *         "status": "pending",
+                         *         "deals_count": 3,
+                         *         "owner": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             property: components["schemas"]["Property"];
                         };
@@ -192,12 +333,24 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "_method": "PUT",
+                     *       "title": "Riverside Villa",
+                     *       "description": "A modern villa near the river.",
+                     *       "city": "Austin",
+                     *       "address": "88 Riverside Drive",
+                     *       "price": 435000,
+                     *       "type": "villa"
+                     *     }
+                     */
                     "application/json": {
                         title: string;
                         description: string;
@@ -211,8 +364,8 @@ export interface paths {
                         status?: "pending" | "showing" | null;
                         /** Format: date-time */
                         readonly created_at: string;
-                        /** @constant */
-                        _method: "PUT";
+                        /** @default PUT */
+                        _method: string;
                     };
                 };
             };
@@ -222,6 +375,43 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "property": {
+                         *         "id": 1,
+                         *         "images": [
+                         *           {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           }
+                         *         ],
+                         *         "title": "Director of Operations",
+                         *         "description": "A representative CRM record.",
+                         *         "city": "Austin",
+                         *         "address": "88 Riverside Drive",
+                         *         "price": 240000,
+                         *         "type": "land",
+                         *         "status": "pending",
+                         *         "deals_count": 3,
+                         *         "owner": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "created_at": "2026-08-20T12:00:00.000000Z"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             property: components["schemas"]["Property"];
                         };
@@ -238,6 +428,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;

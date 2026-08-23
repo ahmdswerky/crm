@@ -15,9 +15,14 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @example 1 */
                     page?: number;
+                    /** @example 1 */
                     per_page?: number;
-                    /** @description Filter leads by assigned user ID. */
+                    /**
+                     * @description Filter leads by assigned user ID.
+                     * @example example
+                     */
                     assigned_agent?: number;
                 };
                 header?: {
@@ -34,6 +39,71 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 100,
+                         *           "name": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+18629085911",
+                         *           "status": "pending",
+                         *           "city": "Texas,",
+                         *           "address": "88 Riverside Drive",
+                         *           "company_name": "Northstar Development",
+                         *           "source": "facebook",
+                         *           "assigned_agent_id": 1,
+                         *           "assigned_agent": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "username": "Example record",
+                         *             "email": "person@example.com",
+                         *             "avatar": {
+                         *               "id": 1,
+                         *               "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *               "name": "Example record",
+                         *               "mime_type": "image/webp",
+                         *               "size": 24576,
+                         *               "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "order": 1,
+                         *               "created_at": "2026-08-20T12:00:00.000000Z"
+                         *             }
+                         *           },
+                         *           "contact": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "title": "Director of Operations",
+                         *             "email": "person@example.com",
+                         *             "phone": "+19292932176"
+                         *           }
+                         *         }
+                         *       ],
+                         *       "links": {
+                         *         "first": "example",
+                         *         "last": "example",
+                         *         "prev": null,
+                         *         "next": "example"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "from": 1,
+                         *         "last_page": 1,
+                         *         "links": [
+                         *           {
+                         *             "url": "https://api-crm.swerky.dev/api/example",
+                         *             "label": "Mon",
+                         *             "page": 1,
+                         *             "active": true
+                         *           }
+                         *         ],
+                         *         "path": "https://api-crm.swerky.dev/api/example",
+                         *         "per_page": 1,
+                         *         "to": 1,
+                         *         "total": 1
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             data: components["schemas"]["Lead"][];
                             links: {
@@ -79,7 +149,7 @@ export interface paths {
                     /**
                      * @example {
                      *       "name": "Gary Grady",
-                     *       "email": "German49@hotmail.com",
+                     *       "email": "gary.grady@example.com",
                      *       "phone": "+18629085911",
                      *       "status": "pending",
                      *       "city": "Nevada",
@@ -111,6 +181,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "lead": {
+                         *         "id": 100,
+                         *         "name": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+18629085911",
+                         *         "status": "pending",
+                         *         "city": "Texas,",
+                         *         "address": "88 Riverside Drive",
+                         *         "company_name": "Northstar Development",
+                         *         "source": "facebook",
+                         *         "assigned_agent_id": 1,
+                         *         "assigned_agent": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "avatar": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           }
+                         *         },
+                         *         "contact": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "title": "Director of Operations",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176"
+                         *         }
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             lead: components["schemas"]["Lead"];
                         };
@@ -118,6 +228,335 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/board": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * leads pipeline board
+         * @description Returns the first cursor page and exact total for each lead status in one response.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @example 1 */
+                    per_page?: number;
+                    /** @example example */
+                    q?: string;
+                    /** @example facebook */
+                    source?: "facebook" | "whatsapp" | "instagram" | "x";
+                    /** @example example */
+                    assigned_agent?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Pipeline board bootstrap. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "stats": {
+                         *         "pending_count": 3,
+                         *         "contacted_count": 3,
+                         *         "qualified_count": 3,
+                         *         "unqalified_count": 3
+                         *       },
+                         *       "columns": {
+                         *         "pending": {
+                         *           "data": [
+                         *             {
+                         *               "id": 100,
+                         *               "name": "Example record",
+                         *               "email": "person@example.com",
+                         *               "phone": "+18629085911",
+                         *               "status": "pending",
+                         *               "city": "Texas,",
+                         *               "address": "88 Riverside Drive",
+                         *               "company_name": "Northstar Development",
+                         *               "source": "facebook",
+                         *               "assigned_agent_id": 1,
+                         *               "assigned_agent": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "username": "Example record",
+                         *                 "email": "person@example.com",
+                         *                 "avatar": {
+                         *                   "id": 1,
+                         *                   "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *                   "name": "Example record",
+                         *                   "mime_type": "image/webp",
+                         *                   "size": 24576,
+                         *                   "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "order": 1,
+                         *                   "created_at": "2026-08-20T12:00:00.000000Z"
+                         *                 }
+                         *               },
+                         *               "contact": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "title": "Director of Operations",
+                         *                 "email": "person@example.com",
+                         *                 "phone": "+19292932176"
+                         *               }
+                         *             }
+                         *           ],
+                         *           "next_cursor": "example",
+                         *           "has_more": true,
+                         *           "total": 0
+                         *         },
+                         *         "contacted": {
+                         *           "data": [
+                         *             {
+                         *               "id": 100,
+                         *               "name": "Example record",
+                         *               "email": "person@example.com",
+                         *               "phone": "+18629085911",
+                         *               "status": "pending",
+                         *               "city": "Texas,",
+                         *               "address": "88 Riverside Drive",
+                         *               "company_name": "Northstar Development",
+                         *               "source": "facebook",
+                         *               "assigned_agent_id": 1,
+                         *               "assigned_agent": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "username": "Example record",
+                         *                 "email": "person@example.com",
+                         *                 "avatar": {
+                         *                   "id": 1,
+                         *                   "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *                   "name": "Example record",
+                         *                   "mime_type": "image/webp",
+                         *                   "size": 24576,
+                         *                   "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "order": 1,
+                         *                   "created_at": "2026-08-20T12:00:00.000000Z"
+                         *                 }
+                         *               },
+                         *               "contact": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "title": "Director of Operations",
+                         *                 "email": "person@example.com",
+                         *                 "phone": "+19292932176"
+                         *               }
+                         *             }
+                         *           ],
+                         *           "next_cursor": "example",
+                         *           "has_more": true,
+                         *           "total": 0
+                         *         },
+                         *         "qualified": {
+                         *           "data": [
+                         *             {
+                         *               "id": 100,
+                         *               "name": "Example record",
+                         *               "email": "person@example.com",
+                         *               "phone": "+18629085911",
+                         *               "status": "pending",
+                         *               "city": "Texas,",
+                         *               "address": "88 Riverside Drive",
+                         *               "company_name": "Northstar Development",
+                         *               "source": "facebook",
+                         *               "assigned_agent_id": 1,
+                         *               "assigned_agent": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "username": "Example record",
+                         *                 "email": "person@example.com",
+                         *                 "avatar": {
+                         *                   "id": 1,
+                         *                   "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *                   "name": "Example record",
+                         *                   "mime_type": "image/webp",
+                         *                   "size": 24576,
+                         *                   "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "order": 1,
+                         *                   "created_at": "2026-08-20T12:00:00.000000Z"
+                         *                 }
+                         *               },
+                         *               "contact": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "title": "Director of Operations",
+                         *                 "email": "person@example.com",
+                         *                 "phone": "+19292932176"
+                         *               }
+                         *             }
+                         *           ],
+                         *           "next_cursor": "example",
+                         *           "has_more": true,
+                         *           "total": 0
+                         *         },
+                         *         "unqualified": {
+                         *           "data": [
+                         *             {
+                         *               "id": 100,
+                         *               "name": "Example record",
+                         *               "email": "person@example.com",
+                         *               "phone": "+18629085911",
+                         *               "status": "pending",
+                         *               "city": "Texas,",
+                         *               "address": "88 Riverside Drive",
+                         *               "company_name": "Northstar Development",
+                         *               "source": "facebook",
+                         *               "assigned_agent_id": 1,
+                         *               "assigned_agent": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "username": "Example record",
+                         *                 "email": "person@example.com",
+                         *                 "avatar": {
+                         *                   "id": 1,
+                         *                   "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *                   "name": "Example record",
+                         *                   "mime_type": "image/webp",
+                         *                   "size": 24576,
+                         *                   "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *                   "order": 1,
+                         *                   "created_at": "2026-08-20T12:00:00.000000Z"
+                         *                 }
+                         *               },
+                         *               "contact": {
+                         *                 "id": 1,
+                         *                 "name": "Example record",
+                         *                 "title": "Director of Operations",
+                         *                 "email": "person@example.com",
+                         *                 "phone": "+19292932176"
+                         *               }
+                         *             }
+                         *           ],
+                         *           "next_cursor": "example",
+                         *           "has_more": true,
+                         *           "total": 0
+                         *         }
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["LeadBoard"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/board/{status}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * leads pipeline board column
+         * @description Returns the next cursor page for one pipeline status without recomputing board totals or statistics.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @example eyJjcmVhdGVkX2F0IjoiMjAyNi0wOC0yMFQxMjowMDowMFoiLCJpZCI6NDJ9 */
+                    cursor?: string;
+                    /** @example 1 */
+                    per_page?: number;
+                    /** @example example */
+                    q?: string;
+                    /** @example facebook */
+                    source?: "facebook" | "whatsapp" | "instagram" | "x";
+                    /** @example example */
+                    assigned_agent?: number;
+                };
+                header?: never;
+                path: {
+                    /** @example pending */
+                    status: "pending" | "contacted" | "qualified" | "unqualified";
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Pipeline column cursor page. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 100,
+                         *           "name": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+18629085911",
+                         *           "status": "pending",
+                         *           "city": "Texas,",
+                         *           "address": "88 Riverside Drive",
+                         *           "company_name": "Northstar Development",
+                         *           "source": "facebook",
+                         *           "assigned_agent_id": 1,
+                         *           "assigned_agent": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "username": "Example record",
+                         *             "email": "person@example.com",
+                         *             "avatar": {
+                         *               "id": 1,
+                         *               "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *               "name": "Example record",
+                         *               "mime_type": "image/webp",
+                         *               "size": 24576,
+                         *               "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "order": 1,
+                         *               "created_at": "2026-08-20T12:00:00.000000Z"
+                         *             }
+                         *           },
+                         *           "contact": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "title": "Director of Operations",
+                         *             "email": "person@example.com",
+                         *             "phone": "+19292932176"
+                         *           }
+                         *         }
+                         *       ],
+                         *       "next_cursor": "example",
+                         *       "has_more": true
+                         *     }
+                         */
+                        "application/json": components["schemas"]["LeadCursorPage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -140,6 +579,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -151,6 +591,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "lead": {
+                         *         "id": 100,
+                         *         "name": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+18629085911",
+                         *         "status": "pending",
+                         *         "city": "Texas,",
+                         *         "address": "88 Riverside Drive",
+                         *         "company_name": "Northstar Development",
+                         *         "source": "facebook",
+                         *         "assigned_agent_id": 1,
+                         *         "assigned_agent": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "avatar": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           }
+                         *         },
+                         *         "contact": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "title": "Director of Operations",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176"
+                         *         }
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             lead: components["schemas"]["Lead"];
                         };
@@ -168,6 +648,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -176,10 +657,11 @@ export interface paths {
                 content: {
                     /**
                      * @example {
+                     *       "_method": "PUT",
                      *       "name": "Gary Grady",
-                     *       "email": "German49@hotmail.com",
+                     *       "email": "gary.grady@example.com",
                      *       "phone": "+18629085911",
-                     *       "status": "pending",
+                     *       "status": "contacted",
                      *       "city": "Nevada",
                      *       "address": "35699 N Poplar Street",
                      *       "company_name": "Andrew Altenwerth",
@@ -211,6 +693,46 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "lead": {
+                         *         "id": 100,
+                         *         "name": "Example record",
+                         *         "email": "person@example.com",
+                         *         "phone": "+18629085911",
+                         *         "status": "pending",
+                         *         "city": "Texas,",
+                         *         "address": "88 Riverside Drive",
+                         *         "company_name": "Northstar Development",
+                         *         "source": "facebook",
+                         *         "assigned_agent_id": 1,
+                         *         "assigned_agent": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "username": "Example record",
+                         *           "email": "person@example.com",
+                         *           "avatar": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           }
+                         *         },
+                         *         "contact": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "title": "Director of Operations",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176"
+                         *         }
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             lead: components["schemas"]["Lead"];
                         };
@@ -227,6 +749,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -265,6 +788,28 @@ export interface components {
             order: number;
             /** Format: date-time */
             created_at: string;
+        };
+        LeadCursorPage: {
+            data: components["schemas"]["Lead"][];
+            next_cursor: string | null;
+            has_more: boolean;
+        };
+        LeadBoardColumn: components["schemas"]["LeadCursorPage"] & {
+            total: number;
+        };
+        LeadBoard: {
+            stats: {
+                pending_count: number;
+                contacted_count: number;
+                qualified_count: number;
+                unqalified_count: number;
+            };
+            columns: {
+                pending: components["schemas"]["LeadBoardColumn"];
+                contacted: components["schemas"]["LeadBoardColumn"];
+                qualified: components["schemas"]["LeadBoardColumn"];
+                unqualified: components["schemas"]["LeadBoardColumn"];
+            };
         };
         Lead: {
             /** @description ID */

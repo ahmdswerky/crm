@@ -26,7 +26,6 @@ const MapPin = (props: ComponentProps<typeof MapPinIcon>) => <MapPinIcon {...pro
 
 export type Deal = SalesComponents["schemas"]["Deal"]
 export type User = AuthComponents["schemas"]["User"]
-type AuthenticatedAgent = User & { commission_rate: number }
 export type AgentOption = { id: number; name: string; username?: string | null; avatar?: User["avatar"] }
 export type DealEnvelope = { deal: Deal }
 export type DealFilterInfo = SalesPaths["/"]["get"]["responses"][200]["content"]["application/json"]["filter"]
@@ -77,25 +76,16 @@ export const dealSchema = z.object({
   closed_at: z.string().refine((value) => !value || !Number.isNaN(new Date(value).getTime()), "Enter a valid closing date."),
 })
 export type DealFormValues = z.infer<typeof dealSchema>
-export type DealFormProps = { form: ReturnType<typeof useForm<DealFormValues>>; onSubmit: () => void; commissionRate: number | null; formId?: string; onPropertyChange?: (property: DealPropertyOption) => void; agentUserId?: number; urlPropertyId?: number; editing?: boolean }
+export type DealFormProps = { form: ReturnType<typeof useForm<DealFormValues>>; onSubmit: () => void; formId?: string; onPropertyChange?: (property: DealPropertyOption) => void; agentUserId?: number; urlPropertyId?: number; editing?: boolean }
 export const emptyValues: DealFormValues = { value: "", deal_value: "", contact_id: "", property_id: "", agent_id: "", status: "inquiry", closed_at: "" }
 
 export function labelFor(value: string) { return value.replaceAll("_", " ") }
 export function titleFor(value: string) { return labelFor(value).replace(/\b\w/g, (character) => character.toUpperCase()) }
 export function formatCurrency(value: number) { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(value) }
 export function formatNumber(value: number) { return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value) }
-export function authenticatedCommissionRate(user: User | null): number | null {
-  const agent = user as AuthenticatedAgent | null
-  return typeof agent?.commission_rate === "number" ? agent.commission_rate : null
-}
 export function rangeValue(value: string, fallback: number | null | undefined) {
   const parsed = Number(value)
   return value && Number.isFinite(parsed) ? parsed : fallback ?? 0
-}
-export function calculateCommissionAmount(dealValue: string, commissionRate: number | null): number | null {
-  const value = Number(dealValue)
-  if (!dealValue.trim() || commissionRate === null || !Number.isFinite(value) || !Number.isFinite(commissionRate)) return null
-  return value * commissionRate / 100
 }
 export function formatDate(value?: string | null) {
   if (!value) return "—"
@@ -318,11 +308,9 @@ export function DealPropertyCarousel({ properties, propertiesLoading, properties
   </Field>
 }
 
-export function DealForm({ form, onSubmit, commissionRate, formId, onPropertyChange, agentUserId, urlPropertyId, editing = false }: DealFormProps) {
+export function DealForm({ form, onSubmit, formId, onPropertyChange, agentUserId, urlPropertyId, editing = false }: DealFormProps) {
   const { register, formState: { errors }, setValue, watch } = form
-  const watchedDealValue = watch("deal_value")
   const watchedStatus = watch("status")
-  const commissionAmount = editing ? null : calculateCommissionAmount(watchedDealValue, commissionRate)
   const [, setFormSearchParams] = useSearchParams()
   const { contacts, properties, propertiesLoading, propertiesLoadingMore, propertiesHasMore, onPropertySearch, onLoadMoreProperties, agents, agentsLoading } = useContext(DealRelationOptionsContext)
   const hideAgentSelect = agentUserId !== undefined
@@ -344,8 +332,8 @@ export function DealForm({ form, onSubmit, commissionRate, formId, onPropertyCha
       <div className="w-full">{propertyField}</div>
       <FieldGroup className="grid w-full gap-3 sm:grid-cols-2 lg:max-w-[50%]">
         <div className="sm:col-span-2">{contactField}</div>
-        <DealInputField inputId="deal-final-value" label="Deal value" required error={errors.deal_value?.message} description={commissionAmount === null ? undefined : <span className="flex w-full items-center gap-2" aria-live="polite"><HandCoins className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" /><span>Commission</span><span className="ms-auto font-mono font-medium text-foreground">{formatCurrency(commissionAmount)}</span></span>}><div className="flex min-w-0 w-full items-center"><InputGroupAddon align="inline-start" className="border-0 bg-transparent ps-2.5 pe-0"><DollarSign className="size-3.5 text-muted-foreground" aria-hidden="true" /></InputGroupAddon><InputGroupInput id="deal-final-value" aria-labelledby="deal-final-value-label" aria-invalid={Boolean(errors.deal_value)} type="number" step="1000" className="!border-0 focus-visible:!border-0 focus-visible:!ring-0" {...register("deal_value")} /></div></DealInputField>
-        <DealInputField inputId="deal-value" label="Value" error={errors.value?.message} inputGroupClassName="focus-within:!border-input focus-within:!ring-0 cursor-default [&_*]:!cursor-default"><div className="flex min-w-0 w-full items-center"><InputGroupAddon align="inline-start" className="border-0 bg-transparent ps-2.5 pe-0"><DollarSign className="size-3.5 text-muted-foreground" aria-hidden="true" /></InputGroupAddon><InputGroupInput id="deal-value" aria-labelledby="deal-value-label" aria-readonly="true" aria-invalid={Boolean(errors.value)} readOnly tabIndex={-1} type="number" step="1000" className="!border-0 focus-visible:!border-0 focus-visible:!ring-0" {...register("value")} /></div></DealInputField>
+        <DealInputField inputId="deal-final-value" label="Deal value" required error={errors.deal_value?.message}><div className="flex min-w-0 w-full items-center"><InputGroupAddon align="inline-start" className="border-0 bg-transparent ps-2.5 pe-0"><DollarSign className="size-3.5 text-muted-foreground" aria-hidden="true" /></InputGroupAddon><InputGroupInput id="deal-final-value" aria-labelledby="deal-final-value-label" aria-invalid={Boolean(errors.deal_value)} type="number" step="1000" className="!border-0 focus-visible:!border-0 focus-visible:!ring-0" {...register("deal_value")} /></div></DealInputField>
+        <DealInputField inputId="deal-value" label="Value" error={errors.value?.message} inputGroupClassName="bg-muted/40 dark:bg-muted/30 focus-within:!border-input focus-within:!ring-0 cursor-default [&_*]:!cursor-default"><div className="flex min-w-0 w-full items-center"><InputGroupAddon align="inline-start" className="border-0 bg-transparent ps-2.5 pe-0"><DollarSign className="size-3.5 text-muted-foreground" aria-hidden="true" /></InputGroupAddon><InputGroupInput id="deal-value" aria-labelledby="deal-value-label" aria-readonly="true" aria-invalid={Boolean(errors.value)} readOnly tabIndex={-1} type="number" step="1000" className="!border-0 focus-visible:!border-0 focus-visible:!ring-0" {...register("value")} /></div></DealInputField>
         {hideAgentSelect ? <input type="hidden" {...register("agent_id")} /> : <DealSelectField inputId="deal-agent" label="Agent" required error={errors.agent_id?.message} value={watch("agent_id")} onValueChange={(value) => setValue("agent_id", value, { shouldDirty: true, shouldValidate: true })} placeholder={agentsLoading ? "Loading users…" : agents.length ? "Choose an agent" : "No agents available"} disabled={agentsLoading || agents.length === 0}><>{agents.map((agent) => <SelectItem key={agent.id} value={String(agent.id)}><span className="flex items-center gap-2"><PersonAvatar name={agent.name} avatar={agent.avatar} size="sm" /><span className="truncate">{agent.name}</span></span></SelectItem>)}</></DealSelectField>}
         <DealSelectField inputId="deal-status" label="Status" required error={errors.status?.message} value={watchedStatus || "inquiry"} onValueChange={(value) => setValue("status", value as DealFormValues["status"], { shouldValidate: true })} className="sm:max-w-44"><>{statuses.map((status) => <SelectItem key={status} value={status}><span className={`capitalize ${statusTextClass[status]}`}>{labelFor(status)}</span></SelectItem>)}</></DealSelectField>
         {watchedStatus === "won" && <DealInputField inputId="deal-closed-at" label="Closed at" error={errors.closed_at?.message}><DateTimePicker value={watch("closed_at")} onChange={(value) => setValue("closed_at", value, { shouldValidate: true })} className="rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0" /></DealInputField>}
@@ -378,7 +366,7 @@ export function DealAgent({ agent, agentId, compact = false, linkEnabled = true,
   const id = agent.id ?? agentId
   const agentPath = id !== undefined && linkEnabled ? `/agents/${id}` : undefined
   const name = agentPath ? <Link className={linkClassName} to={agentPath} onClick={(event) => event.stopPropagation()}>{agent.name}</Link> : agent.name
-  const visual = useIcon ? <span className="grid size-7 shrink-0 place-items-center text-muted-foreground" aria-hidden="true"><UserRound className="size-4" /></span> : <PersonAvatar name={agent.name} size={compact ? "sm" : "default"} />
+  const visual = useIcon ? <span className="grid size-7 shrink-0 place-items-center text-muted-foreground" aria-hidden="true"><UserRound className="size-4" /></span> : <PersonAvatar name={agent.name} avatar={agent.avatar} size={compact ? "sm" : "default"} />
   return <div className="flex min-w-0 items-center gap-2">{agentPath && linkVisuals ? <Link className="shrink-0" to={agentPath} aria-label={`${agent.name} avatar`} onClick={(event) => event.stopPropagation()}>{visual}</Link> : visual}<div className="min-w-0 truncate font-medium">{name}</div></div>
 }
 

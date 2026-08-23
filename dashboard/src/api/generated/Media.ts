@@ -15,8 +15,11 @@ export interface paths {
         get: {
             parameters: {
                 query: {
+                    /** @example property */
                     owner_type: components["parameters"]["OwnerType"];
+                    /** @example 1 */
                     owner_id: components["parameters"]["OwnerId"];
+                    /** @example gallery */
                     collection: components["parameters"]["Collection"];
                 };
                 header?: never;
@@ -46,6 +49,16 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "owner_type": "property",
+                     *       "owner_id": 1,
+                     *       "collection": "gallery",
+                     *       "files": [
+                     *         "riverside-villa.webp"
+                     *       ]
+                     *     }
+                     */
                     "multipart/form-data": {
                         owner_type: components["schemas"]["OwnerType"];
                         owner_id: number;
@@ -88,6 +101,18 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "owner_type": "property",
+                     *       "owner_id": 1,
+                     *       "collection": "gallery",
+                     *       "media_ids": [
+                     *         31,
+                     *         32,
+                     *         33
+                     *       ]
+                     *     }
+                     */
                     "application/json": {
                         owner_type: components["schemas"]["OwnerType"];
                         owner_id: number;
@@ -127,6 +152,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -186,6 +212,23 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
+                /**
+                 * @example {
+                 *       "data": [
+                 *         {
+                 *           "id": 1,
+                 *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                 *           "name": "Example record",
+                 *           "mime_type": "image/webp",
+                 *           "size": 24576,
+                 *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                 *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                 *           "order": 1,
+                 *           "created_at": "2026-08-20T12:00:00.000000Z"
+                 *         }
+                 *       ]
+                 *     }
+                 */
                 "application/json": {
                     data: components["schemas"]["Media"][];
                 };
@@ -197,6 +240,11 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
+                /**
+                 * @example {
+                 *       "message": "Unauthenticated."
+                 *     }
+                 */
                 "application/json": components["schemas"]["Error"];
             };
         };
@@ -206,6 +254,11 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
+                /**
+                 * @example {
+                 *       "message": "This action is unauthorized."
+                 *     }
+                 */
                 "application/json": components["schemas"]["Error"];
             };
         };
@@ -215,6 +268,11 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
+                /**
+                 * @example {
+                 *       "message": "The requested resource was not found."
+                 *     }
+                 */
                 "application/json": components["schemas"]["Error"];
             };
         };
@@ -224,13 +282,26 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
+                /**
+                 * @example {
+                 *       "message": "The given data was invalid.",
+                 *       "errors": {
+                 *         "owner_id": [
+                 *           "The selected owner id is invalid."
+                 *         ]
+                 *       }
+                 *     }
+                 */
                 "application/json": components["schemas"]["Error"];
             };
         };
     };
     parameters: {
+        /** @example property */
         OwnerType: components["schemas"]["OwnerType"];
+        /** @example 1 */
         OwnerId: number;
+        /** @example gallery */
         Collection: string;
     };
     requestBodies: never;
