@@ -1,0 +1,88 @@
+docs/docker-operations.md
+  s_d5719c13ddf000::t_b4ef3b0e28bcb2 200,203-207
+  s_d5719c13ddf000::t_4819170184315c 417-418,420-468
+  s_d5719c13ddf000::t_d7019545bbd6f4 24-26,28-31,33-57
+  s_d5719c13ddf000::t_305812a62eea54 1-23,59-112,114-199,201-202,208-400,402-409,411-416,469-536
+  s_d5719c13ddf000::t_ce42e5ccebddfb 32
+  s_d5719c13ddf000::t_a3290825cd5ffe 58
+  s_d5719c13ddf000::t_cbdf61824fc5dc 27,113,401,410,419
+server/tests/Feature/AuthApiTest.php
+  s_313a007f706c22::t_4df0edc0183d3e 149-150
+  s_313a007f706c22::t_37c97b09391c06 16-148,151-178
+  s_313a007f706c22::t_20fdcbaf58b1d6 13-15
+  s_313a007f706c22::t_4ce56fee2887af 179-181
+lint-staged.config.mjs
+  s_841f69504a4383::t_587f8d98fb3b8d 7
+  s_841f69504a4383::t_1d174b1e27d021 4-6
+  s_841f69504a4383::t_9e490048b001f4 8-9
+server/tests/Feature/Auth/PasswordResetTest.php
+  s_313a007f706c22::t_1e7a32aa4620cb 14,37
+  s_313a007f706c22::t_37c97b09391c06 1-13,15-36,38-41
+scripts/quality/push-check.mjs
+  s_841f69504a4383::t_74d3ddf1f03ba0 1-21
+docs/openapi/Sales.openapi.json
+  s_96da3a15d25e8c::t_9dc70fae221383 1579-1582
+  s_96da3a15d25e8c::t_4b9f38d13ffab4 1583
+README.md
+  s_d5719c13ddf000::t_305812a62eea54 73-74,77-100,121-135
+  s_d5719c13ddf000::t_d7019545bbd6f4 39-41,43-46,48-54,56-65,67-71
+  s_d5719c13ddf000::t_cbdf61824fc5dc 42
+  s_d5719c13ddf000::t_ce42e5ccebddfb 47,55
+  s_d5719c13ddf000::t_5cbc3dd1e35491 136,138-142
+  s_d5719c13ddf000::t_a40511c3aafc6c 66
+  s_d5719c13ddf000::t_c9cb4e5a418a1a 72
+server/tests/Feature/Auth/RegistrationTest.php
+  s_313a007f706c22::t_37c97b09391c06 1-7
+server/tests/Feature/Auth/AuthenticationTest.php
+  s_313a007f706c22::t_37c97b09391c06 1-38
+server/app/Http/Resources/UserResource.php
+  s_7465163c0b25f7::t_eabe3a2ab8b571 17,36-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "67c1a88fc313b321e97984a7ee0b9fcaefbb14bc",
+  "prompts": {},
+  "sessions": {
+    "s_313a007f706c22": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02e18-3a78-7b61-976a-82984675ba15",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_7465163c0b25f7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02e7c-6a21-7460-b8c5-5992e644d6e4",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_841f69504a4383": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02c6a-fe46-7492-9808-9cbeba1e6fc8",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_96da3a15d25e8c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02cd5-e36e-7ee1-9719-270a0c2edc74",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_d5719c13ddf000": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02dc6-7f80-7a63-a0e8-d91d7cb17b5e",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
