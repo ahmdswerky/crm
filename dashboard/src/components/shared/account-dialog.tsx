@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { API_BASE_URL, ApiError, apiJson } from "@/api/client"
@@ -19,6 +19,7 @@ export function AccountDialog({ open, account, onOpenChange, onSaved }: AccountD
   const [error, setError] = useState("")
   const [stagedFiles, setStagedFiles] = useState<File[]>([])
   const [activeAccount, setActiveAccount] = useState<Account | null>(account ?? null)
+  const mediaInitialized = useRef(false)
   const form = useForm<AccountFormValues>({ resolver: zodResolver(accountSchema), defaultValues: emptyValues })
   const editing = Boolean(activeAccount)
 
@@ -26,6 +27,7 @@ export function AccountDialog({ open, account, onOpenChange, onSaved }: AccountD
     if (!open) return
     setError("")
     setStagedFiles([])
+    mediaInitialized.current = false
     setActiveAccount(account ?? null)
     form.reset(account ? valuesFromAccount(account) : emptyValues)
   }, [account, form, open])
@@ -55,7 +57,8 @@ export function AccountDialog({ open, account, onOpenChange, onSaved }: AccountD
     ? <SingleMediaField ownerType="account" ownerId={activeAccount.id} collection="main" label="Account logo" disabled={form.formState.isSubmitting} onChange={(media) => {
       const nextAccount = { ...activeAccount, image: media[0] ?? null }
       setActiveAccount(nextAccount)
-      onSaved(nextAccount)
+      if (mediaInitialized.current) onSaved(nextAccount)
+      mediaInitialized.current = true
     }} />
     : <SingleMediaField label="Account logo" disabled={form.formState.isSubmitting} onFilesChange={setStagedFiles} />
 

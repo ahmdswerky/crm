@@ -273,7 +273,7 @@ export function DealsPage() {
     return `/deals/create${queryString ? `?return=${encodeURIComponent(queryString)}` : ""}`
   }
   return <DealRelationOptionsContext.Provider value={{ contacts: contactOptions, properties: propertyOptions, propertiesLoading: false, propertiesLoadingMore: false, propertiesHasMore: false, agents: agentOptions, agentsLoading: userOptionsLoading }}><div className="space-y-6 p-6 lg:p-8">
-    <div><h1 className="text-2xl font-semibold tracking-tight">Deals</h1><p className="mt-1 text-sm text-muted-foreground">Track active negotiations from offer to close.</p></div>
+    <div><h1 className="text-2xl font-semibold tracking-tight">Deals</h1><p className="mt-1 text-sm text-muted-foreground">Track active negotiations from offer to close.</p><p className="font-mono tabular-nums text-muted-foreground">{meta?.total ?? 0} Deals</p></div>
     {error && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>}
     <div className="relative">
       <div className="flex items-end justify-between gap-4">
@@ -282,7 +282,7 @@ export function DealsPage() {
         </div>
         <div className="mb-1 flex shrink-0 gap-2">
           <Button type="button" variant="outline" className="shrink-0" onClick={() => void loadDeals()} disabled={loading}><RefreshCw className="size-4" />Refresh</Button>
-          {canCreate && <Button asChild variant="outline"><Link to={createPath()}><Plus className="size-4" />Create new deal</Link></Button>}
+          {canCreate && <Button asChild variant="outline"><Link to={createPath()}><Plus className="size-4" />Add new deal</Link></Button>}
         </div>
       </div>
       <motion.div initial={false} animate={{ height: filtersOpen ? "auto" : 0 }} transition={filterSlideTransition} className="overflow-hidden">

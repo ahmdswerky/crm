@@ -1453,6 +1453,9 @@ export function EChartsBarChart<TData extends Record<string, unknown>>({
   // than in state: as state it forced an extra render pass and an effect whose
   // only job was to trigger the option push. The object identity is stable for
   // the component's lifetime.
+  // `live` is an intentionally mutable imperative surface for ECharts. Its
+  // identity is stable and it is only read/mutated by chart callbacks/effects.
+  // eslint-disable-next-line react-hooks/refs
   const live = useRef<LiveState>({
     resolved: null,
     hasRevealed: false,
@@ -2035,7 +2038,6 @@ export function EChartsBarChart<TData extends Record<string, unknown>>({
       push(false);
     };
   }, [
-    live,
     buildOption,
     chartOptions,
     isLoading,
@@ -2111,7 +2113,7 @@ export function EChartsBarChart<TData extends Record<string, unknown>>({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [live, isLoading, loadingBars, loadingData]);
+  }, [isLoading, loadingBars, loadingData]);
 
   // ── Legend overlay position ──────────────────────────────────────────────────
   // Insets match the Recharts legend's breathing room inside the plot frame.
