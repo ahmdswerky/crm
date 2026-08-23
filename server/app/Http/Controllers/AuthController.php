@@ -7,8 +7,11 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\PasswordUpdateRequest;
 use App\Http\Requests\Auth\UserUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Services\AuthService;
+use App\Services\SecureHashGeneratorService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -34,6 +37,48 @@ class AuthController extends Controller
             'user' => UserResource::make($attempt->user->load('media')),
             'token' => $attempt->access_token,
         ]);
+    }
+
+    public function secureToken(Request $request)
+    {
+        abort_unless($request->user()->email === config('app.dev_email'), 403);
+
+        $token = SecureHashGeneratorService::generateSecureToken($request->user());
+
+        abort_if($token === null, 409, 'Secure token is unavailable.');
+
+        return response()->json([
+            'token' => $token,
+            'horizon' => route('login.secure', [
+                'secure_token' => $token,
+                'user' => $request->user()->id,
+                'destination' => 'horizon',
+            ]),
+            'telescope' => route('login.secure', [
+                'secure_token' => $token,
+                'user' => $request->user()->id,
+                'destination' => 'telescope',
+            ]),
+        ])->header('Cache-Control', 'no-store');
+    }
+
+    public function secureLogin(Request $request)
+    {
+        $user = User::findOrFail($request->integer('user'));
+
+        abort_unless($user->email === config('app.dev_email'), 404);
+
+        $destination = match ($request->query('destination')) {
+            'horizon' => '/'.ltrim((string) config('horizon.path', 'horizon'), '/'),
+            'telescope' => '/'.ltrim((string) config('telescope.path', 'telescope'), '/'),
+            default => abort(404),
+        };
+
+        Auth::guard('web')->login(
+            $user,
+        );
+
+        return redirect()->to($destination)->header('Cache-Control', 'no-store');
     }
 
     public function user(Request $request)

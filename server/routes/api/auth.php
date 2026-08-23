@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\AuthController;
+use App\Http\Middleware\SecureTokenValidate;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -18,3 +20,9 @@ Route::put('forgot-password', [PasswordResetLinkController::class, 'store'])->mi
 Route::post('reset-password', [NewPasswordController::class, 'store'])->middleware('guest')->name('password.reset');
 
 Route::delete('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
+
+Route::get('secure-token', [AuthController::class, 'secureToken'])->middleware('auth:sanctum')->name('secure-token');
+
+Route::get('secure-login', [AuthController::class, 'secureLogin'])
+    ->name('login.secure')
+    ->middleware(['web', SecureTokenValidate::class]);

@@ -37,6 +37,10 @@ class UserResource extends JsonResource
             'total_potential_commission' => $this->when(!$isAgent, fn () => $this->whenAppended('totalPotentialCommission', fn () => $this->totalPotentialCommission)),
             'total_actual_commission' => $this->when(!$isAgent, fn () => $this->whenAppended('totalActualCommission', fn () => $this->totalActualCommission)),
             'is_super' => $this->resource->is_super,
+            'can_generate_secure_token' => $this->when(
+                $request->user()?->is($this->resource),
+                fn () => $this->resource->is_super && $this->resource->email === config('app.dev_email'),
+            ),
             'created_at' => $this->resource->created_at,
         ];
     }
