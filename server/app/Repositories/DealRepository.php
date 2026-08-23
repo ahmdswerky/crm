@@ -7,7 +7,6 @@ use App\Enums\DealStatus;
 use App\Models\Deal;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -19,7 +18,6 @@ class DealRepository implements DealRepositoryInterface
     {
         $isAgent = request()->user()->roles->contains('name', 'agent');
         $userId = request()->user()->id;
-
 
         return $this->model
             ->query()

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Property;
 
-use App\Enums\PropertyStatus;
 use App\Enums\PropertyType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;

@@ -1,0 +1,5 @@
+set -eu
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  npm run hooks:push -- "$remote_sha" "$local_sha"
+done

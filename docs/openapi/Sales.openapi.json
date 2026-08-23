@@ -31,7 +31,8 @@
               "type": "number",
               "format": "double",
               "minimum": 0
-            }
+            },
+            "example": "example"
           },
           {
             "name": "max_value",
@@ -41,7 +42,8 @@
               "type": "number",
               "format": "double",
               "minimum": 0
-            }
+            },
+            "example": "example"
           },
           {
             "name": "min_deal_value",
@@ -51,7 +53,8 @@
               "type": "number",
               "format": "double",
               "minimum": 0
-            }
+            },
+            "example": "example"
           },
           {
             "name": "max_deal_value",
@@ -61,7 +64,8 @@
               "type": "number",
               "format": "double",
               "minimum": 0
-            }
+            },
+            "example": "example"
           },
           {
             "name": "q",
@@ -70,7 +74,8 @@
             "schema": {
               "type": "string",
               "maxLength": 250
-            }
+            },
+            "example": "example"
           },
           {
             "name": "status",
@@ -78,8 +83,16 @@
             "description": "Deal status to include.",
             "schema": {
               "type": "string",
-              "enum": ["inquiry", "viewing", "offer_made", "legal", "won", "lost"]
-            }
+              "enum": [
+                "inquiry",
+                "viewing",
+                "offer_made",
+                "legal",
+                "won",
+                "lost"
+              ]
+            },
+            "example": "inquiry"
           },
           {
             "name": "contact",
@@ -88,7 +101,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1
-            }
+            },
+            "example": "example"
           },
           {
             "name": "property",
@@ -97,7 +111,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1
-            }
+            },
+            "example": "example"
           },
           {
             "name": "agent",
@@ -106,7 +121,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1
-            }
+            },
+            "example": "example"
           },
           {
             "name": "closed_from",
@@ -115,7 +131,8 @@
             "schema": {
               "type": "string",
               "format": "date"
-            }
+            },
+            "example": "2026-08-01T00:00:00.000000Z"
           },
           {
             "name": "closed_to",
@@ -124,7 +141,8 @@
             "schema": {
               "type": "string",
               "format": "date"
-            }
+            },
+            "example": "2026-08-01T00:00:00.000000Z"
           },
           {
             "name": "page",
@@ -133,7 +151,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1
-            }
+            },
+            "example": 1
           },
           {
             "name": "per_page",
@@ -143,7 +162,8 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 100
-            }
+            },
+            "example": 1
           }
         ],
         "responses": {
@@ -286,6 +306,157 @@
                     "meta",
                     "filter"
                   ]
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 100,
+                      "value": 240000,
+                      "deal_value": 240000,
+                      "contact": {
+                        "id": 1,
+                        "name": "Example record",
+                        "title": "Director of Operations",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "account": {
+                          "id": 1,
+                          "name": "Example record",
+                          "industry": "Development",
+                          "phone": "+19292932176",
+                          "address": "88 Riverside Drive",
+                          "created_at": "2026-08-20"
+                        },
+                        "lead_id": 1,
+                        "created_at": "2026-08-20"
+                      },
+                      "property": {
+                        "id": 1,
+                        "images": [
+                          {
+                            "id": 1,
+                            "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                            "name": "Example record",
+                            "mime_type": "image/webp",
+                            "size": 24576,
+                            "url": "https://api-crm.swerky.dev/storage/example.webp",
+                            "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                            "order": 1,
+                            "created_at": "2026-08-20T12:00:00.000000Z"
+                          }
+                        ],
+                        "title": "Director of Operations",
+                        "description": "A representative CRM record.",
+                        "city": "Austin",
+                        "address": "88 Riverside Drive",
+                        "price": 240000,
+                        "type": "land",
+                        "status": "pending",
+                        "owner": {
+                          "id": 1,
+                          "name": "Example record",
+                          "username": "Example record",
+                          "email": "person@example.com",
+                          "phone": "+19292932176",
+                          "created_at": "2026-08-20T12:00:00.000000Z"
+                        },
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "agent_id": 1,
+                      "agent": {
+                        "id": 100,
+                        "name": "Example record",
+                        "username": "Example record",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "avatar": {
+                          "id": 1,
+                          "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                          "name": "Example record",
+                          "mime_type": "image/webp",
+                          "size": 24576,
+                          "url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "order": 1,
+                          "created_at": "2026-08-20T12:00:00.000000Z"
+                        },
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "status": "inquiry",
+                      "commission_rate": 12.5,
+                      "commission": {
+                        "status": "estimate",
+                        "version": 1,
+                        "agent_amount": 240000,
+                        "manager_amount": 240000,
+                        "company_amount": 240000,
+                        "total_amount": 240000,
+                        "calculated_at": "2026-08-20T12:00:00.000000Z",
+                        "finalized_at": "2026-08-20T12:00:00.000000Z",
+                        "allocations": [
+                          {
+                            "recipient_type": "agent",
+                            "recipient_user_id": 1,
+                            "recipient": {
+                              "id": 100,
+                              "name": "Example record",
+                              "username": "Example record",
+                              "email": "person@example.com",
+                              "phone": "+19292932176",
+                              "avatar": {
+                                "id": 1,
+                                "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                                "name": "Example record",
+                                "mime_type": "image/webp",
+                                "size": 24576,
+                                "url": "https://api-crm.swerky.dev/storage/example.webp",
+                                "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                                "order": 1,
+                                "created_at": "2026-08-20T12:00:00.000000Z"
+                              },
+                              "created_at": "2026-08-20T12:00:00.000000Z"
+                            },
+                            "base_amount": 240000,
+                            "rate": 12.5,
+                            "amount": 240000,
+                            "state": "estimate",
+                            "snapshotted_at": "2026-08-20T12:00:00.000000Z"
+                          }
+                        ]
+                      },
+                      "closed_at": "2026-08-20T12:00:00.000000Z",
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    }
+                  ],
+                  "links": {
+                    "first": "example",
+                    "last": "example",
+                    "prev": null,
+                    "next": "example"
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "from": 1,
+                    "last_page": 1,
+                    "links": [
+                      {
+                        "url": "https://api-crm.swerky.dev/api/example",
+                        "label": "Mon",
+                        "page": 1,
+                        "active": true
+                      }
+                    ],
+                    "path": "https://api-crm.swerky.dev/api/example",
+                    "per_page": 1,
+                    "to": 1,
+                    "total": 1
+                  },
+                  "filter": {
+                    "min_value": 240000,
+                    "max_value": 240000,
+                    "min_deal_value": 240000,
+                    "max_deal_value": 240000
+                  }
                 }
               }
             },
@@ -365,7 +536,14 @@
                   "closed_at"
                 ]
               },
-              "examples": {}
+              "example": {
+                "deal_value": 240000,
+                "contact_id": 7,
+                "property_id": 1,
+                "agent_id": 2,
+                "status": "inquiry",
+                "closed_at": null
+              }
             }
           },
           "required": true
@@ -385,6 +563,126 @@
                   "required": [
                     "deal"
                   ]
+                },
+                "example": {
+                  "deal": {
+                    "id": 100,
+                    "value": 240000,
+                    "deal_value": 240000,
+                    "contact": {
+                      "id": 1,
+                      "name": "Example record",
+                      "title": "Director of Operations",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "account": {
+                        "id": 1,
+                        "name": "Example record",
+                        "industry": "Development",
+                        "phone": "+19292932176",
+                        "address": "88 Riverside Drive",
+                        "created_at": "2026-08-20"
+                      },
+                      "lead_id": 1,
+                      "created_at": "2026-08-20"
+                    },
+                    "property": {
+                      "id": 1,
+                      "images": [
+                        {
+                          "id": 1,
+                          "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                          "name": "Example record",
+                          "mime_type": "image/webp",
+                          "size": 24576,
+                          "url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "order": 1,
+                          "created_at": "2026-08-20T12:00:00.000000Z"
+                        }
+                      ],
+                      "title": "Director of Operations",
+                      "description": "A representative CRM record.",
+                      "city": "Austin",
+                      "address": "88 Riverside Drive",
+                      "price": 240000,
+                      "type": "land",
+                      "status": "pending",
+                      "owner": {
+                        "id": 1,
+                        "name": "Example record",
+                        "username": "Example record",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "agent_id": 1,
+                    "agent": {
+                      "id": 100,
+                      "name": "Example record",
+                      "username": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "avatar": {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "status": "inquiry",
+                    "commission_rate": 12.5,
+                    "commission": {
+                      "status": "estimate",
+                      "version": 1,
+                      "agent_amount": 240000,
+                      "manager_amount": 240000,
+                      "company_amount": 240000,
+                      "total_amount": 240000,
+                      "calculated_at": "2026-08-20T12:00:00.000000Z",
+                      "finalized_at": "2026-08-20T12:00:00.000000Z",
+                      "allocations": [
+                        {
+                          "recipient_type": "agent",
+                          "recipient_user_id": 1,
+                          "recipient": {
+                            "id": 100,
+                            "name": "Example record",
+                            "username": "Example record",
+                            "email": "person@example.com",
+                            "phone": "+19292932176",
+                            "avatar": {
+                              "id": 1,
+                              "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                              "name": "Example record",
+                              "mime_type": "image/webp",
+                              "size": 24576,
+                              "url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "order": 1,
+                              "created_at": "2026-08-20T12:00:00.000000Z"
+                            },
+                            "created_at": "2026-08-20T12:00:00.000000Z"
+                          },
+                          "base_amount": 240000,
+                          "rate": 12.5,
+                          "amount": 240000,
+                          "state": "estimate",
+                          "snapshotted_at": "2026-08-20T12:00:00.000000Z"
+                        }
+                      ]
+                    },
+                    "closed_at": "2026-08-20T12:00:00.000000Z",
+                    "created_at": "2026-08-20T12:00:00.000000Z"
+                  }
                 }
               }
             },
@@ -406,7 +704,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "",
+            "example": 1,
             "schema": {
               "type": "integer",
               "format": "bignum"
@@ -438,6 +736,126 @@
                   "required": [
                     "deal"
                   ]
+                },
+                "example": {
+                  "deal": {
+                    "id": 100,
+                    "value": 240000,
+                    "deal_value": 240000,
+                    "contact": {
+                      "id": 1,
+                      "name": "Example record",
+                      "title": "Director of Operations",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "account": {
+                        "id": 1,
+                        "name": "Example record",
+                        "industry": "Development",
+                        "phone": "+19292932176",
+                        "address": "88 Riverside Drive",
+                        "created_at": "2026-08-20"
+                      },
+                      "lead_id": 1,
+                      "created_at": "2026-08-20"
+                    },
+                    "property": {
+                      "id": 1,
+                      "images": [
+                        {
+                          "id": 1,
+                          "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                          "name": "Example record",
+                          "mime_type": "image/webp",
+                          "size": 24576,
+                          "url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "order": 1,
+                          "created_at": "2026-08-20T12:00:00.000000Z"
+                        }
+                      ],
+                      "title": "Director of Operations",
+                      "description": "A representative CRM record.",
+                      "city": "Austin",
+                      "address": "88 Riverside Drive",
+                      "price": 240000,
+                      "type": "land",
+                      "status": "pending",
+                      "owner": {
+                        "id": 1,
+                        "name": "Example record",
+                        "username": "Example record",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "agent_id": 1,
+                    "agent": {
+                      "id": 100,
+                      "name": "Example record",
+                      "username": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "avatar": {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "status": "inquiry",
+                    "commission_rate": 12.5,
+                    "commission": {
+                      "status": "estimate",
+                      "version": 1,
+                      "agent_amount": 240000,
+                      "manager_amount": 240000,
+                      "company_amount": 240000,
+                      "total_amount": 240000,
+                      "calculated_at": "2026-08-20T12:00:00.000000Z",
+                      "finalized_at": "2026-08-20T12:00:00.000000Z",
+                      "allocations": [
+                        {
+                          "recipient_type": "agent",
+                          "recipient_user_id": 1,
+                          "recipient": {
+                            "id": 100,
+                            "name": "Example record",
+                            "username": "Example record",
+                            "email": "person@example.com",
+                            "phone": "+19292932176",
+                            "avatar": {
+                              "id": 1,
+                              "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                              "name": "Example record",
+                              "mime_type": "image/webp",
+                              "size": 24576,
+                              "url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "order": 1,
+                              "created_at": "2026-08-20T12:00:00.000000Z"
+                            },
+                            "created_at": "2026-08-20T12:00:00.000000Z"
+                          },
+                          "base_amount": 240000,
+                          "rate": 12.5,
+                          "amount": 240000,
+                          "state": "estimate",
+                          "snapshotted_at": "2026-08-20T12:00:00.000000Z"
+                        }
+                      ]
+                    },
+                    "closed_at": "2026-08-20T12:00:00.000000Z",
+                    "created_at": "2026-08-20T12:00:00.000000Z"
+                  }
                 }
               }
             },
@@ -457,7 +875,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "",
+            "example": 1,
             "schema": {
               "type": "integer",
               "format": "bignum"
@@ -520,14 +938,20 @@
                   },
                   "_method": {
                     "type": "string",
-                    "const": "PUT"
+                    "default": "PUT"
                   }
                 },
                 "required": [
                   "_method"
                 ]
               },
-              "examples": {}
+              "example": {
+                "_method": "PUT",
+                "deal_value": 250000,
+                "agent_id": 2,
+                "status": "legal",
+                "closed_at": "2026-08-20"
+              }
             }
           },
           "required": true
@@ -547,6 +971,126 @@
                   "required": [
                     "deal"
                   ]
+                },
+                "example": {
+                  "deal": {
+                    "id": 100,
+                    "value": 240000,
+                    "deal_value": 240000,
+                    "contact": {
+                      "id": 1,
+                      "name": "Example record",
+                      "title": "Director of Operations",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "account": {
+                        "id": 1,
+                        "name": "Example record",
+                        "industry": "Development",
+                        "phone": "+19292932176",
+                        "address": "88 Riverside Drive",
+                        "created_at": "2026-08-20"
+                      },
+                      "lead_id": 1,
+                      "created_at": "2026-08-20"
+                    },
+                    "property": {
+                      "id": 1,
+                      "images": [
+                        {
+                          "id": 1,
+                          "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                          "name": "Example record",
+                          "mime_type": "image/webp",
+                          "size": 24576,
+                          "url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "order": 1,
+                          "created_at": "2026-08-20T12:00:00.000000Z"
+                        }
+                      ],
+                      "title": "Director of Operations",
+                      "description": "A representative CRM record.",
+                      "city": "Austin",
+                      "address": "88 Riverside Drive",
+                      "price": 240000,
+                      "type": "land",
+                      "status": "pending",
+                      "owner": {
+                        "id": 1,
+                        "name": "Example record",
+                        "username": "Example record",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "agent_id": 1,
+                    "agent": {
+                      "id": 100,
+                      "name": "Example record",
+                      "username": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "avatar": {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "status": "inquiry",
+                    "commission_rate": 12.5,
+                    "commission": {
+                      "status": "estimate",
+                      "version": 1,
+                      "agent_amount": 240000,
+                      "manager_amount": 240000,
+                      "company_amount": 240000,
+                      "total_amount": 240000,
+                      "calculated_at": "2026-08-20T12:00:00.000000Z",
+                      "finalized_at": "2026-08-20T12:00:00.000000Z",
+                      "allocations": [
+                        {
+                          "recipient_type": "agent",
+                          "recipient_user_id": 1,
+                          "recipient": {
+                            "id": 100,
+                            "name": "Example record",
+                            "username": "Example record",
+                            "email": "person@example.com",
+                            "phone": "+19292932176",
+                            "avatar": {
+                              "id": 1,
+                              "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                              "name": "Example record",
+                              "mime_type": "image/webp",
+                              "size": 24576,
+                              "url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "order": 1,
+                              "created_at": "2026-08-20T12:00:00.000000Z"
+                            },
+                            "created_at": "2026-08-20T12:00:00.000000Z"
+                          },
+                          "base_amount": 240000,
+                          "rate": 12.5,
+                          "amount": 240000,
+                          "state": "estimate",
+                          "snapshotted_at": "2026-08-20T12:00:00.000000Z"
+                        }
+                      ]
+                    },
+                    "closed_at": "2026-08-20T12:00:00.000000Z",
+                    "created_at": "2026-08-20T12:00:00.000000Z"
+                  }
                 }
               }
             },
@@ -566,7 +1110,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "",
+            "example": 1,
             "schema": {
               "type": "integer",
               "format": "bignum"
@@ -620,7 +1164,7 @@
             "type": "integer"
           },
           "agent": {
-            "$ref": "#/components/schemas/Agent",
+            "$ref": "#/components/schemas/User",
             "nullable": true
           },
           "status": {
@@ -670,7 +1214,12 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["estimate", "final", "superseded", "void"]
+            "enum": [
+              "estimate",
+              "final",
+              "superseded",
+              "void"
+            ]
           },
           "version": {
             "type": "integer"
@@ -724,14 +1273,18 @@
         "properties": {
           "recipient_type": {
             "type": "string",
-            "enum": ["agent", "manager", "company"]
+            "enum": [
+              "agent",
+              "manager",
+              "company"
+            ]
           },
           "recipient_user_id": {
             "type": "integer",
             "nullable": true
           },
           "recipient": {
-            "$ref": "#/components/schemas/Agent",
+            "$ref": "#/components/schemas/User",
             "nullable": true
           },
           "base_amount": {
@@ -748,7 +1301,12 @@
           },
           "state": {
             "type": "string",
-            "enum": ["estimate", "final", "superseded", "void"]
+            "enum": [
+              "estimate",
+              "final",
+              "superseded",
+              "void"
+            ]
           },
           "snapshotted_at": {
             "type": "string",
@@ -1018,6 +1576,11 @@
           "phone": {
             "type": "string"
           },
+          "avatar": {
+            "$ref": "#/components/schemas/Media",
+            "nullable": true,
+            "readOnly": true
+          },
           "password": {
             "type": "string",
             "format": "password"
@@ -1061,40 +1624,6 @@
           "username",
           "phone",
           "permissions"
-        ]
-      },
-      "Agent": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "ID",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          }
-        },
-        "required": [
-          "name",
-          "email"
         ]
       },
       "Role": {

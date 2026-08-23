@@ -1,0 +1,67 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      repository-tooling-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /dashboard
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      dashboard-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /payment-server
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      payments-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: composer
+    directory: /server
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      server-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /docker/crm-server
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /docker/dashboard
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /docker/payment-server
+    schedule:
+      interval: weekly
+      day: monday

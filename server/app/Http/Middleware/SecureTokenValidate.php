@@ -25,7 +25,7 @@ class SecureTokenValidate
             $token,
         );
 
-        abort_if(!$valid, 404);
+        abort_if(! $valid, 404);
 
         return $next($request);
     }

@@ -1,0 +1,430 @@
+name: ${COMPOSE_PROJECT_NAME:-crm-dev}
+
+services:
+  crm-api:
+    build:
+      context: .
+      dockerfile: docker/crm-server/Dockerfile.dev
+    init: true
+    env_file:
+      - path: .env.docker
+        required: false
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      TELESCOPE_ENABLED: ${TELESCOPE_ENABLED:-false}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${CRM_DB_NAME:-crm}
+      DB_USERNAME: ${CRM_DB_USER:-crm_app}
+      DB_PASSWORD: ${CRM_DB_PASSWORD:-crm-dev-password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USERNAME: crm
+      REDIS_PASSWORD: ${CRM_REDIS_PASSWORD:-crm-redis-dev-password}
+      REDIS_PREFIX: "crm:"
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      MEDIA_DISK: public
+      HORIZON_PREFIX: "crm:horizon:"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: crm
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+      RABBITMQ_VHOST: /
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: debug
+    volumes:
+      - ./server:/var/www/html
+      - crm_vendor_dev:/var/www/html/vendor
+      - crm_storage_dev:/var/www/html/storage
+    expose:
+      - "9000"
+    ports:
+      - "127.0.0.1:19000:9000"
+    networks: [proxy_net, data_net, egress_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  horizon:
+    build:
+      context: .
+      dockerfile: docker/crm-server/Dockerfile.dev
+    image: ${COMPOSE_PROJECT_NAME:-crm-dev}-crm-api:latest
+    init: true
+    restart: unless-stopped
+    env_file:
+      - path: .env.docker
+        required: false
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      TELESCOPE_ENABLED: ${TELESCOPE_ENABLED:-false}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${CRM_DB_NAME:-crm}
+      DB_USERNAME: ${CRM_DB_USER:-crm_app}
+      DB_PASSWORD: ${CRM_DB_PASSWORD:-crm-dev-password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USERNAME: crm
+      REDIS_PASSWORD: ${CRM_REDIS_PASSWORD:-crm-redis-dev-password}
+      REDIS_PREFIX: "crm:"
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      MEDIA_DISK: public
+      HORIZON_PREFIX: "crm:horizon:"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: crm
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+      RABBITMQ_VHOST: /
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: debug
+    command: ["php", "artisan", "horizon"]
+    volumes:
+      - ./server:/var/www/html
+      - crm_vendor_dev:/var/www/html/vendor
+      - crm_storage_dev:/var/www/html/storage
+    networks: [data_net, egress_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/crm-server/Dockerfile.dev
+    image: ${COMPOSE_PROJECT_NAME:-crm-dev}-crm-api:latest
+    init: true
+    restart: unless-stopped
+    env_file:
+      - path: .env.docker
+        required: false
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      TELESCOPE_ENABLED: ${TELESCOPE_ENABLED:-false}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${CRM_DB_NAME:-crm}
+      DB_USERNAME: ${CRM_DB_USER:-crm_app}
+      DB_PASSWORD: ${CRM_DB_PASSWORD:-crm-dev-password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USERNAME: crm
+      REDIS_PASSWORD: ${CRM_REDIS_PASSWORD:-crm-redis-dev-password}
+      REDIS_PREFIX: "crm:"
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      MEDIA_DISK: public
+      HORIZON_PREFIX: "crm:horizon:"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: crm
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+      RABBITMQ_VHOST: /
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: debug
+    command: ["php", "artisan", "schedule:work"]
+    volumes:
+      - ./server:/var/www/html
+      - crm_vendor_dev:/var/www/html/vendor
+      - crm_storage_dev:/var/www/html/storage
+    networks: [data_net, egress_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  payment-events:
+    build:
+      context: .
+      dockerfile: docker/crm-server/Dockerfile.dev
+    image: ${COMPOSE_PROJECT_NAME:-crm-dev}-crm-api:latest
+    init: true
+    restart: unless-stopped
+    env_file:
+      - path: .env.docker
+        required: false
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${CRM_DB_NAME:-crm}
+      DB_USERNAME: ${CRM_DB_USER:-crm_app}
+      DB_PASSWORD: ${CRM_DB_PASSWORD:-crm-dev-password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USERNAME: crm
+      REDIS_PASSWORD: ${CRM_REDIS_PASSWORD:-crm-redis-dev-password}
+      REDIS_PREFIX: "crm:"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: crm
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+      RABBITMQ_VHOST: /
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: debug
+    command: ["php", "artisan", "payments:consume-events"]
+    volumes:
+      - ./server:/var/www/html
+      - crm_vendor_dev:/var/www/html/vendor
+      - crm_storage_dev:/var/www/html/storage
+    networks: [data_net, egress_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  payment-api:
+    build:
+      context: .
+      dockerfile: docker/payment-server/Dockerfile.dev
+    init: true
+    env_file:
+      - path: .env.docker
+        required: false
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      PAYMENTS_DB_HOST: postgres
+      PAYMENTS_DB_PORT: 5432
+      PAYMENTS_DB_NAME: ${PAYMENTS_DB_NAME:-payments}
+      PAYMENTS_DB_USER: ${PAYMENTS_DB_USER:-payments_app}
+      PAYMENTS_DB_PASSWORD: ${PAYMENTS_DB_PASSWORD:-payments-dev-password}
+      PAYMENTS_AUTH_DB_HOST: postgres
+      PAYMENTS_AUTH_DB_PORT: 5432
+      PAYMENTS_AUTH_DB_NAME: ${PAYMENTS_AUTH_DB_NAME:-crm}
+      PAYMENTS_AUTH_DB_USER: ${PAYMENTS_AUTH_DB_USER:-auth_reader}
+      PAYMENTS_AUTH_DB_PASSWORD: ${PAYMENTS_AUTH_DB_PASSWORD:-auth-dev-password}
+      PAYMENTS_REDIS_HOST: redis
+      PAYMENTS_REDIS_PORT: 6379
+      PAYMENTS_REDIS_USERNAME: payments
+      PAYMENTS_REDIS_PASSWORD: ${PAYMENTS_REDIS_PASSWORD:-payments-redis-dev-password}
+      PAYMENTS_REDIS_PREFIX: "payments:"
+      PAYMENTS_MIGRATIONS_RUN: "true"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: crm
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+      RABBITMQ_VHOST: /
+      PAYMENTS_DB_ENABLED: "true"
+    volumes:
+      - ./payment-server:/app
+      - payment_node_modules_dev:/app/node_modules
+    expose:
+      - "3000"
+    ports:
+      - "127.0.0.1:13000:3000"
+    networks: [proxy_net, data_net, egress_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:3000/api/v1/health/live >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/dashboard/Dockerfile.dev
+    init: true
+    environment:
+      VITE_API_BASE_URL: /api
+    volumes:
+      - ./dashboard:/app
+      - dashboard_node_modules_dev:/app/node_modules
+    expose:
+      - "5173"
+    ports:
+      - "127.0.0.1:15173:5173"
+    networks: [proxy_net]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:5173/ >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres-dev-password}
+      CRM_DB_NAME: ${CRM_DB_NAME:-crm}
+      CRM_DB_USER: ${CRM_DB_USER:-crm_app}
+      CRM_DB_PASSWORD: ${CRM_DB_PASSWORD:-crm-dev-password}
+      PAYMENTS_DB_NAME: ${PAYMENTS_DB_NAME:-payments}
+      PAYMENTS_DB_USER: ${PAYMENTS_DB_USER:-payments_app}
+      PAYMENTS_DB_PASSWORD: ${PAYMENTS_DB_PASSWORD:-payments-dev-password}
+      AUTH_DB_USER: ${PAYMENTS_AUTH_DB_USER:-auth_reader}
+      AUTH_DB_PASSWORD: ${PAYMENTS_AUTH_DB_PASSWORD:-auth-dev-password}
+      AUTH_SEED_DB_USER: ${PAYMENTS_AUTH_DB_SEED_USER:-auth_seeder}
+      AUTH_SEED_DB_PASSWORD: ${PAYMENTS_AUTH_DB_SEED_PASSWORD:-auth-seed-dev-password}
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - postgres_dev:/var/lib/postgresql/data
+      - ./docker/postgres/init/01-create-application-databases.sh:/docker-entrypoint-initdb.d/01-create-application-databases.sh:ro
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    networks: [data_net, dev_access_net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  auth-grants:
+    profiles: [auth]
+    image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    restart: "no"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres-dev-password}
+      CRM_DB_NAME: ${CRM_DB_NAME:-crm}
+      AUTH_DB_USER: ${PAYMENTS_AUTH_DB_USER:-auth_reader}
+      AUTH_DB_PASSWORD: ${PAYMENTS_AUTH_DB_PASSWORD:-auth-dev-password}
+      AUTH_SEED_DB_USER: ${PAYMENTS_AUTH_DB_SEED_USER:-auth_seeder}
+      AUTH_SEED_PASSWORD: ${PAYMENTS_AUTH_DB_SEED_PASSWORD:-auth-seed-dev-password}
+      PGHOST: postgres
+    volumes:
+      - ./docker/postgres/grant-auth-access.sh:/usr/local/bin/grant-auth-access:ro
+    networks: [data_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["/bin/sh", "/usr/local/bin/grant-auth-access"]
+
+  payment-auth-seed:
+    profiles: [seed]
+    build:
+      context: .
+      dockerfile: docker/payment-server/Dockerfile
+    environment:
+      NODE_ENV: production
+      PAYMENTS_AUTH_DB_HOST: postgres
+      PAYMENTS_AUTH_DB_PORT: 5432
+      PAYMENTS_AUTH_DB_NAME: ${PAYMENTS_AUTH_DB_NAME:-crm}
+      PAYMENTS_AUTH_DB_USER: ${PAYMENTS_AUTH_DB_SEED_USER:-auth_seeder}
+      PAYMENTS_AUTH_DB_PASSWORD: ${PAYMENTS_AUTH_DB_SEED_PASSWORD:-auth-seed-dev-password}
+      PAYMENTS_AUTH_SEED_ROLE_NAMES: ${PAYMENTS_AUTH_SEED_ROLE_NAMES:-manager,agent}
+    networks: [data_net]
+    depends_on:
+      auth-grants:
+        condition: service_completed_successfully
+    command: ["node", "dist/seed-auth.js"]
+
+  redis:
+    image: redis:8-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    entrypoint: ["/bin/sh", "/usr/local/bin/redis-entrypoint"]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    ports:
+      - "127.0.0.1:16379:6379"
+    environment:
+      CRM_REDIS_PASSWORD: ${CRM_REDIS_PASSWORD:-crm-redis-dev-password}
+      PAYMENTS_REDIS_PASSWORD: ${PAYMENTS_REDIS_PASSWORD:-payments-redis-dev-password}
+      CRM_REDIS_ALLOW_FLUSHDB: "1"
+    volumes:
+      - redis_dev:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./docker/redis/entrypoint.sh:/usr/local/bin/redis-entrypoint:ro
+    networks: [data_net, dev_access_net]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --user crm --pass \"$${CRM_REDIS_PASSWORD}\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-crm}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+    ports:
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - rabbitmq_dev:/var/lib/rabbitmq
+    networks: [data_net, dev_access_net]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  gateway:
+    image: nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de
+    entrypoint: ["nginx"]
+    command: ["-g", "daemon off;"]
+    init: true
+    read_only: true
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    cap_add: [CHOWN, SETUID, SETGID]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/upstreams.dev.conf:/etc/nginx/upstreams.conf:ro
+      - crm_storage_dev:/var/www/html/public/storage:ro
+    networks: [proxy_net]
+    depends_on:
+      crm-api:
+        condition: service_healthy
+      payment-api:
+        condition: service_healthy
+      dashboard:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8080/healthz >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  crm_vendor_dev:
+  crm_storage_dev:
+  payment_node_modules_dev:
+  dashboard_node_modules_dev:
+  postgres_dev:
+  redis_dev:
+  rabbitmq_dev:
+
+networks:
+  proxy_net:
+  data_net:
+    internal: true
+  dev_access_net:
+  egress_net:

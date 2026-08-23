@@ -1,0 +1,493 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changed components
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      payments: ${{ steps.filter.outputs.payments }}
+      compose: ${{ steps.filter.outputs.compose }}
+      tooling: ${{ steps.filter.outputs.tooling }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changes
+        id: filter
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3
+        with:
+          filters: |
+            server:
+              - 'server/**'
+              - 'docker/crm-server/**'
+            dashboard:
+              - 'dashboard/**'
+              - 'docs/openapi/**'
+              - 'docker/dashboard/**'
+            payments:
+              - 'payment-server/**'
+              - 'docker/payment-server/**'
+            compose:
+              - 'docker-compose.yml'
+              - 'docker-compose.dev.yml'
+              - 'docker/nginx/**'
+              - 'docker/postgres/**'
+              - 'docker/redis/**'
+              - '.dockerignore'
+              - '.env.docker.example'
+            tooling:
+              - 'package.json'
+              - 'package-lock.json'
+              - 'commitlint.config.cjs'
+              - '.husky/**'
+              - 'lint-staged.config.mjs'
+              - 'scripts/quality/**'
+
+  commit-policy:
+    name: Conventional Commit policy
+    needs: changes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Check out source and history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install repository tooling
+        run: npm ci
+
+      - name: Validate commit messages
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == 'pull_request' ]]; then
+            from="$PR_BASE"
+            to="$PR_HEAD"
+          else
+            from="$PUSH_BEFORE"
+            to="$PUSH_AFTER"
+            if [[ "$from" =~ ^0+$ ]]; then
+              from="$(git rev-list --max-parents=0 "$to" | tail -n 1)"
+            fi
+          fi
+          npm exec -- commitlint --from "$from" --to "$to" --verbose
+
+  workflow-policy:
+    name: Workflow policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Enforce workflow security policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          if rg -n -P '^\s*uses:\s+[^@]+@(?![0-9a-f]{40}(\s|$))' .github/workflows; then
+            echo 'Every GitHub Action must use a full 40-character commit SHA.' >&2
+            exit 1
+          fi
+          if rg -n '^[[:space:]]*pull_request_target:|^[[:space:]]*permissions:[[:space:]]*(write-all|\{[[:space:]]*\})[[:space:]]*$' .github/workflows; then
+            echo 'Unsafe workflow trigger or permission declaration found.' >&2
+            exit 1
+          fi
+
+  security:
+    name: Dependency and secret security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Check out source and history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      - name: Audit npm production dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          for directory in dashboard payment-server; do
+            if [[ -f "$directory/package-lock.json" ]]; then
+              (cd "$directory" && npm ci && npm audit --omit=dev --audit-level=high)
+            fi
+          done
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, dom, exif, gd, intl, mbstring, pcntl, pdo_sqlite, zip
+          coverage: none
+
+      - name: Audit Composer dependencies
+        working-directory: server
+        if: ${{ hashFiles('server/composer.lock') != '' }}
+        run: composer audit --locked --no-interaction
+
+  server:
+    name: Laravel checks
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' || needs.changes.outputs.tooling == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, dom, exif, gd, intl, mbstring, pcntl, pdo_sqlite, zip
+          coverage: none
+
+      - name: Restore Composer downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ runner.os }}-${{ hashFiles('server/composer.lock') }}
+
+      - name: Install locked dependencies
+        working-directory: server
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate Composer manifest
+        working-directory: server
+        run: composer validate --strict --no-check-publish
+
+      - name: Check Laravel formatting
+        working-directory: server
+        run: ./vendor/bin/pint --test
+
+      - name: Run static analysis
+        working-directory: server
+        run: composer analyze
+
+      - name: Run Laravel tests
+        working-directory: server
+        run: composer test
+
+  dashboard:
+    name: Dashboard checks
+    needs: changes
+    if: ${{ needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.tooling == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install locked dependencies
+        working-directory: dashboard
+        run: npm ci
+
+      - name: Check generated API contract
+        working-directory: dashboard
+        run: npm run api:check
+
+      - name: Check generated API documentation
+        working-directory: dashboard
+        run: npm run api:docs:check
+
+      - name: Validate OpenAPI documents
+        working-directory: dashboard
+        run: npm run api:validate
+
+      - name: Lint dashboard
+        working-directory: dashboard
+        run: npm run lint
+
+      - name: Check dashboard types
+        working-directory: dashboard
+        run: npm run typecheck
+
+      - name: Run dashboard tests
+        working-directory: dashboard
+        run: npm run test
+
+      - name: Build dashboard
+        working-directory: dashboard
+        run: npm run build
+
+  payments:
+    name: Payments API checks
+    needs: changes
+    if: ${{ needs.changes.outputs.payments == 'true' || needs.changes.outputs.tooling == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: payment-server/package-lock.json
+
+      - name: Install locked dependencies
+        working-directory: payment-server
+        run: npm ci
+
+      - name: Lint payments API without rewriting files
+        working-directory: payment-server
+        run: npm run lint:check
+
+      - name: Run payments API tests
+        working-directory: payment-server
+        run: npm run test
+
+      - name: Build payments API
+        working-directory: payment-server
+        run: npm run build
+
+  compose:
+    name: Docker Compose validation
+    needs: changes
+    if: ${{ needs.changes.outputs.compose == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Validate production Compose configuration
+        run: docker compose -f docker-compose.yml config -q
+
+      - name: Validate development Compose configuration
+        run: docker compose --env-file .env.docker.example -f docker-compose.dev.yml config -q
+
+  api-docs:
+    name: API documentation drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dashboard dependencies
+        working-directory: dashboard
+        run: npm ci
+
+      - name: Validate and check generated API documentation
+        working-directory: dashboard
+        run: |
+          npm run api:docs:check
+          npm run api:validate
+          npm run api:check
+
+  docker-structure:
+    name: Docker structure
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install repository tooling
+        run: npm ci
+
+      - name: Validate Docker files and Compose structure
+        run: npm run quality:docker
+
+  server-image:
+    name: Laravel production image
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' || needs.changes.outputs.compose == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build Laravel production image without publishing
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/crm-server/Dockerfile
+          push: false
+          cache-from: type=gha,scope=crm-server
+          cache-to: type=gha,mode=max,scope=crm-server
+
+  dashboard-image:
+    name: Dashboard production image
+    needs: changes
+    if: ${{ needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.compose == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build dashboard production image without publishing
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/dashboard/Dockerfile
+          push: false
+          cache-from: type=gha,scope=dashboard
+          cache-to: type=gha,mode=max,scope=dashboard
+
+  payments-image:
+    name: Payments production image
+    needs: changes
+    if: ${{ needs.changes.outputs.payments == 'true' || needs.changes.outputs.compose == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build payments production image without publishing
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/payment-server/Dockerfile
+          push: false
+          cache-from: type=gha,scope=payment-server
+          cache-to: type=gha,mode=max,scope=payment-server
+
+  policy-gate:
+    name: CI policy gate
+    if: ${{ always() }}
+    needs:
+      - workflow-policy
+      - security
+      - changes
+      - commit-policy
+      - api-docs
+      - docker-structure
+      - server
+      - dashboard
+      - payments
+      - compose
+      - server-image
+      - dashboard-image
+      - payments-image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Enforce required checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            'workflow-policy:${{ needs.workflow-policy.result }}'
+            'security:${{ needs.security.result }}'
+            'changes:${{ needs.changes.result }}'
+            'commit-policy:${{ needs.commit-policy.result }}'
+            'api-docs:${{ needs.api-docs.result }}'
+            'docker-structure:${{ needs.docker-structure.result }}'
+            'server:${{ needs.server.result }}'
+            'payments:${{ needs.payments.result }}'
+            'compose:${{ needs.compose.result }}'
+            'server-image:${{ needs.server-image.result }}'
+            'dashboard:${{ needs.dashboard.result }}'
+            'dashboard-image:${{ needs.dashboard-image.result }}'
+            'payments-image:${{ needs.payments-image.result }}'
+          )
+          for check in "${required[@]}"; do
+            name=${check%%:*}
+            result=${check#*:}
+            if [[ "$result" != 'success' && "$result" != 'skipped' ]]; then
+              echo "$name ended with $result" >&2
+              exit 1
+            fi
+          done

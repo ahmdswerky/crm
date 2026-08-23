@@ -1,0 +1,56 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ rootNamespace }}Http\Controllers\Controller;
+use {{ namespacedRequests }}
+use Illuminate\Routing\Attributes\Controllers\Authorize;
+
+class {{ class }} extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    #[Authorize('viewAny', {{ model }}::class)]
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    #[Authorize('create', {{ model }}::class)]
+    public function store({{ storeRequest }} $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    #[Authorize('view', '{{ modelVariable }}')]
+    public function show({{ model }} ${{ modelVariable }})
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    #[Authorize('update', '{{ modelVariable }}')]
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }})
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    #[Authorize('delete', '{{ modelVariable }}')]
+    public function destroy({{ model }} ${{ modelVariable }})
+    {
+        //
+    }
+}

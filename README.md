@@ -36,12 +36,67 @@ Explore the production API reference:
 ## Architecture
 
 ```text
-dashboard/  React CRM workspace
-    │
-    ├── docs/openapi/  API contract → generated TypeScript
-    │
-    └── server/  Laravel API → PostgreSQL, Redis, Horizon
+                              REAL ESTATE CRM
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PUBLIC EDGE                                                                 │
+│ Browser / API clients → TLS edge (production) → Host NGINX                  │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ 127.0.0.1:8080
+┌──────────────────────────────────────▼──────────────────────────────────────┐
+│ DOCKER NGINX GATEWAY  ·  same-origin routing · upstream balancing           │
+│ / → dashboard (React/Vite; two replicas in production)                      │
+└──────────────────────┬───────────────────────────────────┬──────────────────┘
+                       │ /api/*                            │ /api/v1/payments
+                       │                                   │ /api/v1/invoices
+          ┌────────────▼─────────────┐          ┌──────────▼──────────────┐
+          │ CRM SERVICE PLANE        │          │ PAYMENTS SERVICE PLANE  │
+          │ Laravel API ×2           │          │ NestJS payment API ×2   │
+          │ Horizon · scheduler      │          │ invoices · auth guards  │
+          │ payment event consumer   │          │ payment-server/         │
+          └────────────┬─────────────┘          └──────────┬──────────────┘
+                       │                                    │ auth_reader
+          ┌────────────▼─────────────┐          ┌──────────▼──────────────┐
+          │ CRM DATA PLANE           │          │ PAYMENTS DATA PLANE     │
+          │ PostgreSQL: crm          │◄─────────┤ PostgreSQL: payments    │
+          │ Redis: crm:              │ read-only│ Redis: payments:        │
+          └────────────┬─────────────┘          └──────────┬──────────────┘
+                       │                                    │
+                       └──────────────┬─────────────────────┘
+                                      │
+                         ┌────────────▼──────────────┐
+                         │ EVENT / INTEGRATION PLANE │
+                         │ RabbitMQ                  │
+                         │ command → result event    │
+                         │ payments → crm.payment-   │
+                         │ events                    │
+                         └───────────────────────────┘
+
+docs/openapi/  canonical API contracts → generated dashboard TypeScript
 ```
+
+The Laravel API owns CRM users, roles, and permissions. The payment service owns
+payment data and reads the CRM auth tables through the restricted `auth_reader`
+connection; one-shot grant and seed jobs establish that boundary. RabbitMQ is
+the integration boundary between the services, while Laravel Horizon and Redis
+remain responsible for CRM jobs and queues.
+
+## Installation
+
+Development uses Docker Compose. Copy the local configuration, validate the
+stack, start it, then apply the CRM and payment authorization setup in order:
+
+```sh
+cp .env.docker.example .env.docker
+docker compose --env-file .env.docker -f docker-compose.dev.yml config
+docker compose --env-file .env.docker -f docker-compose.dev.yml up -d --wait
+docker compose --env-file .env.docker -f docker-compose.dev.yml exec crm-api php artisan migrate --seed
+docker compose --env-file .env.docker -f docker-compose.dev.yml --profile auth run --rm auth-grants
+docker compose --env-file .env.docker -f docker-compose.dev.yml --profile auth --profile seed run --rm payment-auth-seed
+```
+
+The full technical guide covers prerequisites, environment and secrets,
+development and production Compose, service boundaries, migrations, health
+checks, backups, deployment, and troubleshooting: [Docker and technical documentation](docs/docker-operations.md).
 
 ## Hard problems
 
@@ -63,6 +118,25 @@ dashboard/  React CRM workspace
 
 Analytics report generation runs as a queued job. Horizon processes background work; Redis provides the queue, cache, sessions, and locks.
 
-## Custom Codex skills
+## Releases
 
-`create-api-endpoint` · `create-openapi-export` · `create-dashboard-resource-page` · `convert-resource-preview-to-drawer` · `redesign-dashboard-show-page` · `real-estate-image-generation`
+The CRM uses one repository-wide Semantic Version and Release Please. Merges to `main` create or update a release pull request; merging that pull request updates `VERSION` and `CHANGELOG.md`, creates a `vX.Y.Z` tag, and publishes the GitHub release.
+
+Use Conventional Commit prefixes so release changes can be classified automatically:
+
+- `feat:` creates a minor release.
+- `fix:` creates a patch release.
+- `feat!:` or `BREAKING CHANGE:` creates a major release.
+- `chore:`, `docs:`, and `test:` are normally non-release changes.
+
+The initial product version is `0.1.0`. Deployment and Docker image publishing remain separate from the release workflow. Published release titles and notes may be corrected without changing the version or tag; code changes require a new version.
+
+## Quality gates
+
+Checks are scoped to the files that changed.
+
+- Commits regenerate and validate `dashboard/public/openapi.json` from `docs/openapi/`.
+- Laravel runs Composer validation, Pint, Larastan, PHP Insights, and tests.
+- The dashboard runs API-contract checks, ESLint, TypeScript, and tests.
+- Payments runs ESLint and tests.
+- Docker changes run Compose structure validation; pushes also run affected builds and API checks.

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\LeadStatus;
 use App\Models\Account;
 use App\Models\Contact;
 use App\Models\Lead;

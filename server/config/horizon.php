@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\SecureTokenValidate;
 use Illuminate\Support\Str;
 
 return [

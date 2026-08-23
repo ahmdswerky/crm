@@ -31,7 +31,95 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "required": [
+                    "data",
+                    "links",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Account"
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "first": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "last": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        },
+                        "prev": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        },
+                        "next": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Example record",
+                      "industry": "Development",
+                      "phone": "+19292932176",
+                      "address": "88 Riverside Drive",
+                      "image": {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20"
+                    }
+                  ],
+                  "links": {
+                    "first": "https://api-crm.swerky.dev/storage/example.webp",
+                    "last": "https://api-crm.swerky.dev/storage/example.webp",
+                    "prev": "https://api-crm.swerky.dev/storage/example.webp",
+                    "next": "https://api-crm.swerky.dev/storage/example.webp"
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "last_page": 1,
+                    "per_page": 1,
+                    "total": 1
+                  }
                 }
               }
             },
@@ -83,7 +171,12 @@
                   "address"
                 ]
               },
-              "examples": {}
+              "example": {
+                "name": "Northstar Development",
+                "industry": "Development",
+                "phone": "+19292932180",
+                "address": "12 Market Street, Austin"
+              }
             }
           },
           "required": true
@@ -95,7 +188,35 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "required": [
+                    "account"
+                  ],
+                  "properties": {
+                    "account": {
+                      "$ref": "#/components/schemas/Account"
+                    }
+                  }
+                },
+                "example": {
+                  "account": {
+                    "id": 1,
+                    "name": "Example record",
+                    "industry": "Development",
+                    "phone": "+19292932176",
+                    "address": "88 Riverside Drive",
+                    "image": {
+                      "id": 1,
+                      "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                      "name": "Example record",
+                      "mime_type": "image/webp",
+                      "size": 24576,
+                      "url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "order": 1,
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "created_at": "2026-08-20"
+                  }
                 }
               }
             },
@@ -119,7 +240,8 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -146,6 +268,28 @@
                   "required": [
                     "account"
                   ]
+                },
+                "example": {
+                  "account": {
+                    "id": 1,
+                    "name": "Example record",
+                    "industry": "Development",
+                    "phone": "+19292932176",
+                    "address": "88 Riverside Drive",
+                    "image": {
+                      "id": 1,
+                      "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                      "name": "Example record",
+                      "mime_type": "image/webp",
+                      "size": 24576,
+                      "url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "order": 1,
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "created_at": "2026-08-20",
+                    "contacts_count": 3
+                  }
                 }
               }
             },
@@ -168,7 +312,8 @@
             "schema": {
               "type": "integer",
               "format": "bignum"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -207,7 +352,12 @@
                   "address"
                 ]
               },
-              "examples": {}
+              "example": {
+                "name": "Northstar Development",
+                "industry": "Development",
+                "phone": "+19292932180",
+                "address": "12 Market Street, Austin"
+              }
             }
           },
           "required": true
@@ -219,7 +369,35 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "required": [
+                    "account"
+                  ],
+                  "properties": {
+                    "account": {
+                      "$ref": "#/components/schemas/Account"
+                    }
+                  }
+                },
+                "example": {
+                  "account": {
+                    "id": 1,
+                    "name": "Example record",
+                    "industry": "Development",
+                    "phone": "+19292932176",
+                    "address": "88 Riverside Drive",
+                    "image": {
+                      "id": 1,
+                      "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                      "name": "Example record",
+                      "mime_type": "image/webp",
+                      "size": 24576,
+                      "url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "order": 1,
+                      "created_at": "2026-08-20T12:00:00.000000Z"
+                    },
+                    "created_at": "2026-08-20"
+                  }
                 }
               }
             },
@@ -241,7 +419,8 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -286,7 +465,115 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "required": [
+                    "data",
+                    "links",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Contact"
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "first": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "last": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        },
+                        "prev": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        },
+                        "next": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Example record",
+                      "title": "Director of Operations",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "lead_id": 1,
+                      "account": {
+                        "id": 1,
+                        "name": "Example record",
+                        "industry": "Development",
+                        "phone": "+19292932176",
+                        "address": "88 Riverside Drive",
+                        "image": {
+                          "id": 1,
+                          "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                          "name": "Example record",
+                          "mime_type": "image/webp",
+                          "size": 24576,
+                          "url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "order": 1,
+                          "created_at": "2026-08-20T12:00:00.000000Z"
+                        },
+                        "created_at": "2026-08-20"
+                      },
+                      "lead": {
+                        "id": 1,
+                        "name": "Example record",
+                        "email": "person@example.com",
+                        "phone": "+19292932176",
+                        "status": "pending",
+                        "city": "Austin",
+                        "address": "88 Riverside Drive",
+                        "company_name": "Northstar Development",
+                        "source": "facebook"
+                      },
+                      "created_at": "2026-08-20"
+                    }
+                  ],
+                  "links": {
+                    "first": "https://api-crm.swerky.dev/storage/example.webp",
+                    "last": "https://api-crm.swerky.dev/storage/example.webp",
+                    "prev": "https://api-crm.swerky.dev/storage/example.webp",
+                    "next": "https://api-crm.swerky.dev/storage/example.webp"
+                  },
+                  "meta": {
+                    "current_page": 1,
+                    "last_page": 1,
+                    "per_page": 1,
+                    "total": 1
+                  }
                 }
               }
             },
@@ -310,7 +597,8 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -337,6 +625,47 @@
                   "required": [
                     "contact"
                   ]
+                },
+                "example": {
+                  "contact": {
+                    "id": 1,
+                    "name": "Example record",
+                    "title": "Director of Operations",
+                    "email": "person@example.com",
+                    "phone": "+19292932176",
+                    "lead_id": 1,
+                    "account": {
+                      "id": 1,
+                      "name": "Example record",
+                      "industry": "Development",
+                      "phone": "+19292932176",
+                      "address": "88 Riverside Drive",
+                      "image": {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20"
+                    },
+                    "lead": {
+                      "id": 1,
+                      "name": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "status": "pending",
+                      "city": "Austin",
+                      "address": "88 Riverside Drive",
+                      "company_name": "Northstar Development",
+                      "source": "facebook"
+                    },
+                    "created_at": "2026-08-20"
+                  }
                 }
               }
             },
@@ -359,7 +688,8 @@
             "schema": {
               "type": "integer",
               "format": "bignum"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -404,7 +734,7 @@
                   },
                   "_method": {
                     "type": "string",
-                    "const": "PUT"
+                    "default": "PUT"
                   }
                 },
                 "required": [
@@ -415,7 +745,14 @@
                   "phone"
                 ]
               },
-              "examples": {}
+              "example": {
+                "_method": "PUT",
+                "name": "Jordan Lee",
+                "title": "Director of Operations",
+                "email": "jordan.lee@example.com",
+                "phone": "+19292932181",
+                "account_id": 12
+              }
             }
           },
           "required": true
@@ -435,6 +772,47 @@
                   "required": [
                     "contact"
                   ]
+                },
+                "example": {
+                  "contact": {
+                    "id": 1,
+                    "name": "Example record",
+                    "title": "Director of Operations",
+                    "email": "person@example.com",
+                    "phone": "+19292932176",
+                    "lead_id": 1,
+                    "account": {
+                      "id": 1,
+                      "name": "Example record",
+                      "industry": "Development",
+                      "phone": "+19292932176",
+                      "address": "88 Riverside Drive",
+                      "image": {
+                        "id": 1,
+                        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Example record",
+                        "mime_type": "image/webp",
+                        "size": 24576,
+                        "url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "order": 1,
+                        "created_at": "2026-08-20T12:00:00.000000Z"
+                      },
+                      "created_at": "2026-08-20"
+                    },
+                    "lead": {
+                      "id": 1,
+                      "name": "Example record",
+                      "email": "person@example.com",
+                      "phone": "+19292932176",
+                      "status": "pending",
+                      "city": "Austin",
+                      "address": "88 Riverside Drive",
+                      "company_name": "Northstar Development",
+                      "source": "facebook"
+                    },
+                    "created_at": "2026-08-20"
+                  }
                 }
               }
             },
@@ -457,7 +835,8 @@
             "schema": {
               "type": "integer",
               "format": "bignum"
-            }
+            },
+            "example": 1
           },
           {
             "name": "Authorization",
@@ -504,7 +883,9 @@
           },
           "image": {
             "allOf": [
-              { "$ref": "#/components/schemas/Media" }
+              {
+                "$ref": "#/components/schemas/Media"
+              }
             ],
             "nullable": true,
             "readOnly": true
@@ -545,17 +926,50 @@
       "Media": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "uuid": { "type": "string", "format": "uuid" },
-          "name": { "type": "string" },
-          "mime_type": { "type": "string" },
-          "size": { "type": "integer", "format": "int64" },
-          "url": { "type": "string", "format": "uri" },
-          "thumbnail_url": { "type": "string", "format": "uri" },
-          "order": { "type": "integer" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "integer"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         },
-        "required": ["id", "uuid", "name", "mime_type", "size", "url", "thumbnail_url", "order", "created_at"]
+        "required": [
+          "id",
+          "uuid",
+          "name",
+          "mime_type",
+          "size",
+          "url",
+          "thumbnail_url",
+          "order",
+          "created_at"
+        ]
       },
       "Contact": {
         "type": "object",

@@ -6,112 +6,218 @@
     "version": "1.0.0"
   },
   "tags": [
-    { "name": "Media" }
+    {
+      "name": "Media"
+    }
   ],
   "paths": {
     "/": {
       "get": {
         "summary": "List a record's media collection",
-        "tags": ["Media"],
+        "tags": [
+          "Media"
+        ],
         "parameters": [
-          { "$ref": "#/components/parameters/OwnerType" },
-          { "$ref": "#/components/parameters/OwnerId" },
-          { "$ref": "#/components/parameters/Collection" }
+          {
+            "$ref": "#/components/parameters/OwnerType"
+          },
+          {
+            "$ref": "#/components/parameters/OwnerId"
+          },
+          {
+            "$ref": "#/components/parameters/Collection"
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/MediaCollection" },
-          "401": { "$ref": "#/components/responses/Unauthenticated" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "422": { "$ref": "#/components/responses/ValidationError" }
+          "200": {
+            "$ref": "#/components/responses/MediaCollection"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
         }
       },
       "post": {
         "summary": "Upload media to a record collection",
         "description": "The original file is stored immediately. Image conversions are processed asynchronously by the configured queue.",
-        "tags": ["Media"],
+        "tags": [
+          "Media"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["owner_type", "owner_id", "collection", "files"],
+                "required": [
+                  "owner_type",
+                  "owner_id",
+                  "collection",
+                  "files"
+                ],
                 "properties": {
-                  "owner_type": { "$ref": "#/components/schemas/OwnerType" },
-                  "owner_id": { "type": "integer", "minimum": 1 },
-                  "collection": { "type": "string", "example": "gallery" },
+                  "owner_type": {
+                    "$ref": "#/components/schemas/OwnerType"
+                  },
+                  "owner_id": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "collection": {
+                    "type": "string",
+                    "example": "gallery"
+                  },
                   "files": {
                     "type": "array",
                     "minItems": 1,
                     "maxItems": 10,
-                    "items": { "type": "string", "format": "binary" }
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
                   }
                 }
+              },
+              "example": {
+                "owner_type": "property",
+                "owner_id": 1,
+                "collection": "gallery",
+                "files": [
+                  "riverside-villa.webp"
+                ]
               }
             }
           }
         },
         "responses": {
-          "201": { "$ref": "#/components/responses/MediaCollection" },
-          "401": { "$ref": "#/components/responses/Unauthenticated" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "422": { "$ref": "#/components/responses/ValidationError" }
+          "201": {
+            "$ref": "#/components/responses/MediaCollection"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
         }
       }
     },
     "/reorder": {
       "post": {
         "summary": "Set the order of a record's complete media collection",
-        "tags": ["Media"],
+        "tags": [
+          "Media"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["owner_type", "owner_id", "collection", "media_ids"],
+                "required": [
+                  "owner_type",
+                  "owner_id",
+                  "collection",
+                  "media_ids"
+                ],
                 "properties": {
-                  "owner_type": { "$ref": "#/components/schemas/OwnerType" },
-                  "owner_id": { "type": "integer", "minimum": 1 },
-                  "collection": { "type": "string", "example": "gallery" },
+                  "owner_type": {
+                    "$ref": "#/components/schemas/OwnerType"
+                  },
+                  "owner_id": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "collection": {
+                    "type": "string",
+                    "example": "gallery"
+                  },
                   "media_ids": {
                     "type": "array",
                     "minItems": 1,
-                    "items": { "type": "integer" }
+                    "items": {
+                      "type": "integer"
+                    }
                   }
                 }
+              },
+              "example": {
+                "owner_type": "property",
+                "owner_id": 1,
+                "collection": "gallery",
+                "media_ids": [
+                  31,
+                  32,
+                  33
+                ]
               }
             }
           }
         },
         "responses": {
-          "200": { "$ref": "#/components/responses/MediaCollection" },
-          "401": { "$ref": "#/components/responses/Unauthenticated" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "422": { "$ref": "#/components/responses/ValidationError" }
+          "200": {
+            "$ref": "#/components/responses/MediaCollection"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
         }
       }
     },
     "/{id}": {
       "delete": {
         "summary": "Delete a media item",
-        "tags": ["Media"],
+        "tags": [
+          "Media"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
           }
         ],
         "responses": {
-          "204": { "description": "Media deleted." },
-          "401": { "$ref": "#/components/responses/Unauthenticated" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "204": {
+            "description": "Media deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
         }
       }
     }
@@ -122,46 +228,104 @@
         "name": "owner_type",
         "in": "query",
         "required": true,
-        "schema": { "$ref": "#/components/schemas/OwnerType" }
+        "schema": {
+          "$ref": "#/components/schemas/OwnerType"
+        },
+        "example": "property"
       },
       "OwnerId": {
         "name": "owner_id",
         "in": "query",
         "required": true,
-        "schema": { "type": "integer", "minimum": 1 }
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "example": 1
       },
       "Collection": {
         "name": "collection",
         "in": "query",
         "required": true,
-        "schema": { "type": "string", "example": "gallery" }
+        "schema": {
+          "type": "string",
+          "example": "gallery"
+        },
+        "example": "gallery"
       }
     },
     "schemas": {
       "OwnerType": {
         "type": "string",
-        "enum": ["account", "property", "user"]
+        "enum": [
+          "account",
+          "property",
+          "user"
+        ]
       },
       "Media": {
         "type": "object",
-        "required": ["id", "uuid", "name", "mime_type", "size", "url", "thumbnail_url", "order", "created_at"],
+        "required": [
+          "id",
+          "uuid",
+          "name",
+          "mime_type",
+          "size",
+          "url",
+          "thumbnail_url",
+          "order",
+          "created_at"
+        ],
         "properties": {
-          "id": { "type": "integer" },
-          "uuid": { "type": "string", "format": "uuid" },
-          "name": { "type": "string" },
-          "mime_type": { "type": "string" },
-          "size": { "type": "integer", "format": "int64" },
-          "url": { "type": "string", "format": "uri" },
-          "thumbnail_url": { "type": "string", "format": "uri" },
-          "order": { "type": "integer" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "integer"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "Error": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" },
-          "errors": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
@@ -172,29 +336,92 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": ["data"],
+              "required": [
+                "data"
+              ],
               "properties": {
-                "data": { "type": "array", "items": { "$ref": "#/components/schemas/Media" } }
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Media"
+                  }
+                }
               }
+            },
+            "example": {
+              "data": [
+                {
+                  "id": 1,
+                  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                  "name": "Example record",
+                  "mime_type": "image/webp",
+                  "size": 24576,
+                  "url": "https://api-crm.swerky.dev/storage/example.webp",
+                  "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                  "order": 1,
+                  "created_at": "2026-08-20T12:00:00.000000Z"
+                }
+              ]
             }
           }
         }
       },
       "Unauthenticated": {
         "description": "Authentication is required.",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "Unauthenticated."
+            }
+          }
+        }
       },
       "Forbidden": {
         "description": "You do not have permission to manage this record's media.",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "This action is unauthorized."
+            }
+          }
+        }
       },
       "NotFound": {
         "description": "The record or media item was not found.",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "The requested resource was not found."
+            }
+          }
+        }
       },
       "ValidationError": {
         "description": "The media request is invalid.",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "The given data was invalid.",
+              "errors": {
+                "owner_id": [
+                  "The selected owner id is invalid."
+                ]
+              }
+            }
+          }
+        }
       }
     }
   }
