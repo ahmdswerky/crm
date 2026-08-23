@@ -63,12 +63,14 @@ describe("AgentsPage", () => {
     expect(screen.queryByRole("heading", { name: "Agent preview" })).not.toBeInTheDocument()
   })
 
-  it("shows commission columns without the created column for non-agent viewers", async () => {
+  it("shows the combined commission column without the created column for non-agent viewers", async () => {
+    const user = userEvent.setup()
     renderIndex("/agents")
 
     await screen.findByText(agent.name)
-    expect(screen.getByRole("columnheader", { name: "Commission rate" })).toBeInTheDocument()
-    expect(screen.getByRole("columnheader", { name: "Commission totals" })).toBeInTheDocument()
+    expect(screen.getByRole("columnheader", { name: "Commission" })).toBeInTheDocument()
+    expect(screen.queryByRole("columnheader", { name: "Commission rate" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("columnheader", { name: "Commission totals" })).not.toBeInTheDocument()
     expect(screen.getByRole("columnheader", { name: "Access" })).toBeInTheDocument()
     expect(screen.queryByRole("columnheader", { name: "Roles" })).not.toBeInTheDocument()
     expect(screen.queryByRole("columnheader", { name: "Created" })).not.toBeInTheDocument()
@@ -76,8 +78,9 @@ describe("AgentsPage", () => {
     expect(row).toHaveTextContent("Sales")
     expect(row).not.toHaveTextContent("Standard")
     expect(screen.getByText("2.5%")).toBeInTheDocument()
-    expect(screen.getByText("$12,500.00")).toBeInTheDocument()
-    expect(screen.getByText("$7,500.00")).toBeInTheDocument()
+    expect(screen.getByText("$7,500")).toBeInTheDocument()
+    await user.hover(screen.getByRole("button", { name: "Potential commission $12,500" }))
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Potential commission: $12,500")
   })
 
   it("hides commission columns for agent viewers", async () => {
@@ -85,8 +88,7 @@ describe("AgentsPage", () => {
     renderIndex("/agents")
 
     await screen.findByText(agent.name)
-    expect(screen.queryByRole("columnheader", { name: "Commission rate" })).not.toBeInTheDocument()
-    expect(screen.queryByRole("columnheader", { name: "Commission totals" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("columnheader", { name: "Commission" })).not.toBeInTheDocument()
   })
 
   it("uses one muted line for missing super-user commission data", async () => {
@@ -95,7 +97,7 @@ describe("AgentsPage", () => {
     renderIndex("/agents")
 
     const row = await screen.findByRole("row", { name: /Owner/ })
-    expect(row.querySelectorAll('[data-testid="empty-commission-line"]')).toHaveLength(2)
+    expect(row.querySelectorAll('[data-testid="empty-commission-line"]')).toHaveLength(1)
     expect(row).not.toHaveTextContent("—")
     expect(row).not.toHaveTextContent("Potential")
     expect(row).not.toHaveTextContent("Actual")

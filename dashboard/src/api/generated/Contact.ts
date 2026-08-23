@@ -29,7 +29,62 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "industry": "Development",
+                         *           "phone": "+19292932176",
+                         *           "address": "88 Riverside Drive",
+                         *           "image": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           },
+                         *           "created_at": "2026-08-20"
+                         *         }
+                         *       ],
+                         *       "links": {
+                         *         "first": "https://api-crm.swerky.dev/storage/example.webp",
+                         *         "last": "https://api-crm.swerky.dev/storage/example.webp",
+                         *         "prev": "https://api-crm.swerky.dev/storage/example.webp",
+                         *         "next": "https://api-crm.swerky.dev/storage/example.webp"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "last_page": 1,
+                         *         "per_page": 1,
+                         *         "total": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            data: components["schemas"]["Account"][];
+                            links: {
+                                /** Format: uri */
+                                first?: string;
+                                /** Format: uri */
+                                last?: string | null;
+                                /** Format: uri */
+                                prev?: string | null;
+                                /** Format: uri */
+                                next?: string | null;
+                            };
+                            meta: {
+                                current_page?: number;
+                                last_page?: number;
+                                per_page?: number;
+                                total?: number;
+                            };
+                        };
                     };
                 };
             };
@@ -48,6 +103,14 @@ export interface paths {
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "name": "Northstar Development",
+                     *       "industry": "Development",
+                     *       "phone": "+19292932180",
+                     *       "address": "12 Market Street, Austin"
+                     *     }
+                     */
                     "application/json": {
                         name: string;
                         /** @example Development */
@@ -63,7 +126,32 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        /**
+                         * @example {
+                         *       "account": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "industry": "Development",
+                         *         "phone": "+19292932176",
+                         *         "address": "88 Riverside Drive",
+                         *         "image": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "created_at": "2026-08-20"
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            account: components["schemas"]["Account"];
+                        };
                     };
                 };
             };
@@ -90,6 +178,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -101,6 +190,30 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "account": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "industry": "Development",
+                         *         "phone": "+19292932176",
+                         *         "address": "88 Riverside Drive",
+                         *         "image": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "created_at": "2026-08-20",
+                         *         "contacts_count": 3
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             account: components["schemas"]["AccountDetails"];
                         };
@@ -118,12 +231,21 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "name": "Northstar Development",
+                     *       "industry": "Development",
+                     *       "phone": "+19292932180",
+                     *       "address": "12 Market Street, Austin"
+                     *     }
+                     */
                     "application/json": {
                         name: string;
                         /** @example Development */
@@ -139,7 +261,32 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        /**
+                         * @example {
+                         *       "account": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "industry": "Development",
+                         *         "phone": "+19292932176",
+                         *         "address": "88 Riverside Drive",
+                         *         "image": {
+                         *           "id": 1,
+                         *           "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *           "name": "Example record",
+                         *           "mime_type": "image/webp",
+                         *           "size": 24576,
+                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "order": 1,
+                         *           "created_at": "2026-08-20T12:00:00.000000Z"
+                         *         },
+                         *         "created_at": "2026-08-20"
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            account: components["schemas"]["Account"];
+                        };
                     };
                 };
             };
@@ -153,6 +300,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -197,7 +345,82 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        /**
+                         * @example {
+                         *       "data": [
+                         *         {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "title": "Director of Operations",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "lead_id": 1,
+                         *           "account": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "industry": "Development",
+                         *             "phone": "+19292932176",
+                         *             "address": "88 Riverside Drive",
+                         *             "image": {
+                         *               "id": 1,
+                         *               "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *               "name": "Example record",
+                         *               "mime_type": "image/webp",
+                         *               "size": 24576,
+                         *               "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "order": 1,
+                         *               "created_at": "2026-08-20T12:00:00.000000Z"
+                         *             },
+                         *             "created_at": "2026-08-20"
+                         *           },
+                         *           "lead": {
+                         *             "id": 1,
+                         *             "name": "Example record",
+                         *             "email": "person@example.com",
+                         *             "phone": "+19292932176",
+                         *             "status": "pending",
+                         *             "city": "Austin",
+                         *             "address": "88 Riverside Drive",
+                         *             "company_name": "Northstar Development",
+                         *             "source": "facebook"
+                         *           },
+                         *           "created_at": "2026-08-20"
+                         *         }
+                         *       ],
+                         *       "links": {
+                         *         "first": "https://api-crm.swerky.dev/storage/example.webp",
+                         *         "last": "https://api-crm.swerky.dev/storage/example.webp",
+                         *         "prev": "https://api-crm.swerky.dev/storage/example.webp",
+                         *         "next": "https://api-crm.swerky.dev/storage/example.webp"
+                         *       },
+                         *       "meta": {
+                         *         "current_page": 1,
+                         *         "last_page": 1,
+                         *         "per_page": 1,
+                         *         "total": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": {
+                            data: components["schemas"]["Contact"][];
+                            links: {
+                                /** Format: uri */
+                                first?: string;
+                                /** Format: uri */
+                                last?: string | null;
+                                /** Format: uri */
+                                prev?: string | null;
+                                /** Format: uri */
+                                next?: string | null;
+                            };
+                            meta: {
+                                current_page?: number;
+                                last_page?: number;
+                                per_page?: number;
+                                total?: number;
+                            };
+                        };
                     };
                 };
             };
@@ -226,6 +449,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
@@ -237,6 +461,49 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "contact": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "title": "Director of Operations",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "lead_id": 1,
+                         *         "account": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "industry": "Development",
+                         *           "phone": "+19292932176",
+                         *           "address": "88 Riverside Drive",
+                         *           "image": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           },
+                         *           "created_at": "2026-08-20"
+                         *         },
+                         *         "lead": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "status": "pending",
+                         *           "city": "Austin",
+                         *           "address": "88 Riverside Drive",
+                         *           "company_name": "Northstar Development",
+                         *           "source": "facebook"
+                         *         },
+                         *         "created_at": "2026-08-20"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             contact: components["schemas"]["Contact"];
                         };
@@ -254,12 +521,23 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;
             };
             requestBody: {
                 content: {
+                    /**
+                     * @example {
+                     *       "_method": "PUT",
+                     *       "name": "Jordan Lee",
+                     *       "title": "Director of Operations",
+                     *       "email": "jordan.lee@example.com",
+                     *       "phone": "+19292932181",
+                     *       "account_id": 12
+                     *     }
+                     */
                     "application/json": {
                         /** Format: bignum */
                         readonly id: number;
@@ -269,8 +547,8 @@ export interface paths {
                         phone: string;
                         /** Format: bignum */
                         account_id: number;
-                        /** @constant */
-                        _method: "PUT";
+                        /** @default PUT */
+                        _method: string;
                     };
                 };
             };
@@ -280,6 +558,49 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "contact": {
+                         *         "id": 1,
+                         *         "name": "Example record",
+                         *         "title": "Director of Operations",
+                         *         "email": "person@example.com",
+                         *         "phone": "+19292932176",
+                         *         "lead_id": 1,
+                         *         "account": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "industry": "Development",
+                         *           "phone": "+19292932176",
+                         *           "address": "88 Riverside Drive",
+                         *           "image": {
+                         *             "id": 1,
+                         *             "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                         *             "name": "Example record",
+                         *             "mime_type": "image/webp",
+                         *             "size": 24576,
+                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "order": 1,
+                         *             "created_at": "2026-08-20T12:00:00.000000Z"
+                         *           },
+                         *           "created_at": "2026-08-20"
+                         *         },
+                         *         "lead": {
+                         *           "id": 1,
+                         *           "name": "Example record",
+                         *           "email": "person@example.com",
+                         *           "phone": "+19292932176",
+                         *           "status": "pending",
+                         *           "city": "Austin",
+                         *           "address": "88 Riverside Drive",
+                         *           "company_name": "Northstar Development",
+                         *           "source": "facebook"
+                         *         },
+                         *         "created_at": "2026-08-20"
+                         *       }
+                         *     }
+                         */
                         "application/json": {
                             contact: components["schemas"]["Contact"];
                         };
@@ -296,6 +617,7 @@ export interface paths {
                     Authorization?: string;
                 };
                 path: {
+                    /** @example 1 */
                     id: number;
                 };
                 cookie?: never;

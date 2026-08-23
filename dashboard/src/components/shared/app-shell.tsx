@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import {
   BarChart3,
   FileChartColumn,
+  FileText,
   Building2,
   ChevronRight,
   FolderKanban,
@@ -12,6 +13,7 @@ import {
   Moon,
   Settings2,
   Sun,
+  CreditCard,
   UserRound,
   UsersRound,
 } from "lucide-react"
@@ -66,7 +68,11 @@ const realEstateNavigation: NavigationItem[] = [
   { label: "Accounts", to: "/accounts", icon: UsersRound, permission: "account.view" },
 ]
 
-const navigation = [...workspaceNavigation, ...realEstateNavigation]
+const paymentsNavigation: NavigationItem[] = [
+  { label: "Invoices", to: "/invoices", icon: FileText },
+]
+
+const navigation = [...workspaceNavigation, ...realEstateNavigation, ...paymentsNavigation]
 
 export function AppShell() {
   const { can, isSuper } = useAuth()
@@ -74,6 +80,7 @@ export function AppShell() {
   const location = useLocation()
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [realEstateOpen, setRealEstateOpen] = useState(true)
+  const [paymentsOpen, setPaymentsOpen] = useState(() => location.pathname.startsWith("/invoices"))
   const [settingsOpen, setSettingsOpen] = useState(() => location.pathname.startsWith("/settings"))
   const visibleNavigation = useMemo(
     () => navigation.filter((item) => (item.superOnly ? isSuper : !item.permission || can(item.permission))),
@@ -121,6 +128,39 @@ export function AppShell() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Payments</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    type="button"
+                    tooltip="Payments"
+                    aria-expanded={paymentsOpen}
+                    onClick={() => setPaymentsOpen((open) => !open)}
+                  >
+                    <CreditCard />
+                    <span>Payments</span>
+                    <ChevronRight className={`ms-auto size-4 transition-transform ${paymentsOpen ? "rotate-90" : ""}`} />
+                  </SidebarMenuButton>
+                  {paymentsOpen && (
+                    <SidebarMenuSub>
+                      {visibleNavigation.filter((item) => paymentsNavigation.includes(item)).map(({ label, to, icon: Icon }) => (
+                        <SidebarMenuSubItem key={to}>
+                          <SidebarMenuSubButton asChild isActive={location.pathname === to}>
+                            <NavLink to={to}>
+                              <Icon />
+                              <span>{label}</span>
+                            </NavLink>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  )}
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -241,7 +281,7 @@ function AccountMenu() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton tooltip="Account">
-              <PersonAvatar name={user?.name ?? "Account"} size="sm" className="size-5 [&>span]:text-[9px]" />
+              <PersonAvatar name={user?.name ?? "Account"} avatar={user?.avatar} size="sm" className="size-5 [&>span]:text-[9px]" />
               <span className="truncate">{user?.name ?? "Account"}</span>
             </SidebarMenuButton>
           </DropdownMenuTrigger>

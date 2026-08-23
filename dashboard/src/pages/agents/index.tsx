@@ -9,7 +9,6 @@ import { useAuth } from "@/auth/auth-provider"
 import { PersonAvatar } from "@/components/shared/person-avatar"
 import { ResourceDeleteDialog } from "@/components/shared/resource-delete-dialog"
 import { ResourcePagination } from "@/components/shared/resource-pagination"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -84,7 +83,7 @@ export function AgentsPage() {
   }
   if (!can("user.view")) return <ForbiddenAgents />
   const canCreate = can("user.create"); const canEdit = can("user.edit")
-  const columnCount = showCommissionColumns ? 8 : 6
+  const columnCount = showCommissionColumns ? 7 : 6
   const openCreate = () => setParams({ record: undefined, mode: "create" })
   const openEdit = (agent: User) => setParams({ record: String(agent.id ?? 0), mode: "edit" })
   const closeDialog = () => setParams({ mode: undefined, record: undefined })

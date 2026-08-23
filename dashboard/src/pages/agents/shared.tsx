@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type ComponentProps, type ReactNode }
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from "react-router-dom"
-import { ArrowDown, ArrowRight, ArrowUp, AtSign, BriefcaseBusiness, Dices, Eye, EyeOff, HandCoins, ImageIcon, KeyRound, Mail, Phone, Save, ShieldCheck, UserRound, type LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowRight, ArrowUp, AtSign, BriefcaseBusiness, CircleQuestionMark, Dices, Eye, EyeOff, HandCoins, ImageIcon, KeyRound, Mail, Save, ShieldCheck, UserRound, type LucideIcon } from "lucide-react"
 import { z } from "zod"
 import type { components as AuthComponents } from "@/api/generated/Auth"
 import type { components as MarketingComponents } from "@/api/generated/Marketing"
@@ -12,6 +12,7 @@ import { listUrl } from "@/api/list-query"
 import type { Paginated } from "@/api/contracts"
 import { useAuth } from "@/auth/auth-provider"
 import { ErrorState } from "@/components/shared/error-state"
+import { SingleMediaField } from "@/components/shared/single-media-field"
 import { PersonAvatar } from "@/components/shared/person-avatar"
 import { PhoneField } from "@/components/shared/phone-field"
 import { Badge } from "@/components/ui/badge"
@@ -36,6 +37,7 @@ export const emptyValues: AgentFormValues = { name: "", username: "", email: "",
 export const labelFor = (value: string) => value.replaceAll(".", " / ").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
 const formatNumber = (value: number) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value)
 export const formatCurrency = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(value)
+const formatCommissionCurrency = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value)
 export const detailsPath = (id: number, returnSearch = "", edit = false) => {
   const params = new URLSearchParams()
   if (edit) params.set("mode", "edit")
@@ -84,14 +86,17 @@ export function RoleReference({ role, stopPropagation = true }: { role: { id?: n
 }
 
 export function AgentCommissionHeaders({ visible }: { visible: boolean }) {
-  return <><TableHead>Manager</TableHead>{visible && <><TableHead>Commission rate</TableHead><TableHead>Commission totals</TableHead></>}</>
+  return <><TableHead>Manager</TableHead>{visible && <TableHead>Commission</TableHead>}</>
 }
 
 function EmptyCommissionLine() { return <span data-testid="empty-commission-line" className="block h-px w-20 bg-muted-foreground/30" aria-hidden="true" /> }
 
 export function AgentCommissionCells({ agent, visible }: { agent: User; visible: boolean }) {
   if (!visible) return null
-  return <><TableCell className="font-mono text-sm">{agent.is_super ? <EmptyCommissionLine /> : typeof agent.commission_rate !== "number" ? "—" : `${formatNumber(agent.commission_rate)}%`}</TableCell><TableCell>{agent.is_super ? <EmptyCommissionLine /> : <div className="space-y-1 font-mono text-xs"><div><span className="me-2 text-muted-foreground">Potential</span><span className="text-amber-700 dark:text-amber-300">{typeof agent.total_potential_commission !== "number" ? "—" : formatCurrency(agent.total_potential_commission)}</span></div><div><span className="me-2 text-muted-foreground">Actual</span><span className="text-emerald-700 dark:text-emerald-300">{typeof agent.total_actual_commission !== "number" ? "—" : formatCurrency(agent.total_actual_commission)}</span></div></div>}</TableCell></>
+  if (agent.is_super) return <TableCell><EmptyCommissionLine /></TableCell>
+  const potential = typeof agent.total_potential_commission === "number" ? formatCommissionCurrency(agent.total_potential_commission) : "—"
+  const actual = typeof agent.total_actual_commission === "number" ? formatCommissionCurrency(agent.total_actual_commission) : "—"
+  return <TableCell><div className="flex items-center gap-2 whitespace-nowrap"><Badge variant="secondary" className="font-mono text-xs">{typeof agent.commission_rate !== "number" ? "—" : `${formatNumber(agent.commission_rate)}%`}</Badge><span className="font-mono text-xs font-medium text-emerald-700 dark:text-emerald-300">{actual}</span><Tooltip><TooltipTrigger asChild><button type="button" aria-label={`Potential commission ${potential}`} className="text-muted-foreground transition-colors hover:text-foreground" onClick={(event) => event.stopPropagation()}><CircleQuestionMark className="size-3.5" aria-hidden="true" /></button></TooltipTrigger><TooltipContent side="top">Potential commission: {potential}</TooltipContent></Tooltip></div></TableCell>
 }
 
 export function AgentAccessCell({ agent }: { agent: User }) {
@@ -207,7 +212,7 @@ export function AgentDialog({ open, mode, agent, isSuper, roles, onOpenChange, o
       setError(caught instanceof Error ? caught.message : mode === "create" ? "Unable to create this agent." : "Unable to save this agent.")
     }
   })
-  return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="max-w-2xl"><DialogHeader><DialogTitle>{mode === "create" ? "Create agent" : `Edit ${agent?.name ?? "agent"}`}</DialogTitle></DialogHeader><form id="agent-create-form" onSubmit={submit} className="space-y-5"><AgentFields create={mode === "create"} form={form} isSuper={isSuper} roles={roles} />{error && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>}<DialogFooter><Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button><Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? mode === "create" ? "Creating…" : "Saving…" : mode === "create" ? "Create" : <><Save className="me-2 size-3.5" />Save agent</>}</Button></DialogFooter></form></DialogContent></Dialog>
+  return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="max-w-2xl"><DialogHeader><DialogTitle>{mode === "create" ? "Create agent" : `Edit ${agent?.name ?? "agent"}`}</DialogTitle></DialogHeader><form id="agent-create-form" onSubmit={submit} className="space-y-5">{mode === "edit" && agent?.id !== undefined && <div className="border-b border-border pb-5"><SingleMediaField ownerType="user" ownerId={agent.id} collection="main" label="Agent avatar" description="Upload or replace this agent's avatar." disabled={form.formState.isSubmitting} /></div>}<AgentFields create={mode === "create"} form={form} isSuper={isSuper} roles={roles} />{error && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>}<DialogFooter><Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button><Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? mode === "create" ? "Creating…" : "Saving…" : mode === "create" ? "Create" : <><Save className="me-2 size-3.5" />Save agent</>}</Button></DialogFooter></form></DialogContent></Dialog>
 }
 
 export function ForbiddenAgents() { return <ErrorState kind="forbidden" title="Agents are restricted" description="You do not have permission to view staff accounts." actionLabel="Return to overview" actionTo="/" /> }

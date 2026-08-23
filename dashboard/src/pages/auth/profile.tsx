@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AtSign, Check, Copy, Eye, KeyRound, LoaderCircle, Mail, Phone, Save, UserRound } from "lucide-react"
+import { AtSign, Check, Copy, Eye, ExternalLink, KeyRound, LoaderCircle, Mail, Save, UserRound } from "lucide-react"
 import { z } from "zod"
 import { toast } from "sonner"
 import type { User } from "@/api/contracts"
@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { Skeleton } from "@/components/ui/skeleton"
-import { BadgeCheckIcon, ChevronRightIcon } from "lucide-react"
 import {
   Item,
   ItemActions,
@@ -34,6 +33,7 @@ type ProfileFormValues = {
 
 type UserEnvelope = { user: User }
 type SecureTokenEnvelope = AuthPaths["/secure-token"]["get"]["responses"][200]["content"]["application/json"]
+type SecureTokenLinks = Pick<SecureTokenEnvelope, "horizon" | "telescope">
 
 const profileSchema = z.object({
   name: z.string().trim().min(4, "Use at least 4 characters."),
@@ -59,7 +59,7 @@ export function ProfilePage() {
   const [error, setError] = useState("")
   const [saved, setSaved] = useState(false)
   const [secureToken, setSecureToken] = useState("")
-  const [tokenLinks, setTokenLinks] = useState({})
+  const [tokenLinks, setTokenLinks] = useState<SecureTokenLinks | null>(null)
   const [secureTokenError, setSecureTokenError] = useState("")
   const [generatingToken, setGeneratingToken] = useState(false)
   const [copiedToken, setCopiedToken] = useState(false)
@@ -132,10 +132,7 @@ export function ProfilePage() {
         cache: "no-store",
       })
       setSecureToken(body.token)
-      setTokenLinks({
-        horizon: body.horizon,
-        telescope: body.telescope,
-      })
+      setTokenLinks(body)
       setRevealed(true)
     } catch (caught) {
       setSecureTokenError(caught instanceof Error ? caught.message : "Unable to generate a secure token.")
@@ -181,6 +178,7 @@ export function ProfilePage() {
           <h2 className="font-semibold">Identity and contact</h2>
           <p className="mt-1 text-sm text-muted-foreground">These details are visible to people working with you in the CRM.</p>
         </div>
+        {profile.id !== undefined && <div className="border-b border-border px-5 py-4"><SingleMediaField ownerType="user" ownerId={profile.id} collection="main" label="Profile image" description="Upload or replace the image used for this staff record." disabled={!can("user.edit")} /></div>}
         <FieldGroup className="grid gap-4 p-5 sm:grid-cols-2">
           <ProfileField label="Name" error={errors.name?.message} className="sm:col-span-2">
             <InputGroup><InputGroupAddon><UserRound aria-hidden="true" /></InputGroupAddon><InputGroupInput autoComplete="name" {...register("name")} /></InputGroup>
@@ -204,7 +202,7 @@ export function ProfilePage() {
         </div>
       </form>
 
-      {isSuper && (
+      {isSuper && profile.can_generate_secure_token === true && (
         <section className="border border-border bg-card">
           <div className="border-b border-border px-5 py-4">
             <h2 className="flex items-center gap-2 font-semibold"><KeyRound className="size-4 text-muted-foreground" aria-hidden="true" />Generate Secure Token</h2>
@@ -237,7 +235,7 @@ export function ProfilePage() {
                     onClick={() => {
                       if (secureToken && revealed) void copySecureToken()
                     }}
-                    placeholder="******************************"
+                    placeholder="**********"
                     readOnly
                     value={secureToken}
                   />
@@ -249,15 +247,12 @@ export function ProfilePage() {
                 </InputGroup>
               </ProfileField>
               <p role="status" className="sr-only">{secureToken ? "Secure token generated." : ""}</p>
-              <div className="flex w-full flex-col gap-6 mt-5">
-                <Item variant="outline" size="sm" render={<a href="#"><ItemMedia>
-                    <BadgeCheckIcon className="size-5" />
-                  </ItemMedia><ItemContent>
-                    <ItemTitle>Your profile has been verified.</ItemTitle>
-                  </ItemContent><ItemActions>
-                    <ChevronRightIcon className="size-4" />
-                  </ItemActions></a>} />
-              </div>
+              {secureToken && tokenLinks && (
+                <div className="grid w-full gap-3 mt-5 sm:grid-cols-2">
+                  <SecureToolLink href={tokenLinks.horizon} label="Horizon" />
+                  <SecureToolLink href={tokenLinks.telescope} label="Telescope" />
+                </div>
+              )}
             </div>
             {!revealed && (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -275,10 +270,18 @@ export function ProfilePage() {
           </div>
         </section>
       )}
-
-      {profile.id !== undefined && <SingleMediaField ownerType="user" ownerId={profile.id} collection="main" label="Profile image" description="Upload or replace the image used for this staff record." disabled={!can("user.edit")} />}
     </div>
   )
+}
+
+function SecureToolLink({ href, label }: { href: string; label: string }) {
+  return <Item variant="outline" size="sm" asChild>
+    <a href={href} target="_blank" rel="noreferrer">
+      <ItemMedia><ExternalLink className="size-5" aria-hidden="true" /></ItemMedia>
+      <ItemContent><ItemTitle>{label}</ItemTitle></ItemContent>
+      <ItemActions><ExternalLink className="size-4" aria-hidden="true" /></ItemActions>
+    </a>
+  </Item>
 }
 
 function ProfileField({ label, error, inputId, hideLabel = false, className, children }: { label: string; error?: string; inputId?: string; hideLabel?: boolean; className?: string; children: React.ReactNode }) {

@@ -10,7 +10,6 @@ import { ErrorState } from "@/components/shared/error-state"
 import { Button } from "@/components/ui/button"
 import {
   applyPropertyToDealForm,
-  authenticatedCommissionRate,
   DealEnvelope,
   DealForm,
   DealRelationOptions,
@@ -51,7 +50,6 @@ function DealEditorPage() {
   const returnQuery = searchParams.get("return")
   const propertyQuery = editing ? null : searchParams.get("property")
   const backToIndex = returnQuery ? `/deals?${returnQuery}` : "/deals"
-  const commissionRate = authenticatedCommissionRate(user)
   const agentUserId = user?.roles?.some((role) => role.name === "agent") ? user.id : undefined
 
   const loadEditDeal = useCallback(async (signal?: AbortSignal) => {
@@ -68,7 +66,7 @@ function DealEditorPage() {
         propertiesLoading: false,
         propertiesLoadingMore: false,
         propertiesHasMore: false,
-        agents: body.deal.agent?.id === undefined ? [] : [{ id: body.deal.agent.id, name: body.deal.agent.name, username: body.deal.agent.username }],
+        agents: body.deal.agent?.id === undefined ? [] : [{ id: body.deal.agent.id, name: body.deal.agent.name, username: body.deal.agent.username, avatar: body.deal.agent.avatar }],
         agentsLoading: false,
       })
     } catch (caught) {
@@ -100,7 +98,7 @@ function DealEditorPage() {
     const propertiesRequest = loadDealPropertyOptions(propertySearch, propertyPage, controller.signal)
     void Promise.all([usersRequest, propertiesRequest])
       .then(([users, propertyPageBody]) => {
-        const userAgents = users?.data.filter((item): item is User & { id: number } => item.id !== undefined).map((item) => ({ id: item.id, name: item.name, username: item.username })) ?? []
+        const userAgents = users?.data.filter((item): item is User & { id: number } => item.id !== undefined).map((item) => ({ id: item.id, name: item.name, username: item.username, avatar: item.avatar })) ?? []
         const relationProperties = propertyPageBody.options.map((option) => normalizeDealProperty(option.data)).filter((property): property is DealPropertyOption => property !== undefined)
         const urlPropertyId = Number(propertyQuery) || undefined
         const selectedProperty = !editing && relationProperties.find((property) => property.id === urlPropertyId)
@@ -126,7 +124,7 @@ function DealEditorPage() {
     setRelationOptions((current) => ({ ...current, agentsLoading: true }))
     void apiJson<Paginated<User>>(`${API_BASE_URL}/v1/users`, { signal: controller.signal })
       .then((users) => {
-        const userAgents = users.data.filter((item): item is User & { id: number } => item.id !== undefined).map((item) => ({ id: item.id, name: item.name, username: item.username }))
+        const userAgents = users.data.filter((item): item is User & { id: number } => item.id !== undefined).map((item) => ({ id: item.id, name: item.name, username: item.username, avatar: item.avatar }))
         setRelationOptions((current) => ({ ...current, agents: Array.from(new Map([...current.agents, ...userAgents].map((agent) => [agent.id, agent])).values()), agentsLoading: false }))
       })
       .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : "Unable to load deal options.") })
@@ -187,5 +185,5 @@ function DealEditorPage() {
 
   const formId = editing ? "deal-edit-form" : "deal-create-form"
   const saving = form.formState.isSubmitting
-  return <DealRelationOptionsContext.Provider value={{ ...relationOptions, onPropertySearch: editing ? undefined : searchProperties, onLoadMoreProperties: editing ? undefined : loadMoreProperties }}><div className="space-y-6 p-6 pb-24 lg:p-8"><header className="border-b border-border pb-6"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={backToIndex}><ArrowLeft className="me-2 size-3.5" />Back to deals</Link></Button><div className="mt-5 flex flex-wrap items-center justify-between gap-3"><div><h1 className="mt-2 text-2xl font-semibold tracking-tight">{editing ? "Edit deal" : "New deal"}</h1></div><div className="flex items-center gap-2"><Button type="button" variant="outline" size="sm" onClick={() => navigate(backToIndex)}>Cancel</Button><Button type="submit" form={formId} size="sm" disabled={saving}>{saving ? editing ? "Saving…" : "Creating…" : editing ? "Save changes" : "Create"}</Button></div></div></header>{editorError && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{editorError}</div>}<section className="w-full"><DealForm editing={editing} formId={formId} form={form} commissionRate={commissionRate} agentUserId={agentUserId} urlPropertyId={editing ? deal?.property.id : Number(propertyQuery) || undefined} onSubmit={editing ? submitEdit : submitCreate} /></section></div></DealRelationOptionsContext.Provider>
+  return <DealRelationOptionsContext.Provider value={{ ...relationOptions, onPropertySearch: editing ? undefined : searchProperties, onLoadMoreProperties: editing ? undefined : loadMoreProperties }}><div className="space-y-6 p-6 pb-24 lg:p-8"><header className="border-b border-border pb-6"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={backToIndex}><ArrowLeft className="me-2 size-3.5" />Back to deals</Link></Button><div className="mt-5 flex flex-wrap items-center justify-between gap-3"><div><h1 className="mt-2 text-2xl font-semibold tracking-tight">{editing ? "Edit deal" : "New deal"}</h1></div><div className="flex items-center gap-2"><Button type="button" variant="outline" size="sm" onClick={() => navigate(backToIndex)}>Cancel</Button><Button type="submit" form={formId} size="sm" disabled={saving}>{saving ? editing ? "Saving…" : "Creating…" : editing ? "Save changes" : "Create"}</Button></div></div></header>{editorError && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{editorError}</div>}<section className="w-full"><DealForm editing={editing} formId={formId} form={form} agentUserId={agentUserId} urlPropertyId={editing ? deal?.property.id : Number(propertyQuery) || undefined} onSubmit={editing ? submitEdit : submitCreate} /></section></div></DealRelationOptionsContext.Provider>
 }
