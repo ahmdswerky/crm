@@ -11,6 +11,7 @@
     "hooks:push": "node scripts/quality/push-check.mjs",
     "quality:projects": "node scripts/quality/check-projects.mjs",
     "quality:docker": "node scripts/quality/validate-docker.mjs",
+    "quality:act:event": "node scripts/quality/act-event.mjs",
     "quality:outdated": "node scripts/quality/check-outdated.mjs",
     "quality:test": "node scripts/quality/project-map.test.mjs"
   },
