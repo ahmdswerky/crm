@@ -26,7 +26,7 @@ jobs:
       tooling: ${{ steps.filter.outputs.tooling }}
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -55,6 +55,7 @@ jobs:
               - '.dockerignore'
               - '.env.docker.example'
             tooling:
+              - '.github/**'
               - 'package.json'
               - 'package-lock.json'
               - 'commitlint.config.cjs'
@@ -69,7 +70,7 @@ jobs:
     timeout-minutes: 8
     steps:
       - name: Check out source and history
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -88,22 +89,22 @@ jobs:
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
-          PR_BASE: ${{ github.event.pull_request.base.sha }}
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
-          PUSH_BEFORE: ${{ github.event.before }}
           PUSH_AFTER: ${{ github.sha }}
         run: |
           set -euo pipefail
           if [[ "$EVENT_NAME" == 'pull_request' ]]; then
-            from="$PR_BASE"
             to="$PR_HEAD"
           else
-            from="$PUSH_BEFORE"
             to="$PUSH_AFTER"
-            if [[ "$from" =~ ^0+$ ]]; then
-              from="$(git rev-list --max-parents=0 "$to" | tail -n 1)"
-            fi
           fi
+          policy_origin="$(git log --reverse --format=%H -- .github/workflows/ci.yml | head -n 1)"
+          if [[ -z "$policy_origin" ]]; then
+            echo 'Unable to determine the commit-policy adoption point.' >&2
+            exit 1
+          fi
+          echo "Ignoring commits before CI policy adoption: $policy_origin"
+          from="$policy_origin^"
           npm exec -- commitlint --from "$from" --to "$to" --verbose
 
   workflow-policy:
@@ -112,7 +113,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -120,11 +121,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if rg -n -P '^\s*uses:\s+[^@]+@(?![0-9a-f]{40}(\s|$))' .github/workflows; then
+          if grep -RInP '^\s*uses:\s+[^@]+@(?![0-9a-f]{40}(\s|$))' .github/workflows; then
             echo 'Every GitHub Action must use a full 40-character commit SHA.' >&2
             exit 1
           fi
-          if rg -n '^[[:space:]]*pull_request_target:|^[[:space:]]*permissions:[[:space:]]*(write-all|\{[[:space:]]*\})[[:space:]]*$' .github/workflows; then
+          if grep -RInE '^[[:space:]]*pull_request_target:|^[[:space:]]*permissions:[[:space:]]*(write-all|\{[[:space:]]*\})[[:space:]]*$' .github/workflows; then
             echo 'Unsafe workflow trigger or permission declaration found.' >&2
             exit 1
           fi
@@ -135,7 +136,7 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Check out source and history
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -144,6 +145,7 @@ jobs:
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: ${{ env.ACT != 'true' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -180,7 +182,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -225,7 +227,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -276,7 +278,7 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -311,7 +313,7 @@ jobs:
     timeout-minutes: 8
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -327,7 +329,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -355,7 +357,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -380,7 +382,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -404,7 +406,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -428,7 +430,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 

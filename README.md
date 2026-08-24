@@ -136,7 +136,7 @@ The initial product version is `0.1.0`. Deployment and Docker image publishing r
 Checks are scoped to the files that changed.
 
 - Commits regenerate and validate `dashboard/public/openapi.json` from `docs/openapi/`.
-- Laravel runs Composer validation, Pint, Larastan, PHP Insights, and tests.
+- Laravel runs Composer validation, Pint, PHP Insights, and tests.
 - The dashboard runs API-contract checks, ESLint, TypeScript, and tests.
 - Payments runs ESLint and tests.
 - Docker changes run Compose structure validation; pushes also run affected builds and API checks.

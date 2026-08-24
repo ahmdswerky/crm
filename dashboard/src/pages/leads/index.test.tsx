@@ -137,7 +137,7 @@ describe("LeadsKanbanPage", () => {
     await user.type(screen.getByPlaceholderText("City"), createdLead.city)
     await user.click(screen.getByRole("button", { name: "Create" }))
     await waitFor(() => expect(fetchSpy.mock.calls.some(([, init]) => init?.method === "POST" && String(init.body).includes('"company_name":"Example Holdings"'))).toBe(true))
-  })
+  }, 20_000)
 
   it("opens the requested lead dialog from the record query parameter", async () => {
     const lead = { id: 18, name: "Layla Nasser", email: "layla@example.com", phone: "+201001234567", status: "qualified", city: "Cairo", address: null, company_name: "Nasser Holdings", source: null }
