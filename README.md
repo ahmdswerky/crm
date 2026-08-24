@@ -12,13 +12,10 @@
 <br />
 
 <p align="center">
-  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13" /></a>
-  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19" /></a>
-  <a href="https://vite.dev"><img src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white" alt="Vite 8" /></a>
-  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript 5" /></a>
-  <a href="https://www.postgresql.org"><img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
-  <a href="https://redis.io"><img src="https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white" alt="Redis" /></a>
-  <a href="https://api-crm.swerky.dev/api-docs"><img src="https://img.shields.io/badge/OpenAPI-API%20Docs-6BA539?logo=openapiinitiative&logoColor=white" alt="OpenAPI API Documentation" /></a>
+  <a href="https://github.com/ahmdswerky/crm/actions/workflows/ci.yml"><img src="https://github.com/ahmdswerky/crm/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="https://github.com/ahmdswerky/crm/actions/workflows/codeql.yml"><img src="https://github.com/ahmdswerky/crm/actions/workflows/codeql.yml/badge.svg" alt="CodeQL status" /></a>
+  <a href="https://crm.swerky.dev"><img src="https://img.shields.io/badge/Demo-Live%20Preview-0f766e?logo=googlechrome&logoColor=white&style=flat" alt="Live demo" /></a>
+  <a href="https://crm.swerky.dev/api-docs"><img src="https://img.shields.io/badge/API%20Docs-Reference-6BA539?logo=openapiinitiative&logoColor=white&style=flat" alt="API documentation" /></a>
 </p>
 
 <p align="center">
@@ -31,7 +28,7 @@
 
 Explore the production API reference:
 
-<p><a href="https://api-crm.swerky.dev/api-docs">https://api-crm.swerky.dev/api-docs</a></p>
+<p><a href="https://crm.swerky.dev/api-docs">https://crm.swerky.dev/api-docs</a></p>
 
 ## Architecture
 
