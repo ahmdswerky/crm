@@ -1,0 +1,76 @@
+server/app/Http/Requests/Deal/DealUpdateRequest.php
+  s_7465163c0b25f7::t_d206d3cce8b44c 21
+package.json
+  s_ff4c051c2f7554::t_ef03f975af8970 14
+.github/workflows/codeql.yml
+  s_ff4c051c2f7554::t_104320dca2aaaf 27-28
+  s_ff4c051c2f7554::t_e7f081076f88ae 31
+server/phpunit.xml
+  s_ff4c051c2f7554::t_ef03f975af8970 22-23
+scripts/quality/act-event.mjs
+  s_ff4c051c2f7554::t_ef03f975af8970 1-5,9-56
+  s_ff4c051c2f7554::t_72b987af5a9133 6-8
+dashboard/src/pages/leads/index.test.tsx
+  s_ff4c051c2f7554::t_60357d2deeca09 140
+.github/workflows/dependency-freshness.yml
+  s_ff4c051c2f7554::t_ad95a030a0307f 18
+.github/workflows/ci.yml
+  s_ff4c051c2f7554::t_878353a7ec01ca 360
+  s_ff4c051c2f7554::t_932698cc47580d 185
+  s_ff4c051c2f7554::t_86665088ebb05b 58
+  s_ff4c051c2f7554::t_09803bc3829511 29
+  s_ff4c051c2f7554::t_3cf6faf4dabe21 116
+  s_ff4c051c2f7554::t_16fa5d3dd7d117 139
+  s_ff4c051c2f7554::t_11df036f437c67 281
+  s_ff4c051c2f7554::t_20dc56c51345d8 385
+  s_ff4c051c2f7554::t_259c419bb1b780 409
+  s_ff4c051c2f7554::t_8d604870169e2f 73
+  s_ff4c051c2f7554::t_2ad8dbe64c6a9a 230
+  s_ff4c051c2f7554::t_436eeb96ae8d33 148
+  s_ff4c051c2f7554::t_f6ba10fc5f6a6f 316
+  s_ff4c051c2f7554::t_ef03f975af8970 101-107,124,128
+  s_ff4c051c2f7554::t_7ad5401561bfe6 433
+  s_ff4c051c2f7554::t_65a15f356c65d1 332
+server/app/Providers/AppServiceProvider.php
+  s_7465163c0b25f7::t_d206d3cce8b44c 65-68
+dashboard/tsconfig.app.json
+  s_ff4c051c2f7554::t_ef03f975af8970 19
+README.md
+  s_7465163c0b25f7::t_ee6d4db28cba1f 139
+server/app/Repositories/RoleRepository.php
+  s_7465163c0b25f7::t_d206d3cce8b44c 6,43,56,66-72
+  s_7465163c0b25f7::t_4dd82979b29cb8 11
+  s_7465163c0b25f7::t_fa5308816a0da0 8,39
+  s_7465163c0b25f7::t_582986793c5b31 73
+server/app/Http/Controllers/DealController.php
+  s_7465163c0b25f7::t_d206d3cce8b44c 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "531cf5beb963c764cf693536dd93839a990cff3a",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_7465163c0b25f7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02e7c-6a21-7460-b8c5-5992e644d6e4",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_ff4c051c2f7554": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02eae-607a-7af1-8801-2c0f3d0ba38b",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
