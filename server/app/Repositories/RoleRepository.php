@@ -3,9 +3,12 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\RoleRepositoryInterface;
+use App\Models\Permission;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
+use Spatie\Permission\Guard;
 
 class RoleRepository implements RoleRepositoryInterface
 {
@@ -33,11 +36,11 @@ class RoleRepository implements RoleRepositoryInterface
             ->query()
             ->create([
                 'name' => $data['name'],
-                'guard_name' => config('auth.defaults.guard'),
+                'guard_name' => Guard::getDefaultName(User::class),
             ]);
 
         if (array_key_exists('permissions', $data)) {
-            $role->syncPermissions($data['permissions']);
+            $role->syncPermissions($this->permissionsForRole($role, $data['permissions']));
         }
 
         return $role->load('permissions');
@@ -50,7 +53,7 @@ class RoleRepository implements RoleRepositoryInterface
         ]);
 
         if (array_key_exists('permissions', $data)) {
-            $role->syncPermissions($data['permissions']);
+            $role->syncPermissions($this->permissionsForRole($role, $data['permissions']));
         }
 
         return $role->fresh('permissions');
@@ -59,5 +62,13 @@ class RoleRepository implements RoleRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) $this->model->destroy($id);
+    }
+
+    /** @param array<int, string> $names */
+    private function permissionsForRole(Role $role, array $names): array
+    {
+        return collect($names)
+            ->map(fn (string $name): Permission => Permission::findByName($name, $role->guard_name))
+            ->all();
     }
 }
