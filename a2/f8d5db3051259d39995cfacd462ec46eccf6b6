@@ -1,0 +1,24 @@
+README.md
+  s_b228c3adf3430f::t_815ab4cc352525 15-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "a2f8d5db3051259d39995cfacd462ec46eccf6b6",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_b228c3adf3430f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a03305-4efd-7191-bd0d-ab580e081c82",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
