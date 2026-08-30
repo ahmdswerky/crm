@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Payment Command Round-Trip",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [1080, 810]
+  },
+  "participants": [
+    { "id": "crm_api", "type": "backend", "label": "Laravel CRM API", "sublabel": "2 production replicas" },
+    { "id": "crm_db", "type": "database", "label": "CRM PostgreSQL", "sublabel": "payment_commands" },
+    { "id": "rabbitmq", "type": "messagebus", "label": "RabbitMQ", "sublabel": "durable topic exchanges" },
+    { "id": "payments", "type": "backend", "label": "NestJS Payments", "sublabel": "2 production replicas" },
+    { "id": "payments_db", "type": "database", "label": "Payments PostgreSQL", "sublabel": "invoices + receipts" },
+    { "id": "event_worker", "type": "backend", "label": "CRM Event Worker", "sublabel": "private worker ×1" }
+  ],
+  "segments": [
+    { "from": 150, "to": 292, "label": "Record + publish" },
+    { "from": 310, "to": 510, "label": "Consume + persist" },
+    { "from": 528, "to": 730, "label": "Result event + reconcile" }
+  ],
+  "messages": [
+    { "from": "crm_api", "to": "crm_db", "y": 182, "label": "record payment_commands / invoice.generate", "variant": "emphasis" },
+    { "from": "crm_api", "to": "rabbitmq", "y": 238, "label": "publish payments.commands / invoice.generate", "variant": "emphasis" },
+    { "from": "rabbitmq", "to": "payments", "y": 340, "label": "deliver payments queue command", "variant": "emphasis" },
+    { "from": "payments", "to": "payments_db", "y": 396, "label": "idempotent receipt + invoice", "variant": "emphasis" },
+    { "from": "payments_db", "to": "payments", "y": 442, "label": "completed or failed result", "variant": "return" },
+    { "from": "payments", "to": "rabbitmq", "y": 552, "label": "publish payments.events / invoice.completed|failed", "variant": "emphasis" },
+    { "from": "rabbitmq", "to": "event_worker", "y": 608, "label": "deliver crm.payment-events", "variant": "emphasis" },
+    { "from": "event_worker", "to": "crm_db", "y": 664, "label": "update command status + result", "variant": "emphasis" }
+  ],
+  "activations": [
+    { "participant": "crm_api", "from": 174, "to": 252, "type": "backend" },
+    { "participant": "crm_db", "from": 176, "to": 690, "type": "database" },
+    { "participant": "rabbitmq", "from": 232, "to": 620, "type": "messagebus" },
+    { "participant": "payments", "from": 334, "to": 564, "type": "backend" },
+    { "participant": "payments_db", "from": 390, "to": 448, "type": "database" },
+    { "participant": "event_worker", "from": 602, "to": 672, "type": "backend" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Durable Integration Boundary", "items": ["The public CRM plane is reachable through https://crm.swerky.dev/api/", "RabbitMQ separates Laravel command publication from payment execution", "The NestJS consumer publishes a versioned completed or failed event"] },
+    { "dot": "emerald", "title": "Idempotent Result Handling", "items": ["PaymentJobReceipt de-duplicates a command by message id", "Invoices and receipts live in the payments database", "The private Laravel consumer reconciles the result into CRM state"] }
+  ]
+}

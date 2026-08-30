@@ -16,7 +16,8 @@
     "quality:db-schema:check": "node scripts/quality/generate-db-schema.mjs --check",
     "quality:act:event": "node scripts/quality/act-event.mjs",
     "quality:outdated": "node scripts/quality/check-outdated.mjs",
-    "quality:test": "node scripts/quality/project-map.test.mjs"
+    "quality:test": "node scripts/quality/project-map.test.mjs",
+    "docs:architecture": "node scripts/quality/generate-architecture.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",

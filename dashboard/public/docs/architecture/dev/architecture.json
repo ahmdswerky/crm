@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CRM Development Deployment",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/ahmdswerky/crm",
+      "revision": "c8a7b04862df9ca93dcdb046fe47cba67ebec303"
+    },
+    "viewBox": [1320, 720]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Developer Browser",
+      "sublabel": "localhost client",
+      "pos": [32, 315],
+      "size": [130, 62],
+      "sources": [{ "path": "docker-compose.dev.yml", "line": 397, "label": "gateway port" }]
+    },
+    {
+      "id": "gateway",
+      "type": "security",
+      "label": "NGINX Gateway",
+      "sublabel": "http://localhost:8080",
+      "tag": "one service",
+      "pos": [220, 315],
+      "size": [142, 62],
+      "sources": [
+        { "path": "docker-compose.dev.yml", "line": 385, "label": "gateway service" },
+        { "path": "docker/nginx/nginx.dev.conf", "line": 27, "label": "listen 8080" }
+      ]
+    },
+    {
+      "id": "dashboard",
+      "type": "frontend",
+      "label": "React Dashboard",
+      "sublabel": "Vite dev server :5173",
+      "tag": "one service",
+      "pos": [430, 80],
+      "size": [150, 62],
+      "sources": [{ "path": "docker-compose.dev.yml", "line": 257, "label": "dashboard service" }]
+    },
+    {
+      "id": "crm_api",
+      "type": "backend",
+      "label": "Laravel CRM API",
+      "sublabel": "PHP-FPM :9000",
+      "tag": "one service",
+      "pos": [430, 250],
+      "size": [150, 62],
+      "sources": [
+        { "path": "docker-compose.dev.yml", "line": 4, "label": "crm-api service" },
+        { "path": "server/routes/api.php", "line": 7, "label": "v1 routes" }
+      ]
+    },
+    {
+      "id": "payment_api",
+      "type": "backend",
+      "label": "NestJS Payment API",
+      "sublabel": "api/v1 · :3000",
+      "tag": "one service",
+      "pos": [430, 430],
+      "size": [150, 62],
+      "sources": [
+        { "path": "docker-compose.dev.yml", "line": 205, "label": "payment-api service" },
+        { "path": "payment-server/src/main.ts", "line": 9, "label": "api/v1 prefix" }
+      ]
+    },
+    {
+      "id": "horizon",
+      "type": "backend",
+      "label": "Laravel Horizon",
+      "sublabel": "Redis queue worker",
+      "tag": "one worker",
+      "pos": [990, 80],
+      "size": [144, 62],
+      "sources": [{ "path": "docker-compose.dev.yml", "line": 60, "label": "horizon service" }]
+    },
+    {
+      "id": "event_consumer",
+      "type": "backend",
+      "label": "Payment Event Consumer",
+      "sublabel": "payments:consume-events",
+      "tag": "one worker",
+      "pos": [990, 530],
+      "size": [144, 62],
+      "sources": [{ "path": "docker-compose.dev.yml", "line": 162, "label": "payment-events service" }]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "crm: + payments: ACLs",
+      "tag": "127.0.0.1:16379",
+      "pos": [720, 80],
+      "size": [150, 62],
+      "sources": [{ "path": "docker-compose.dev.yml", "line": 348, "label": "redis service" }]
+    },
+    {
+      "id": "crm_db",
+      "type": "database",
+      "label": "PostgreSQL · crm",
+      "sublabel": "CRM source of truth",
+      "tag": "127.0.0.1:15432",
+      "pos": [720, 250],
+      "size": [150, 62],
+      "sources": [
+        { "path": "docker-compose.dev.yml", "line": 278, "label": "postgres service" }
+      ]
+    },
+    {
+      "id": "payments_db",
+      "type": "database",
+      "label": "PostgreSQL · payments",
+      "sublabel": "invoices + receipts",
+      "tag": "127.0.0.1:15432",
+      "pos": [720, 430],
+      "size": [150, 62],
+      "sources": [
+        { "path": "docker-compose.dev.yml", "line": 278, "label": "postgres service" },
+        { "path": "payment-server/src/app.module.ts", "line": 16, "label": "payments datasource" }
+      ]
+    },
+    {
+      "id": "rabbitmq",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "commands + result events",
+      "tag": "management :15672",
+      "pos": [720, 530],
+      "size": [164, 62],
+      "sources": [
+        { "path": "docker-compose.dev.yml", "line": 369, "label": "rabbitmq service" },
+        { "path": "payment-server/src/messaging/rabbitmq.service.ts", "line": 17, "label": "exchanges" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Docker Compose development deployment",
+      "wraps": ["gateway", "dashboard", "crm_api", "payment_api", "horizon", "event_consumer", "redis", "crm_db", "payments_db", "rabbitmq"],
+      "pad": 24
+    },
+    {
+      "kind": "security-group",
+      "label": "proxy_net: gateway-facing services",
+      "wraps": ["gateway", "dashboard", "crm_api", "payment_api"],
+      "pad": 13
+    },
+    {
+      "kind": "security-group",
+      "label": "data_net: internal service data plane",
+      "wraps": ["crm_api", "payment_api", "horizon", "event_consumer", "redis", "crm_db", "payments_db", "rabbitmq"],
+      "pad": 12
+    }
+  ],
+  "connections": [
+    { "from": "browser", "to": "gateway", "label": "HTTP · localhost:8080", "variant": "emphasis", "labelAt": [190, 402] },
+    { "from": "gateway", "to": "dashboard", "label": "/ → SPA", "variant": "emphasis", "route": "orthogonal-h", "labelAt": [390, 194] },
+    { "from": "gateway", "to": "crm_api", "label": "/api/* · /telescope · /horizon", "variant": "emphasis", "route": "orthogonal-h", "labelAt": [300, 440] },
+    { "from": "gateway", "to": "payment_api", "label": "/api/v1/payments + /invoices", "variant": "emphasis", "route": "orthogonal-h", "labelAt": [390, 520] },
+    { "from": "crm_api", "to": "crm_db", "label": "crm SQL", "route": "straight", "labelAt": [650, 235] },
+    { "from": "crm_api", "to": "redis", "label": "queue · cache · session", "fromSide": "right", "toSide": "left", "via": [[620, 281], [620, 111]], "labelAt": [635, 170] },
+    { "from": "horizon", "to": "redis", "label": "process CRM jobs", "route": "straight", "labelAt": [890, 66] },
+    { "from": "payment_api", "to": "payments_db", "label": "payments SQL + auth_reader", "route": "straight", "labelAt": [650, 395] },
+    { "from": "crm_api", "to": "rabbitmq", "label": "publish payment commands", "variant": "dashed", "fromSide": "bottom", "toSide": "right", "via": [[505, 380], [900, 380], [900, 561]], "labelAt": [780, 365] },
+    { "from": "payment_api", "to": "rabbitmq", "label": "consume commands · publish results", "variant": "dashed", "fromSide": "bottom", "toSide": "left", "via": [[505, 620], [700, 620], [700, 561]], "labelAt": [600, 645] },
+    { "from": "event_consumer", "to": "rabbitmq", "label": "consume crm.payment-events", "variant": "dashed", "route": "straight", "labelAt": [900, 616] }
+  ]
+}

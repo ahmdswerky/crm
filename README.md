@@ -77,6 +77,12 @@ connection; one-shot grant and seed jobs establish that boundary. RabbitMQ is
 the integration boundary between the services, while Laravel Horizon and Redis
 remain responsible for CRM jobs and queues.
 
+An interactive viewer at `/docs/architecture/` toggles between **dev** and
+**production** infrastructure and between the system architecture, the
+lead → deal → commission workflow, and the payment round-trip (see
+`docs/architecture/`). Regenerate the diagrams on demand with
+`npm run docs:architecture` — local only, not run by any hook or CI.
+
 ## Installation
 
 Development uses Docker Compose. Copy the local configuration, validate the

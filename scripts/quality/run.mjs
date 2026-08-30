@@ -1,11 +1,17 @@
 import { spawnSync } from 'node:child_process'
 
 export function run(command, args = [], options = {}) {
+  const stdio = options.capture
+    ? ['ignore', 'pipe', 'pipe']
+    : options.input != null
+      ? ['pipe', 'inherit', 'inherit']
+      : 'inherit'
   const result = spawnSync(command, args, {
     cwd: options.cwd,
     env: { ...process.env, ...(options.env ?? {}) },
     encoding: 'utf8',
-    stdio: options.capture ? ['ignore', 'pipe', 'pipe'] : 'inherit',
+    input: options.input,
+    stdio,
   })
 
   if (result.error) throw result.error

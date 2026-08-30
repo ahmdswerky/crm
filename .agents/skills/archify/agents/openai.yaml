@@ -1,0 +1,9 @@
+interface:
+  display_name: "Archify"
+  short_description: "Render typed JSON-IR architecture / workflow / sequence diagrams to a self-contained HTML page"
+  default_prompt: "Use $archify to refresh docs/architecture/ from current repo evidence."
+
+# Vendored from https://github.com/tt-a1i/archify at commit
+# 4ac500a498267f18bda42b3c82b51edb8f9c1baf (skill payload = repo `archify/` subtree,
+# minus node_modules/ and test/). Runs with zero install on Node >= 18.
+# Bump: re-copy the subtree, update this sha and docs/contracts/archify-cli-research.md.

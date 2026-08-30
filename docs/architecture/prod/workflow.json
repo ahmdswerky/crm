@@ -1,0 +1,56 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Lead to Deal to Commission Lifecycle",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "viewBox": [1000, 680]
+  },
+  "lanes": [
+    { "id": "operator", "label": "CRM Operator" },
+    { "id": "laravel", "label": "Laravel API ×2" },
+    { "id": "queue", "label": "Private Redis + Horizon ×1" },
+    { "id": "crm_data", "label": "CRM PostgreSQL" }
+  ],
+  "phases": [
+    { "id": "capture", "label": "Capture", "fromCol": 0, "toCol": 1 },
+    { "id": "qualify", "label": "Qualify + convert", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "sell", "label": "Create deal + allocate", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "conversion", "label": "After-commit conversion", "lane": "queue", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "commission", "label": "One CRM database transaction", "lane": "laravel", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["create_lead", "persist_lead", "qualify_lead", "lead_job", "horizon", "contact", "create_deal", "deal_service", "commission"],
+  "semanticChecks": {
+    "allowedRoots": ["create_lead"],
+    "allowedTerminals": ["commission"],
+    "requiredPaths": [{ "from": "create_lead", "to": "commission" }]
+  },
+  "nodes": [
+    { "id": "create_lead", "lane": "operator", "col": 0, "type": "frontend", "label": "Create Lead", "sublabel": "POST https://crm.swerky.dev/api/v1/leads", "width": 180 },
+    { "id": "persist_lead", "lane": "crm_data", "col": 1, "type": "database", "label": "Lead Stored", "sublabel": "CRM record", "width": 122 },
+    { "id": "qualify_lead", "lane": "laravel", "col": 2, "type": "backend", "label": "Qualify Lead", "sublabel": "PATCH https://crm.swerky.dev/api/v1/leads/:id", "width": 200 },
+    { "id": "lead_job", "lane": "queue", "col": 2, "type": "messagebus", "label": "Queue Conversion", "sublabel": "after commit", "width": 138 },
+    { "id": "horizon", "lane": "queue", "col": 3, "type": "backend", "label": "Horizon", "sublabel": "private worker ×1", "tag": "LeadConvertionJob", "width": 132 },
+    { "id": "contact", "lane": "crm_data", "col": 3, "type": "database", "label": "Contact + Account", "sublabel": "from qualified lead", "width": 142 },
+    { "id": "create_deal", "lane": "operator", "col": 4, "type": "frontend", "label": "Create Deal", "sublabel": "POST https://crm.swerky.dev/api/v1/deals", "width": 180 },
+    { "id": "deal_service", "lane": "laravel", "col": 4, "type": "backend", "label": "Deal Service", "sublabel": "locks property + user", "width": 136 },
+    { "id": "commission", "lane": "crm_data", "col": 5, "type": "database", "label": "Commission Allocations", "sublabel": "estimate or final on won", "width": 158 }
+  ],
+  "edges": [
+    { "from": "create_lead", "to": "persist_lead", "label": "201 lead", "variant": "emphasis", "role": "main" },
+    { "from": "persist_lead", "to": "qualify_lead", "label": "later status update", "role": "main" },
+    { "from": "qualify_lead", "to": "lead_job", "label": "qualified → dispatch", "variant": "emphasis", "role": "async" },
+    { "from": "lead_job", "to": "horizon", "label": "Redis queue", "variant": "emphasis", "role": "main" },
+    { "from": "horizon", "to": "contact", "label": "createFromQualifiedLead", "variant": "emphasis", "role": "main" },
+    { "from": "contact", "to": "create_deal", "label": "contact is available", "role": "main", "fromSide": "bottom", "toSide": "right", "via": [[583.8, 560], [912, 560], [912, 120]] },
+    { "from": "create_deal", "to": "deal_service", "label": "201 deal", "variant": "emphasis", "role": "main" },
+    { "from": "deal_service", "to": "commission", "label": "recalculate in transaction", "variant": "emphasis", "role": "main" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Qualified Leads Convert After Commit", "items": ["The LeadObserver dispatches only when status becomes qualified", "LeadConvertionJob delegates contact creation to ContactService", "The private Horizon service runs the Redis-backed job"] },
+    { "dot": "emerald", "title": "Deal Write Is Transactional", "items": ["DealService locks the selected property before it persists the deal", "It synchronizes the property status and recalculates commission in the same transaction", "A won deal produces final allocations; earlier deal states produce estimates"] }
+  ]
+}

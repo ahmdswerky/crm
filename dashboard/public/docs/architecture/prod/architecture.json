@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CRM Production Deployment",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "engineering_profile": "deployment-ownership",
+    "repository": {
+      "url": "https://github.com/ahmdswerky/crm",
+      "revision": "c8a7b04862df9ca93dcdb046fe47cba67ebec303"
+    },
+    "viewBox": [1390, 760]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser / API Client",
+      "sublabel": "public CRM user",
+      "pos": [24, 326],
+      "size": [138, 62],
+      "sources": [{ "path": "README.md", "line": 39, "label": "public edge" }]
+    },
+    {
+      "id": "cloudflare",
+      "type": "cloud",
+      "label": "Cloudflare",
+      "sublabel": "TLS edge",
+      "tag": "public boundary",
+      "pos": [208, 326],
+      "size": [130, 62],
+      "sources": [{ "path": "README.md", "line": 39, "label": "TLS edge" }]
+    },
+    {
+      "id": "host_nginx",
+      "type": "security",
+      "label": "Host NGINX Gateway",
+      "sublabel": "crm.swerky.dev :443",
+      "tag": "origin boundary",
+      "pos": [386, 326],
+      "size": [154, 62],
+      "sources": [{ "path": "docker/nginx/vps-site.example.conf", "line": 7, "label": "TLS proxy" }]
+    },
+    {
+      "id": "compose_gateway",
+      "type": "security",
+      "label": "Compose NGINX Gateway",
+      "sublabel": "127.0.0.1:8080",
+      "tag": "proxy_net",
+      "pos": [588, 326],
+      "size": [158, 62],
+      "sources": [
+        { "path": "docker-compose.yml", "line": 449, "label": "gateway service" },
+        { "path": "docker/nginx/nginx.conf", "line": 30, "label": "listen 8080" }
+      ]
+    },
+    {
+      "id": "dashboard",
+      "type": "frontend",
+      "label": "React Dashboard",
+      "sublabel": "static SPA",
+      "tag": "2 replicas",
+      "pos": [820, 82],
+      "size": [142, 62],
+      "sources": [{ "path": "docker-compose.yml", "line": 331, "label": "dashboard-1" }]
+    },
+    {
+      "id": "crm_api",
+      "type": "backend",
+      "label": "Laravel CRM API",
+      "sublabel": "PHP-FPM :9000",
+      "tag": "2 replicas",
+      "pos": [820, 246],
+      "size": [142, 62],
+      "sources": [
+        { "path": "docker-compose.yml", "line": 8, "label": "crm-api-1" },
+        { "path": "server/routes/api.php", "line": 7, "label": "v1 routes" }
+      ]
+    },
+    {
+      "id": "payments_api",
+      "type": "backend",
+      "label": "NestJS Payments API",
+      "sublabel": "api/v1 · :3000",
+      "tag": "2 replicas",
+      "pos": [820, 414],
+      "size": [154, 62],
+      "sources": [
+        { "path": "docker-compose.yml", "line": 204, "label": "payment-api-1" },
+        { "path": "payment-server/src/main.ts", "line": 8, "label": "api/v1 prefix" }
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL · crm",
+      "sublabel": "CRM source of truth",
+      "tag": "data_net only",
+      "pos": [1082, 168],
+      "size": [162, 62],
+      "sources": [{ "path": "docker-compose.yml", "line": 377, "label": "no published port" }]
+    },
+    {
+      "id": "payments_db",
+      "type": "database",
+      "label": "PostgreSQL · payments",
+      "sublabel": "invoices + receipts",
+      "tag": "data_net only",
+      "pos": [1082, 430],
+      "size": [162, 62],
+      "sources": [
+        { "path": "docker-compose.yml", "line": 377, "label": "postgres service" },
+        { "path": "payment-server/src/app.module.ts", "line": 16, "label": "payments datasource" }
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "crm: + payments: ACLs",
+      "tag": "data_net only",
+      "pos": [1082, 342],
+      "size": [162, 62],
+      "sources": [{ "path": "docker-compose.yml", "line": 408, "label": "redis service" }]
+    },
+    {
+      "id": "rabbitmq",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "commands + result events",
+      "tag": "data_net only",
+      "pos": [1082, 538],
+      "size": [162, 62],
+      "sources": [
+        { "path": "docker-compose.yml", "line": 428, "label": "rabbitmq service" },
+        { "path": "payment-server/src/messaging/rabbitmq.service.ts", "line": 17, "label": "topic topology" }
+      ]
+    }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Public internet", "wraps": ["browser", "cloudflare"], "pad": 18 },
+    { "kind": "security-group", "label": "Production host / origin", "wraps": ["host_nginx", "compose_gateway"], "pad": 18 },
+    { "kind": "region", "label": "Production host + Docker Compose", "wraps": ["host_nginx", "compose_gateway", "dashboard", "crm_api", "payments_api", "postgres", "payments_db", "redis", "rabbitmq"], "pad": 24 },
+    { "kind": "security-group", "label": "Internal data_net", "wraps": ["crm_api", "payments_api", "postgres", "payments_db", "redis", "rabbitmq"], "pad": 14 }
+  ],
+  "connections": [
+    { "from": "browser", "to": "cloudflare", "label": "HTTPS", "variant": "emphasis" },
+    { "from": "cloudflare", "to": "host_nginx", "label": "TLS to origin", "variant": "security", "labelAt": [362, 402] },
+    { "from": "host_nginx", "to": "compose_gateway", "label": "127.0.0.1:8080", "variant": "security", "labelAt": [564, 402] },
+    { "from": "compose_gateway", "to": "dashboard", "label": "/ → SPA", "variant": "emphasis", "labelAt": [780, 170] },
+    { "from": "compose_gateway", "to": "crm_api", "label": "/api/ → crm_pool", "variant": "emphasis", "labelAt": [690, 300] },
+    { "from": "compose_gateway", "to": "payments_api", "label": "/api/v1/payments + /invoices", "variant": "emphasis", "labelAt": [785, 500] },
+    { "from": "crm_api", "to": "postgres", "label": "crm SQL", "route": "orthogonal-h", "labelAt": [1022, 235] },
+    { "from": "payments_api", "to": "payments_db", "label": "payments SQL", "route": "orthogonal-h", "labelAt": [1028, 395] },
+    { "from": "crm_api", "to": "rabbitmq", "label": "payment commands", "variant": "dashed", "fromSide": "bottom", "toSide": "right", "via": [[891, 320], [1300, 320], [1300, 569]], "labelAt": [1110, 305] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Public Request Path", "items": ["Cloudflare reaches the host gateway before the loopback Compose gateway", "The gateway load-balances the dashboard and both API planes across two replicas", "Payment paths are routed before the Laravel /api/ location"] },
+    { "dot": "rose", "title": "Private Operations", "items": ["Horizon, scheduler, and payment-event consumer have no public NGINX route", "PostgreSQL has no published host port", "data_net is internal while proxy_net is gateway-facing"] },
+    { "dot": "emerald", "title": "Service Boundaries", "items": ["Laravel owns CRM data and Redis-backed application work", "Payments owns payment data and reads CRM auth through auth_reader", "RabbitMQ carries payment commands and result events"] }
+  ]
+}
