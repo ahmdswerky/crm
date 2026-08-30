@@ -1,0 +1,222 @@
+scripts/quality/db-schema/config.mjs
+  s_eea70215478e36::t_2cab9ece891435 1-39,45-47,49-58,60-68
+  s_eea70215478e36::t_1ef5128512f957 40-44,48,59
+scripts/quality/db-schema/liam.mjs
+  s_eea70215478e36::t_d36480aea1bcd7 1-25
+server/app/Models/PaymentEventInbox.php
+  s_0c68bebaef7099::t_478015c243d2f2 13-14
+  s_0c68bebaef7099::t_67bbde23b2546b 1-12,15-38
+package.json
+  s_eea70215478e36::t_a571d0d37160ac 15-16
+  s_eea70215478e36::t_7d52e7082cb577 14
+docs/db/payments/schema.json
+  s_eea70215478e36::t_beafbc954b9e98 1-401
+payment-server/src/messaging/payment-event-outbox.publisher.spec.ts
+  s_0c68bebaef7099::t_f933f0033449bb 80-85
+  s_0c68bebaef7099::t_51489dfd579e94 62,98-102
+  s_0c68bebaef7099::t_d6f606c7e5866e 2-5,9-59,63-64,67-79,89-97,107-108
+  s_0c68bebaef7099::t_b16d282ab62d8f 60-61,106
+  s_0c68bebaef7099::t_24829acec1d303 86-88
+  s_0c68bebaef7099::t_add7c6e333eab8 103-105
+  s_0c68bebaef7099::t_e26e72c73c6cb9 1,6-8,65-66
+scripts/quality/validate-rabbitmq-topology.mjs
+  s_0c68bebaef7099::t_e3e7bf2cf87437 7-10,89-92
+  s_0c68bebaef7099::t_310078aaf61b1a 1-6,11-88,93-95
+server/app/Services/Payments/PaymentEventCodec.php
+  s_0c68bebaef7099::t_43980b04ca8719 1-16,18-43,45-77,79-112
+  s_0c68bebaef7099::t_6d3eb4d3e3af7f 17,44,78
+scripts/quality/generate-db-schema.mjs
+  s_eea70215478e36::t_746f56dcd6fe4c 124-136,138
+  s_eea70215478e36::t_af684002468584 26-32
+  s_eea70215478e36::t_0c4856bbc242f3 3-4,41,46,56-57,67-68,77-79,82,88,90-92,94-95,97-98,101-115,117-121,123
+  s_eea70215478e36::t_6f39fbec4a78ce 5-6
+  s_eea70215478e36::t_6743f01d6883be 1-2,7-25,33-40,42-45,47-55,58-66,69-76,80-81,83-87,89,93,96,99-100,116,122,137,139-143
+.gitignore
+  s_eea70215478e36::t_3aa71f39e753b9 31-33
+  s_eea70215478e36::t_c6f99d13af8477 34
+server/tests/Feature/PaymentEventCodecTest.php
+  s_0c68bebaef7099::t_a71f775692752b 1-11,14,19-30
+  s_0c68bebaef7099::t_2336971b9ef8c2 12-13,15-18
+docs/db/crm/schema.sql
+  s_eea70215478e36::t_beafbc954b9e98 1-1700
+payment-server/src/messaging/rabbitmq.recovery.spec.ts
+  s_0c68bebaef7099::t_036cd5864ae8ed 1-8,21-40,45-52,54,57-58,61-62
+  s_0c68bebaef7099::t_f3f93fc47b286d 55-56
+  s_0c68bebaef7099::t_cf7ddab39006ed 9-20,41-44,53,59-60
+payment-server/src/messaging/payment-event-codec.spec.ts
+  s_0c68bebaef7099::t_a71f775692752b 1-50
+docker/dashboard/Dockerfile
+  s_eea70215478e36::t_49c76a51195666 7,9-13
+  s_eea70215478e36::t_e36a6243225c94 6,8
+payment-server/src/database/data-source.ts
+  s_eea70215478e36::t_ce9b1d81b39364 4-7
+  s_eea70215478e36::t_d56eaf7ab44b88 16
+dashboard/vite.config.ts
+  s_eea70215478e36::t_e8b9c749e6ee3e 10,21-22,28,32-35,37,49
+  s_eea70215478e36::t_4fa2de01625b78 58
+  s_eea70215478e36::t_e91c0a1940d8c4 1,6,27,29-31,52-55
+  s_eea70215478e36::t_12994640462cdb 11-20,23-26,36,38-48,50-51
+  s_eea70215478e36::t_24009fbbb303a2 56
+payment-server/src/messaging/payment-command-codec.spec.ts
+  s_0c68bebaef7099::t_a71f775692752b 1-18,22-56
+  s_0c68bebaef7099::t_5d482b046f8b76 19-21
+payment-server/src/messaging/payment-event-codec.ts
+  s_0c68bebaef7099::t_3fdda2c3d1b50d 1-27,31-45,49,53-71
+  s_0c68bebaef7099::t_da4eedf27cf33f 28-30,46-48,50-52
+docs/db/payments/README.md
+  s_eea70215478e36::t_beafbc954b9e98 1-16
+scripts/quality/validate-docker.mjs
+  s_7cbfbcd2df699b::t_7590b30aa6de2b 15
+  s_7cbfbcd2df699b::t_dd485c96b8f4a8 10
+docs/db/crm/schema.json
+  s_eea70215478e36::t_beafbc954b9e98 1-3356
+server/tests/Feature/PaymentEventProcessorTest.php
+  s_0c68bebaef7099::t_855533bcaf6547 1-4,6-9,11-95,97-98,101-103
+  s_0c68bebaef7099::t_9b9937a491779b 100,109
+  s_0c68bebaef7099::t_40fd773aabf795 104-108,110-112
+  s_0c68bebaef7099::t_a71f775692752b 5,96,99
+  s_0c68bebaef7099::t_478015c243d2f2 10
+server/app/Console/Commands/ConsumePaymentEventsCommand.php
+  s_0c68bebaef7099::t_55820bfb248be3 6
+  s_0c68bebaef7099::t_67bbde23b2546b 1-4,7-17,19-21,23,25-33
+  s_0c68bebaef7099::t_43980b04ca8719 5,18,22,24
+scripts/quality/commit-check.mjs
+  s_eea70215478e36::t_93ea4b21736c8a 4
+  s_eea70215478e36::t_996e1918e410ae 26-31
+scripts/quality/db-schema/migrate.mjs
+  s_eea70215478e36::t_34d174eff1eb07 1-57
+dashboard/package.json
+  s_eea70215478e36::t_f14ceffbcaae7d 16
+server/database/migrations/2026_08_25_000001_create_payment_event_inbox_table.php
+  s_0c68bebaef7099::t_67bbde23b2546b 1-27
+docker/rabbitmq/definitions.json
+  s_0c68bebaef7099::t_310078aaf61b1a 1-29
+server/tests/Feature/RabbitMqClientRecoveryTest.php
+  s_0c68bebaef7099::t_036cd5864ae8ed 1-15
+docker-compose.dev.yml
+  s_7cbfbcd2df699b::t_4aeec2a714d14a 54-55,111-112,163-164,210-211,264-265,268-269,327-352,372-373
+  s_5c8dc7908c59c8::t_a2cb0d7edfddf8 226-227
+  s_5c8dc7908c59c8::t_13af32714bb1ad 419-420
+  s_7cbfbcd2df699b::t_6c17117d65f073 38,43,220,250,254,425-426
+dashboard/scripts/build-erd.mjs
+  s_eea70215478e36::t_093ad6c1554be2 1-55
+docs/db/crm/README.md
+  s_eea70215478e36::t_beafbc954b9e98 1-16
+docker/postgres/reconcile-dev-access.sh
+  s_7cbfbcd2df699b::t_4aeec2a714d14a 1-39,47-52,60-85,90-101,105-134,136-138
+  s_7cbfbcd2df699b::t_e7c73b749caff7 40-46,53-59,86-89
+  s_7cbfbcd2df699b::t_a8090aa09382b3 135
+  s_7cbfbcd2df699b::t_c7cbcc47657e5a 102-104
+docs/contracts/payments/invoice.failed.v1.json
+  s_0c68bebaef7099::t_33e58be5f6c0fd 1-12
+docker/dashboard/nginx.conf
+  s_eea70215478e36::t_72b2d8bd23cd5c 38-39,44,46-48,52
+  s_eea70215478e36::t_b07dde588240a1 40-43,45,53
+  s_eea70215478e36::t_e055fae7eef812 49-51,54-55
+payment-server/src/messaging/payment-command-codec.ts
+  s_0c68bebaef7099::t_3fdda2c3d1b50d 1-19,23-59
+  s_0c68bebaef7099::t_da4eedf27cf33f 20-22
+scripts/quality/project-map.mjs
+  s_eea70215478e36::t_16af88b1facb87 20
+  s_eea70215478e36::t_917a12569e91ec 42-49,52-56
+payment-server/src/messaging/payment-event-outbox.publisher.ts
+  s_0c68bebaef7099::t_7cc977f31c4421 7-8,10-22,26-101,108-135
+  s_0c68bebaef7099::t_51489dfd579e94 1-6,23-25,102-107
+  s_0c68bebaef7099::t_2dd64a7454a8f6 9
+server/app/Services/Payments/PaymentEventProcessor.php
+  s_0c68bebaef7099::t_67bbde23b2546b 1-57
+server/tests/Feature/Console/ConsumePaymentEventsCommandTest.php
+  s_0c68bebaef7099::t_9b9937a491779b 56,81,108,113
+  s_0c68bebaef7099::t_9934fe09d31892 12-28,60,87
+  s_0c68bebaef7099::t_357b4de8fb4603 4,36-53,65,78,82-83,104-107,109-110
+  s_0c68bebaef7099::t_55820bfb248be3 6
+  s_0c68bebaef7099::t_65d722b200a39b 1-3,7-11,29-35,54-55,57-59,61-64,66-77,79,84-86,88-103,111,114
+  s_0c68bebaef7099::t_a71f775692752b 5,80,112
+  s_0c68bebaef7099::t_51c33a670d7712 115-140
+payment-server/src/messaging/entities/payment-event-outbox.entity.ts
+  s_0c68bebaef7099::t_7cc977f31c4421 1-52
+docs/db/payments/schema.sql
+  s_eea70215478e36::t_beafbc954b9e98 1-195
+scripts/quality/db-schema/postgres.mjs
+  s_eea70215478e36::t_df7aef7cdd807a 1-75
+payment-server/src/database/migrations/20260825000000-CreatePaymentEventOutbox.ts
+  s_0c68bebaef7099::t_51489dfd579e94 3
+  s_0c68bebaef7099::t_7cc977f31c4421 1-2,4-37
+scripts/quality/project-map.test.mjs
+  s_eea70215478e36::t_70595521423189 13,17-21
+  s_eea70215478e36::t_084d34613fae28 22-23
+docs/contracts/payments/invoice.generate.v1.json
+  s_0c68bebaef7099::t_33e58be5f6c0fd 1-14
+server/tests/Feature/PaymentCommandPublisherContractTest.php
+  s_0c68bebaef7099::t_33e58be5f6c0fd 1-2,4-13,18-53
+  s_0c68bebaef7099::t_4753c97998398d 14-17
+  s_0c68bebaef7099::t_271d2d0860dd3c 3
+server/app/Services/Payments/PaymentCommandPublisher.php
+  s_0c68bebaef7099::t_310078aaf61b1a 1-68
+payment-server/src/messaging/payment-message-validation.error.ts
+  s_0c68bebaef7099::t_3fdda2c3d1b50d 1-3
+.github/workflows/ci.yml
+  s_eea70215478e36::t_e5fa66b242bd20 555
+  s_eea70215478e36::t_8603de6fb030ce 308-379
+  s_eea70215478e36::t_cd1d3fad621e0a 534
+scripts/quality/db-schema/dump.mjs
+  s_eea70215478e36::t_2905dc46737e65 1-33
+docs/db/README.md
+  s_eea70215478e36::t_beafbc954b9e98 1-21
+docs/docker-operations.md
+  s_7cbfbcd2df699b::t_4aeec2a714d14a 171,174,177-181,183-185
+  s_7cbfbcd2df699b::t_85e29f8080bf2d 121,159,346,401-426
+payment-server/src/messaging/rabbitmq.service.spec.ts
+  s_0c68bebaef7099::t_d6f606c7e5866e 43-47
+  s_0c68bebaef7099::t_f0ff12675331bc 70,73,109
+  s_0c68bebaef7099::t_46e5bbaf878757 51,59-60
+  s_0c68bebaef7099::t_4753c97998398d 10-14
+  s_0c68bebaef7099::t_6d576c793a7be9 4,20-22,36-37,99-106,108
+  s_0c68bebaef7099::t_33e58be5f6c0fd 1-3,5-9,15-19,23-35,38,50,52,111
+  s_0c68bebaef7099::t_a7e39647b33bf1 107
+  s_0c68bebaef7099::t_139091668692be 41-42,48-49,53-58,61-67
+  s_0c68bebaef7099::t_51489dfd579e94 39-40
+  s_0c68bebaef7099::t_51c33a670d7712 68-69,71-72,74-98,110
+docs/contracts/payments/invoice.completed.v1.json
+  s_0c68bebaef7099::t_33e58be5f6c0fd 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fae90032163f3bfa867c80f1b942a299c73c3d14",
+  "prompts": {},
+  "sessions": {
+    "s_0c68bebaef7099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a031b9-6f19-7e30-9e82-11ffa0e693f1",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": null
+    },
+    "s_5c8dc7908c59c8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0510e-9eac-76e0-b96c-796be222c669",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_7cbfbcd2df699b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a05316-d7a4-7d21-8ca1-f828ea6513fe",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_eea70215478e36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d74737b-300b-46a9-8f4e-0144ee7ce6fc",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
