@@ -338,7 +338,7 @@ services:
         tmpfs: {size: 134217728, mode: "0777"}
     networks: [data_net, egress_net]
     secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
-  depends_on:
+    depends_on:
       crm-migrate:
         condition: service_completed_successfully
 
