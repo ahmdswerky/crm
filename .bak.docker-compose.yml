@@ -44,20 +44,19 @@ services:
       LOG_CHANNEL: stderr
       LOG_LEVEL: ${LOG_LEVEL:-info}
     volumes:
-      - laravel_private:/var/www/html/storage/app/private
       - laravel_media:/var/www/html/storage/app/public
       - type: tmpfs
         target: /var/www/html/bootstrap/cache
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/framework
-        tmpfs: {size: 67108864, mode: "0777"}
+        tmpfs: {size: 67108864, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/logs
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/media-library/temp
-        tmpfs: {size: 134217728, mode: "0777"}
+        tmpfs: {size: 134217728, mode: 511}
     expose: ["9000"]
     networks: [proxy_net, data_net, egress_net]
     secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
@@ -79,20 +78,19 @@ services:
       dockerfile: docker/crm-server/Dockerfile
     environment: *crm-environment
     volumes:
-      - laravel_private:/var/www/html/storage/app/private
       - laravel_media:/var/www/html/storage/app/public
       - type: tmpfs
         target: /var/www/html/bootstrap/cache
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/framework
-        tmpfs: {size: 67108864, mode: "0777"}
+        tmpfs: {size: 67108864, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/logs
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/media-library/temp
-        tmpfs: {size: 134217728, mode: "0777"}
+        tmpfs: {size: 134217728, mode: 511}
     expose: ["9000"]
     networks: [proxy_net, data_net, egress_net]
     secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
@@ -108,22 +106,21 @@ services:
       context: .
       dockerfile: docker/crm-server/Dockerfile
     environment: *crm-environment
-    profiles: ["payments"]
     command: ["php", "artisan", "payments:consume-events"]
     volumes:
       - laravel_media:/var/www/html/storage/app/public
       - type: tmpfs
         target: /var/www/html/bootstrap/cache
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/framework
-        tmpfs: {size: 67108864, mode: "0777"}
+        tmpfs: {size: 67108864, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/logs
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/media-library/temp
-        tmpfs: {size: 134217728, mode: "0777"}
+        tmpfs: {size: 134217728, mode: 511}
     networks: [data_net, egress_net]
     secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
     depends_on:
@@ -154,16 +151,16 @@ services:
       - laravel_media:/var/www/html/storage/app/public
       - type: tmpfs
         target: /var/www/html/bootstrap/cache
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/framework
-        tmpfs: {size: 67108864, mode: "0777"}
+        tmpfs: {size: 67108864, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/logs
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/media-library/temp
-        tmpfs: {size: 134217728, mode: "0777"}
+        tmpfs: {size: 134217728, mode: 511}
     networks: [data_net, egress_net]
     secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
     depends_on:
@@ -175,7 +172,7 @@ services:
 
   auth-grants:
     <<: *app-defaults
-    image: docker.io/library/postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
     restart: "no"
     environment:
       POSTGRES_USER: postgres
@@ -294,22 +291,21 @@ services:
     environment: *crm-environment
     command: ["php", "artisan", "horizon"]
     volumes:
-      - laravel_private:/var/www/html/storage/app/private
       - laravel_media:/var/www/html/storage/app/public
       - type: tmpfs
         target: /var/www/html/bootstrap/cache
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/framework
-        tmpfs: {size: 67108864, mode: "0777"}
+        tmpfs: {size: 67108864, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/logs
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/media-library/temp
-        tmpfs: {size: 134217728, mode: "0777"}
+        tmpfs: {size: 134217728, mode: 511}
     networks: [data_net, egress_net]
-    secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
+    secrets: [laravel_app_key, crm_db_password, crm_redis_password]
     depends_on:
       crm-migrate:
         condition: service_completed_successfully
@@ -322,23 +318,22 @@ services:
     environment: *crm-environment
     command: ["php", "artisan", "schedule:work"]
     volumes:
-      - laravel_private:/var/www/html/storage/app/private
       - laravel_media:/var/www/html/storage/app/public
       - type: tmpfs
         target: /var/www/html/bootstrap/cache
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/framework
-        tmpfs: {size: 67108864, mode: "0777"}
+        tmpfs: {size: 67108864, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/logs
-        tmpfs: {size: 33554432, mode: "0777"}
+        tmpfs: {size: 33554432, mode: 511}
       - type: tmpfs
         target: /var/www/html/storage/media-library/temp
-        tmpfs: {size: 134217728, mode: "0777"}
+        tmpfs: {size: 134217728, mode: 511}
     networks: [data_net, egress_net]
-    secrets: [laravel_app_key, crm_db_password, crm_redis_password, rabbitmq_password]
-  depends_on:
+    secrets: [laravel_app_key, crm_db_password, crm_redis_password]
+    depends_on:
       crm-migrate:
         condition: service_completed_successfully
 
@@ -375,7 +370,7 @@ services:
       retries: 5
 
   postgres:
-    image: docker.io/library/postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
     restart: unless-stopped
     shm_size: 64m
     environment:
@@ -406,7 +401,7 @@ services:
       retries: 10
 
   redis:
-    image: docker.io/library/redis:8-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
+    image: redis:8-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
     restart: unless-stopped
     entrypoint: ["/bin/sh", "/usr/local/bin/redis-entrypoint"]
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
@@ -426,18 +421,16 @@ services:
       retries: 10
 
   rabbitmq:
-    image: docker.io/library/rabbitmq:4.1-management-alpine
+    image: rabbitmq:4.1-management-alpine
     restart: unless-stopped
     entrypoint: ["/bin/sh", "/usr/local/bin/rabbitmq-entrypoint"]
     command: ["rabbitmq-server"]
     environment:
-      RABBITMQ_BOOTSTRAP_USER: ${RABBITMQ_USER:-crm}
-      RABBITMQ_BOOTSTRAP_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-crm}
+      RABBITMQ_DEFAULT_PASS_FILE: /run/secrets/rabbitmq_password
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - ./docker/rabbitmq/entrypoint.sh:/usr/local/bin/rabbitmq-entrypoint:ro
-      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     networks: [data_net]
     secrets: [rabbitmq_password]
     healthcheck:
@@ -447,7 +440,7 @@ services:
       retries: 12
 
   gateway:
-    image: docker.io/library/nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de
+    image: nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de
     entrypoint: ["nginx"]
     command: ["-g", "daemon off;"]
     init: true
@@ -486,7 +479,6 @@ services:
 
 volumes:
   laravel_media:
-  laravel_private:
   postgres_data:
   redis_data:
   rabbitmq_data:
@@ -500,28 +492,19 @@ networks:
 secrets:
   laravel_app_key:
     file: ${LARAVEL_APP_KEY_FILE:-.secrets/laravel_app_key}
-    x-podman.relabel: z
   postgres_password:
     file: ${POSTGRES_PASSWORD_FILE:-.secrets/postgres_password}
-    x-podman.relabel: z
   crm_db_password:
     file: ${CRM_DB_PASSWORD_FILE:-.secrets/crm_db_password}
-    x-podman.relabel: z
   payments_db_password:
     file: ${PAYMENTS_DB_PASSWORD_FILE:-.secrets/payments_db_password}
-    x-podman.relabel: z
   auth_db_password:
     file: ${PAYMENTS_AUTH_DB_PASSWORD_FILE:-.secrets/auth_db_password}
-    x-podman.relabel: z
   auth_seed_db_password:
     file: ${PAYMENTS_AUTH_DB_SEED_PASSWORD_FILE:-.secrets/auth_seed_db_password}
-    x-podman.relabel: z
   crm_redis_password:
     file: ${CRM_REDIS_PASSWORD_FILE:-.secrets/crm_redis_password}
-    x-podman.relabel: z
   payments_redis_password:
     file: ${PAYMENTS_REDIS_PASSWORD_FILE:-.secrets/payments_redis_password}
-    x-podman.relabel: z
   rabbitmq_password:
     file: ${RABBITMQ_PASSWORD_FILE:-.secrets/rabbitmq_password}
-    x-podman.relabel: z

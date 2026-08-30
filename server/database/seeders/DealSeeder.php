@@ -24,9 +24,9 @@ class DealSeeder extends Seeder
         $count = min($batchCount, max($maxTotal - $existingCount, 0));
         $chunkSize = 200;
 
-        if (! $count) {
+//        if (! $count) {
             return;
-        }
+ //       }
 
         $contacts = Contact::query()
             ->select(['id', 'assigned_agent_id'])

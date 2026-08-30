@@ -15,6 +15,7 @@ class PropertyMediaSeeder extends Seeder
 {
     public function run(): void
     {
+	return;
         $this->syncExistingSeedMedia();
 
         $imageSets = $this->imageSets();

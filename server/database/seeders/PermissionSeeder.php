@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use Spatie\Permission\PermissionRegistrar;
+use Spatie\Permission\Guard;
 use Illuminate\Support\Str;
 
 class PermissionSeeder extends Seeder
@@ -14,6 +17,7 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $actions = ['view', 'create', 'edit', 'delete', 'restore'];
+	$guard = Guard::getDefaultName(User::class);
         $names = collect(scandir(app_path('Models')))
             ->reject(fn ($name) => in_array($name, ['.', '..', 'ActivityLog.php', 'Permission.php', 'ReportRun.php']))
             ->map(function (string $name) use ($actions) {
@@ -37,5 +41,7 @@ class PermissionSeeder extends Seeder
 
         DB::table(config('permission.table_names.permissions'))
             ->insertOrIgnore($names);
+
+	app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
