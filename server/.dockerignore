@@ -12,4 +12,3 @@ coverage
 phpunit.xml
 *.log
 *.sqlite
-public/seed-images

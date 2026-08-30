@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
             CommissionPolicySeeder::class,
         ]);
 
-        if (app()->isProduction()) {
-            return;
-        }
+//        if (app()->isProduction()) {
+//            return;
+//        }
 
         $this->call([
             AccountSeeder::class,

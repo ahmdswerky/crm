@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Guard;
 
 class RoleSeeder extends Seeder
 {
@@ -16,9 +17,11 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        $guard = Guard::getDefaultName(User::class);
+        echo $guard."\n";
         $manager = Role::firstOrCreate([
             'name' => 'manager',
-            'guard_name' => config('auth.defaults.guard'),
+            'guard_name' => $guard,
         ]);
 
         $manager->syncPermissions([
@@ -45,7 +48,7 @@ class RoleSeeder extends Seeder
 
         $agent = Role::firstOrCreate([
             'name' => 'agent',
-            'guard_name' => config('auth.defaults.guard'),
+            'guard_name' => $guard,
         ]);
 
         $agent->syncPermissions([

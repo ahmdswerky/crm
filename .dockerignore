@@ -13,6 +13,5 @@ server/storage
 server/db.jpg
 server/public/users.csv
 server/public/users.xlsx
-server/public/seed-images
 dashboard/docs
 dashboard/scripts

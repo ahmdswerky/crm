@@ -1,0 +1,12 @@
+# Podman-only production entrypoint.
+#
+# Keep the production service definitions in docker-compose.yml. Podman Compose
+# otherwise places every service in one pod by default, but this stack relies on
+# service-name DNS and separate network attachments.
+include:
+  - docker-compose.yml
+
+name: ${COMPOSE_PROJECT_NAME:-crm-podman}
+
+x-podman:
+  in_pod: false

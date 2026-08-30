@@ -333,3 +333,5 @@ dist/
 deploy.sh
 
 # End of https://www.toptal.com/developers/gitignore/api/laravel,node,yarn,git,vue,vuejs,dotenv,phpstorm
+
+.bak*
