@@ -1,0 +1,27 @@
+scripts/quality/validate-docker.mjs
+  s_1ae4f9572739b9::t_eb119f29204a3b 2-3,5,25,27-35,38-51,53-55,58-59
+  s_1ae4f9572739b9::t_1600ece1e09d52 26,36-37,52,56-57
+docker-compose.yml
+  s_1ae4f9572739b9::t_703fe8181f7686 341
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "c8a7b04862df9ca93dcdb046fe47cba67ebec303",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_1ae4f9572739b9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a050e3-2870-7772-8537-a57f3712b9bf",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
