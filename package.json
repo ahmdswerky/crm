@@ -11,6 +11,9 @@
     "hooks:push": "node scripts/quality/push-check.mjs",
     "quality:projects": "node scripts/quality/check-projects.mjs",
     "quality:docker": "node scripts/quality/validate-docker.mjs",
+    "quality:rabbitmq": "node scripts/quality/validate-rabbitmq-topology.mjs",
+    "quality:db-schema": "node scripts/quality/generate-db-schema.mjs",
+    "quality:db-schema:check": "node scripts/quality/generate-db-schema.mjs --check",
     "quality:act:event": "node scripts/quality/act-event.mjs",
     "quality:outdated": "node scripts/quality/check-outdated.mjs",
     "quality:test": "node scripts/quality/project-map.test.mjs"

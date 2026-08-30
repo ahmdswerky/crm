@@ -28,6 +28,10 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Generated static doc apps served at /docs/<app>/ — Liam ERDs (rebuilt from
+# docs/db/<name>/schema.sql) and the archify architecture views.
+dashboard/public/docs/
+
 # Laravel 4 specific
 bootstrap/compiled.php
 app/storage/

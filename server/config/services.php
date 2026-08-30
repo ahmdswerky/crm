@@ -44,6 +44,8 @@ return [
         'connection_timeout' => (float) env('RABBITMQ_CONNECTION_TIMEOUT', 3),
         'read_write_timeout' => (float) env('RABBITMQ_READ_WRITE_TIMEOUT', 5),
         'heartbeat' => (int) env('RABBITMQ_HEARTBEAT', 30),
+        'reconnect_initial_delay_ms' => (int) env('RABBITMQ_RECONNECT_INITIAL_DELAY_MS', 250),
+        'reconnect_max_delay_ms' => (int) env('RABBITMQ_RECONNECT_MAX_DELAY_MS', 10000),
         'commands_exchange' => env('RABBITMQ_COMMANDS_EXCHANGE', 'payments.commands'),
         'commands_queue' => env('RABBITMQ_COMMANDS_QUEUE', 'payments'),
         'events_exchange' => env('RABBITMQ_EVENTS_EXCHANGE', 'payments.events'),

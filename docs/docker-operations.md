@@ -118,6 +118,7 @@ Production additionally requires host NGINX, a TLS certificate, and an external 
 | --- | --- |
 | `docker-compose.dev.yml` | Local development with source mounts and loopback ports |
 | `docker-compose.yml` | Production-style single-host deployment with secrets, read-only containers, and two application replicas |
+| `docker-compose.podman.yml` | Podman-only production entrypoint; includes `docker-compose.yml` and disables the default shared pod |
 | `.env.docker` | Local, untracked Compose configuration |
 | `.env.docker.example` | Configuration template |
 | `.secrets/` | Local, untracked secret files |
@@ -155,7 +156,7 @@ chmod 600 .secrets/* .env.docker
 
 Update `.env.docker` when changing hostnames, database names, database users, or secret file locations. Do not commit `.env.docker` or `.secrets/`.
 
-The development Compose file uses development defaults for passwords and does not mount production secret files. The production Compose file requires every file listed under `secrets:` in `docker-compose.yml`.
+The development Compose file uses development defaults for passwords and does not mount production secret files. Both production entrypoints require every file listed under `secrets:` in `docker-compose.yml`.
 
 ## Development setup
 
@@ -167,17 +168,21 @@ Validate the rendered Compose configuration:
 docker compose --env-file .env.docker -f docker-compose.dev.yml config
 ```
 
-Build and start the development stack:
-
-```sh
-docker compose --env-file .env.docker -f docker-compose.dev.yml up -d --build --wait
-```
-
-Run the build only when source or dependency changes require new images. Routine starts do not require `--build`:
+Start the development stack without building images:
 
 ```sh
 docker compose --env-file .env.docker -f docker-compose.dev.yml up -d --wait
 ```
+
+Every normal development Compose start runs `postgres-reconcile` after
+PostgreSQL is healthy and before database-dependent services start. It
+idempotently restores CRM/payment database ownership and application access on
+the persistent development volume, then reapplies CRM auth grants when the CRM
+auth tables exist. It does not remove data or terminate database sessions.
+
+The reconciler reports lock chains and uses a short DDL lock timeout, so a real
+blocker fails startup instead of hanging. PostgreSQL itself releases transaction
+and advisory locks when it restarts; the reconciler never kills client sessions.
 
 Check service status:
 
@@ -338,7 +343,7 @@ Bash users can source `docker/shortcuts.bash.sh`. The direct Compose commands in
 
 ## Production setup
 
-Production uses `docker-compose.yml` and Docker secret files. It does not use the development Compose file or development defaults.
+Production uses `docker-compose.yml` with Docker Compose, or `docker-compose.podman.yml` with Podman Compose. Both use the same production services and Docker secret files; neither uses the development Compose file or development defaults.
 
 Validate the production configuration:
 
@@ -392,6 +397,32 @@ curl -fsS http://127.0.0.1:8080/healthz
 ```
 
 Do not run `migrate:fresh --seed` in production. Keep previous application images available until health, route, and smoke checks pass.
+
+### Podman production setup
+
+Use the Podman-only entrypoint for production on Podman:
+
+Always pass `-f docker-compose.podman.yml`; a bare `podman-compose` command
+uses its default Compose-file search order and may load a different file.
+
+```sh
+podman-compose --env-file .env.docker -f docker-compose.podman.yml config
+podman-compose --env-file .env.docker -f docker-compose.podman.yml build
+podman-compose --env-file .env.docker -f docker-compose.podman.yml up --no-build -d postgres redis
+podman-compose --env-file .env.docker -f docker-compose.podman.yml run --rm crm-migrate
+podman-compose --env-file .env.docker -f docker-compose.podman.yml run --rm auth-grants
+podman-compose --env-file .env.docker -f docker-compose.podman.yml --profile seed run --rm payment-auth-seed
+podman-compose --env-file .env.docker -f docker-compose.podman.yml up -d
+```
+
+The Podman file includes the canonical production file and sets `x-podman.in_pod: false`. This is required because the gateway routes to services by Compose service name; placing the entire stack in Podman's default shared pod would change that network topology. Use the same health and smoke checks described above after startup.
+
+Production image references are qualified with `docker.io/library/` so Podman
+does not depend on host-wide unqualified-search registry settings.
+
+For the remaining production inspection and recovery commands below, replace
+the Docker Compose command and file with `podman-compose --env-file .env.docker
+-f docker-compose.podman.yml`.
 
 ## Production networking
 

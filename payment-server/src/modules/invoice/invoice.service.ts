@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { randomUUID } from 'node:crypto';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { PaymentEventOutbox } from '../../messaging/entities/payment-event-outbox.entity';
+import {
+  PaymentCommandMessage,
+  PaymentEventType,
+} from '../../messaging/payment-messages';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './entities/invoice.entity';
 import { PaymentJobReceipt } from './entities/payment-job-receipt.entity';
-import {
-  PermanentPaymentCommandError,
-  RabbitMqService,
-} from '../../messaging/rabbitmq.service';
-import { PaymentCommandMessage } from '../../messaging/payment-messages';
 
 @Injectable()
 export class InvoiceService {
   constructor(
-    @InjectRepository(Invoice, 'payments')
-    private readonly invoiceRepository: Repository<Invoice>,
-    @InjectRepository(PaymentJobReceipt, 'payments')
-    private readonly receiptRepository: Repository<PaymentJobReceipt>,
-    private readonly rabbitMq: RabbitMqService,
+    @InjectDataSource('payments')
+    private readonly paymentsDataSource: DataSource,
   ) {}
 
   create(_createInvoiceDto: CreateInvoiceDto) {
@@ -44,122 +42,152 @@ export class InvoiceService {
   }
 
   async handleCommand(message: PaymentCommandMessage): Promise<void> {
-    if (message.type !== 'invoice.generate' || message.version !== 1) {
-      throw new PermanentPaymentCommandError(
-        `Unsupported payment command: ${message.type}@${message.version}`,
-      );
-    }
+    await this.paymentsDataSource.transaction(async (manager) => {
+      const invoiceRepository = manager.getRepository(Invoice);
+      const receiptRepository = manager.getRepository(PaymentJobReceipt);
+      const outboxRepository = manager.getRepository(PaymentEventOutbox);
+      const existingReceipt = await receiptRepository.findOneBy({
+        messageId: message.message_id,
+      });
 
-    console.log('consuming invoice', message);
+      if (existingReceipt) {
+        await this.ensureOutbox(message, existingReceipt, outboxRepository);
+        return;
+      }
 
-    const existingReceipt = await this.receiptRepository.findOneBy({
-      messageId: message.message_id,
-    });
-    if (existingReceipt) {
-      await this.publishResult(message, existingReceipt);
-      return;
-    }
-
-    try {
-      this.validatePayload(message);
-    } catch (error) {
-      const receipt = await this.receiptRepository.save(
-        this.receiptRepository.create({
-          messageId: message.message_id,
-          correlationId: message.correlation_id,
-          commandType: message.type,
-          status: 'failed',
-          payload: message.payload,
-          result: null,
-          failureCode: 'invalid_payload',
-          failureMessage:
-            error instanceof Error ? error.message : String(error),
-        }),
-      );
-      await this.publishResult(message, receipt);
-      return;
-    }
-    let invoice = await this.invoiceRepository.findOneBy({
-      invoicableType: message.payload.invoicable_type,
-      invoicableId: message.payload.invoicable_id,
-      type: message.payload.type,
-    });
-    if (!invoice) {
       try {
-        invoice = await this.invoiceRepository.save(
-          this.invoiceRepository.create({
+        this.validatePayload(message);
+      } catch (error) {
+        const receipt = await receiptRepository.save(
+          receiptRepository.create({
+            messageId: message.message_id,
+            correlationId: message.correlation_id,
+            commandType: message.type,
+            status: 'failed',
+            payload: message.payload,
+            result: null,
+            failureCode: 'invalid_payload',
+            failureMessage:
+              error instanceof Error ? error.message : String(error),
+          }),
+        );
+        await this.ensureOutbox(message, receipt, outboxRepository);
+        return;
+      }
+
+      let invoice = await invoiceRepository.findOneBy({
+        invoicableType: message.payload.invoicable_type,
+        invoicableId: message.payload.invoicable_id,
+        type: message.payload.type,
+      });
+      if (!invoice) {
+        try {
+          invoice = await invoiceRepository.save(
+            invoiceRepository.create({
+              invoicableType: message.payload.invoicable_type,
+              invoicableId: message.payload.invoicable_id,
+              type: message.payload.type,
+              value: message.payload.value,
+              status: 'completed',
+            }),
+          );
+        } catch (error) {
+          if (!(error instanceof QueryFailedError)) {
+            throw error;
+          }
+          invoice = await invoiceRepository.findOneBy({
             invoicableType: message.payload.invoicable_type,
             invoicableId: message.payload.invoicable_id,
             type: message.payload.type,
-            value: message.payload.value,
+          });
+          if (!invoice) {
+            throw error;
+          }
+        }
+      }
+
+      let receipt: PaymentJobReceipt;
+      try {
+        receipt = await receiptRepository.save(
+          receiptRepository.create({
+            messageId: message.message_id,
+            correlationId: message.correlation_id,
+            commandType: message.type,
             status: 'completed',
+            payload: message.payload,
+            result: { invoice_id: invoice.id, status: invoice.status },
+            failureCode: null,
+            failureMessage: null,
           }),
         );
       } catch (error) {
         if (!(error instanceof QueryFailedError)) {
           throw error;
         }
-        invoice = await this.invoiceRepository.findOneBy({
-          invoicableType: message.payload.invoicable_type,
-          invoicableId: message.payload.invoicable_id,
-          type: message.payload.type,
+        receipt = await receiptRepository.findOneByOrFail({
+          messageId: message.message_id,
         });
-        if (!invoice) {
-          throw error;
-        }
       }
+
+      await this.ensureOutbox(message, receipt, outboxRepository);
+    });
+  }
+
+  private async ensureOutbox(
+    message: PaymentCommandMessage,
+    receipt: PaymentJobReceipt,
+    outboxRepository: Repository<PaymentEventOutbox>,
+  ): Promise<void> {
+    const existingEvent = await outboxRepository.findOneBy({
+      commandMessageId: message.message_id,
+    });
+    if (existingEvent) {
+      return;
     }
 
-    let receipt: PaymentJobReceipt;
+    const type: PaymentEventType =
+      receipt.status === 'failed' ? 'invoice.failed' : 'invoice.completed';
+    const payload =
+      type === 'invoice.failed'
+        ? {
+            failure_code: receipt.failureCode,
+            failure_message: receipt.failureMessage,
+          }
+        : {
+            ...(receipt.result ?? {}),
+            message_id: message.message_id,
+          };
+
     try {
-      receipt = await this.receiptRepository.save(
-        this.receiptRepository.create({
-          messageId: message.message_id,
+      await outboxRepository.save(
+        outboxRepository.create({
+          eventId: randomUUID(),
+          commandMessageId: message.message_id,
           correlationId: message.correlation_id,
-          commandType: message.type,
-          status: 'completed',
-          payload: message.payload,
-          result: { invoice_id: invoice.id, status: invoice.status },
-          failureCode: null,
-          failureMessage: null,
+          type,
+          version: 1,
+          source: 'payments',
+          occurredAt: new Date(),
+          payload,
+          publishedAt: null,
+          attempts: 0,
+          lastError: null,
+          claimedAt: null,
+          claimToken: null,
         }),
       );
     } catch (error) {
       if (!(error instanceof QueryFailedError)) {
         throw error;
       }
-      receipt = await this.receiptRepository.findOneByOrFail({
-        messageId: message.message_id,
+
+      const concurrentEvent = await outboxRepository.findOneBy({
+        commandMessageId: message.message_id,
       });
+      if (!concurrentEvent) {
+        throw error;
+      }
     }
-
-    await this.publishResult(message, receipt);
-  }
-
-  private async publishResult(
-    message: PaymentCommandMessage,
-    receipt: PaymentJobReceipt,
-  ): Promise<void> {
-    if (receipt.status === 'failed') {
-      await this.rabbitMq.publishEvent(
-        'invoice.failed',
-        message.correlation_id,
-        {
-          failure_code: receipt.failureCode,
-          failure_message: receipt.failureMessage,
-        },
-      );
-      return;
-    }
-
-    await this.rabbitMq.publishEvent(
-      'invoice.completed',
-      message.correlation_id,
-      {
-        ...(receipt.result ?? {}),
-        message_id: message.message_id,
-      },
-    );
   }
 
   private validatePayload(message: PaymentCommandMessage): void {

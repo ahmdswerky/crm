@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "screenshots": "node scripts/capture-routes.mjs",
+    "erd:build": "node scripts/build-erd.mjs",
     "api:docs": "node scripts/generate-openapi.mjs",
     "api:docs:check": "node scripts/check-openapi-docs.mjs",
     "api:validate": "node scripts/validate-openapi.mjs",

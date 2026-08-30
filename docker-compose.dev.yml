@@ -35,10 +35,12 @@ services:
       RABBITMQ_USER: crm
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
       RABBITMQ_VHOST: /
+      PAYMENT_CONTRACTS_PATH: /contracts/payments
       LOG_CHANNEL: stderr
       LOG_LEVEL: debug
     volumes:
       - ./server:/var/www/html
+      - ./docs/contracts:/contracts:ro
       - crm_vendor_dev:/var/www/html/vendor
       - crm_storage_dev:/var/www/html/storage
     expose:
@@ -49,6 +51,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-reconcile:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     healthcheck:
@@ -104,6 +108,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-reconcile:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
 
@@ -154,6 +160,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-reconcile:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
       rabbitmq:
@@ -199,6 +207,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-reconcile:
+        condition: service_completed_successfully
       rabbitmq:
         condition: service_healthy
 
@@ -207,11 +217,14 @@ services:
       context: .
       dockerfile: docker/payment-server/Dockerfile.dev
     init: true
+    restart: unless-stopped
     env_file:
       - path: .env.docker
         required: false
     environment:
       NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: 500
       PORT: 3000
       PAYMENTS_DB_HOST: postgres
       PAYMENTS_DB_PORT: 5432
@@ -234,9 +247,11 @@ services:
       RABBITMQ_USER: crm
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
       RABBITMQ_VHOST: /
+      PAYMENT_CONTRACTS_PATH: /contracts/payments
       PAYMENTS_DB_ENABLED: "true"
     volumes:
       - ./payment-server:/app
+      - ./docs/contracts:/contracts:ro
       - payment_node_modules_dev:/app/node_modules
     expose:
       - "3000"
@@ -246,7 +261,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-reconcile:
+        condition: service_completed_successfully
       redis:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:3000/api/v1/health/live >/dev/null"]
@@ -305,6 +324,32 @@ services:
       timeout: 5s
       retries: 10
 
+  postgres-reconcile:
+    image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    restart: "no"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres-dev-password}
+      CRM_DB_NAME: ${CRM_DB_NAME:-crm}
+      CRM_DB_USER: ${CRM_DB_USER:-crm_app}
+      CRM_DB_PASSWORD: ${CRM_DB_PASSWORD:-crm-dev-password}
+      PAYMENTS_DB_NAME: ${PAYMENTS_DB_NAME:-payments}
+      PAYMENTS_DB_USER: ${PAYMENTS_DB_USER:-payments_app}
+      PAYMENTS_DB_PASSWORD: ${PAYMENTS_DB_PASSWORD:-payments-dev-password}
+      AUTH_DB_USER: ${PAYMENTS_AUTH_DB_USER:-auth_reader}
+      AUTH_DB_PASSWORD: ${PAYMENTS_AUTH_DB_PASSWORD:-auth-dev-password}
+      AUTH_SEED_DB_USER: ${PAYMENTS_AUTH_DB_SEED_USER:-auth_seeder}
+      AUTH_SEED_PASSWORD: ${PAYMENTS_AUTH_DB_SEED_PASSWORD:-auth-seed-dev-password}
+      PGHOST: postgres
+    volumes:
+      - ./docker/postgres/reconcile-dev-access.sh:/usr/local/bin/reconcile-dev-access:ro
+      - ./docker/postgres/grant-auth-access.sh:/usr/local/bin/grant-auth-access:ro
+    networks: [data_net]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["/bin/sh", "/usr/local/bin/reconcile-dev-access"]
+
   auth-grants:
     profiles: [auth]
     image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
@@ -324,6 +369,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-reconcile:
+        condition: service_completed_successfully
     command: ["/bin/sh", "/usr/local/bin/grant-auth-access"]
 
   payment-auth-seed:
@@ -369,12 +416,14 @@ services:
   rabbitmq:
     image: rabbitmq:4.1-management-alpine
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-crm}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
+      RABBITMQ_BOOTSTRAP_USER: ${RABBITMQ_USER:-crm}
+      RABBITMQ_BOOTSTRAP_PASSWORD: ${RABBITMQ_PASSWORD:-rabbitmq-dev-password}
     ports:
       - "127.0.0.1:15672:15672"
     volumes:
       - rabbitmq_dev:/var/lib/rabbitmq
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     networks: [data_net, dev_access_net]
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]

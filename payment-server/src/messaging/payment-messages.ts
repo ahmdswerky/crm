@@ -7,7 +7,7 @@ export interface PaymentCommandMessage {
   correlation_id: string;
   type: PaymentCommandType;
   version: number;
-  source: string;
+  source: 'crm';
   occurred_at: string;
   payload: {
     invoicable_type: string;

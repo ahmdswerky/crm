@@ -1,10 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken } from '@nestjs/typeorm';
 import { InvoiceController } from './invoice.controller';
 import { InvoiceService } from './invoice.service';
-import { Invoice } from './entities/invoice.entity';
-import { PaymentJobReceipt } from './entities/payment-job-receipt.entity';
-import { RabbitMqService } from '../../messaging/rabbitmq.service';
 
 describe('InvoiceController', () => {
   let controller: InvoiceController;
@@ -14,12 +11,7 @@ describe('InvoiceController', () => {
       controllers: [InvoiceController],
       providers: [
         InvoiceService,
-        { provide: getRepositoryToken(Invoice, 'payments'), useValue: {} },
-        {
-          provide: getRepositoryToken(PaymentJobReceipt, 'payments'),
-          useValue: {},
-        },
-        { provide: RabbitMqService, useValue: {} },
+        { provide: getDataSourceToken('payments'), useValue: {} },
       ],
     }).compile();
 

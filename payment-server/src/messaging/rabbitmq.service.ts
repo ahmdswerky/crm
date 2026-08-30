@@ -11,20 +11,27 @@ import {
   Message,
   connect,
 } from 'amqplib';
-import { randomUUID } from 'node:crypto';
-import { PaymentCommandMessage } from './payment-messages';
+import { PaymentCommandMessage, PaymentEventMessage } from './payment-messages';
+import { PaymentCommandCodec } from './payment-command-codec';
+import { PaymentEventCodec } from './payment-event-codec';
+import { PermanentPaymentCommandError } from './payment-message-validation.error';
 
 const COMMANDS_EXCHANGE =
   process.env.RABBITMQ_COMMANDS_EXCHANGE ?? 'payments.commands';
 const COMMANDS_QUEUE = process.env.RABBITMQ_COMMANDS_QUEUE ?? 'payments';
 const EVENTS_EXCHANGE =
   process.env.RABBITMQ_EVENTS_EXCHANGE ?? 'payments.events';
-const EVENTS_QUEUE = process.env.RABBITMQ_EVENTS_QUEUE ?? 'crm.payment-events';
 const RETRY_LIMIT = 3;
+const RECONNECT_INITIAL_DELAY_MS = Number(
+  process.env.RABBITMQ_RECONNECT_INITIAL_DELAY_MS ?? 250,
+);
+const RECONNECT_MAX_DELAY_MS = Number(
+  process.env.RABBITMQ_RECONNECT_MAX_DELAY_MS ?? 10000,
+);
 
 type MessageHandler = (message: PaymentCommandMessage) => Promise<void>;
 
-export class PermanentPaymentCommandError extends Error {}
+export { PermanentPaymentCommandError } from './payment-message-validation.error';
 
 @Injectable()
 export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
@@ -32,12 +39,25 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
   private connection?: ChannelModel;
   private channel?: ConfirmChannel;
   private connectionPromise?: Promise<ConfirmChannel>;
+  private recoveryPromise?: Promise<void>;
+  private stopping = false;
+  private readonly commandHandlers = new Set<MessageHandler>();
+  private readonly commandCodec = new PaymentCommandCodec();
+  private readonly eventCodec = new PaymentEventCodec();
 
   async onModuleInit(): Promise<void> {
-    await this.connect();
+    try {
+      await this.connect();
+    } catch (error) {
+      this.logger.warn(
+        `RabbitMQ is unavailable at startup; recovery will retry: ${this.errorMessage(error)}`,
+      );
+      void this.recoverConsumers();
+    }
   }
 
   async onModuleDestroy(): Promise<void> {
+    this.stopping = true;
     try {
       await this.channel?.close();
       await this.connection?.close();
@@ -46,29 +66,15 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async publishEvent(
-    type: 'invoice.completed' | 'invoice.failed',
-    correlationId: string,
-    payload: Record<string, unknown>,
-  ): Promise<void> {
+  async publishEvent(event: PaymentEventMessage): Promise<void> {
     const channel = await this.getChannel();
-    const body = Buffer.from(
-      JSON.stringify({
-        event_id: randomUUID(),
-        correlation_id: correlationId,
-        type,
-        version: 1,
-        source: 'payments',
-        occurred_at: new Date().toISOString(),
-        payload,
-      }),
-    );
-    const published = channel.publish(EVENTS_EXCHANGE, type, body, {
+    const body = this.eventCodec.serialize(event);
+    const published = channel.publish(EVENTS_EXCHANGE, event.type, body, {
       contentType: 'application/json',
       deliveryMode: 2,
-      type,
-      correlationId,
-      messageId: randomUUID(),
+      type: event.type,
+      correlationId: event.correlation_id,
+      messageId: event.event_id,
       appId: 'payments',
     });
 
@@ -79,11 +85,32 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
   }
 
   async consumeCommands(handler: MessageHandler): Promise<void> {
-    const channel = await this.getChannel();
+    this.commandHandlers.add(handler);
+
+    try {
+      const channel = await this.getChannel();
+      await this.registerCommandConsumer(channel, handler);
+    } catch (error) {
+      this.logger.warn(
+        `RabbitMQ command consumer is unavailable; recovery will retry: ${this.errorMessage(error)}`,
+      );
+      void this.recoverConsumers();
+    }
+  }
+
+  private async registerCommandConsumer(
+    channel: ConfirmChannel,
+    handler: MessageHandler,
+  ): Promise<void> {
     await channel.prefetch(10);
     await channel.consume(COMMANDS_QUEUE, (message) => {
       if (message) {
-        void this.handleCommand(channel, message, handler);
+        void this.handleCommand(channel, message, handler).catch((error) => {
+          this.logger.error(
+            'Unable to settle payment command delivery after a broker interruption',
+            this.errorMessage(error),
+          );
+        });
       }
     });
     this.logger.log(`Consuming RabbitMQ queue ${COMMANDS_QUEUE}`);
@@ -95,9 +122,7 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     handler: MessageHandler,
   ): Promise<void> {
     try {
-      const parsed = JSON.parse(
-        message.content.toString(),
-      ) as PaymentCommandMessage;
+      const parsed = this.commandCodec.decode(message.content);
       await handler(parsed);
       channel.ack(message);
     } catch (error) {
@@ -159,7 +184,7 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
         timeout: Number(process.env.RABBITMQ_CONNECTION_TIMEOUT ?? 3000),
       });
       this.channel = await this.connection.createConfirmChannel();
-      await this.declareTopology(this.channel);
+      this.observeLifecycle(this.connection, this.channel);
 
       return this.channel;
     })();
@@ -179,38 +204,94 @@ export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
     return this.channel ?? this.connect();
   }
 
-  private async declareTopology(channel: ConfirmChannel): Promise<void> {
-    const retryExchange = `${COMMANDS_EXCHANGE}.retry`;
-    const deadExchange = `${COMMANDS_EXCHANGE}.dead`;
-    const eventDeadExchange = `${EVENTS_EXCHANGE}.dead`;
+  private observeLifecycle(
+    connection: ChannelModel,
+    channel: ConfirmChannel,
+  ): void {
+    const recover = (reason: string) => {
+      this.handleDisconnect(connection, channel, reason);
+    };
 
-    await channel.assertExchange(COMMANDS_EXCHANGE, 'topic', { durable: true });
-    await channel.assertExchange(retryExchange, 'topic', { durable: true });
-    await channel.assertExchange(deadExchange, 'topic', { durable: true });
-    await channel.assertQueue(COMMANDS_QUEUE, {
-      durable: true,
-      arguments: { 'x-dead-letter-exchange': deadExchange },
-    });
-    await channel.bindQueue(COMMANDS_QUEUE, COMMANDS_EXCHANGE, '#');
-    await channel.assertQueue(`${COMMANDS_QUEUE}.retry`, {
-      durable: true,
-      arguments: {
-        'x-message-ttl': 10000,
-        'x-dead-letter-exchange': COMMANDS_EXCHANGE,
-      },
-    });
-    await channel.bindQueue(`${COMMANDS_QUEUE}.retry`, retryExchange, '#');
-    await channel.assertQueue(`${COMMANDS_QUEUE}.dead`, { durable: true });
-    await channel.bindQueue(`${COMMANDS_QUEUE}.dead`, deadExchange, '#');
+    connection.once('error', (error) => recover(this.errorMessage(error)));
+    connection.once('close', () => recover('connection closed'));
+    channel.once('error', (error) => recover(this.errorMessage(error)));
+    channel.once('close', () => recover('channel closed'));
+  }
 
-    await channel.assertExchange(EVENTS_EXCHANGE, 'topic', { durable: true });
-    await channel.assertExchange(eventDeadExchange, 'topic', { durable: true });
-    await channel.assertQueue(EVENTS_QUEUE, {
-      durable: true,
-      arguments: { 'x-dead-letter-exchange': eventDeadExchange },
+  private handleDisconnect(
+    connection: ChannelModel,
+    channel: ConfirmChannel,
+    reason: string,
+  ): void {
+    if (
+      this.stopping ||
+      (this.connection !== connection && this.channel !== channel)
+    ) {
+      return;
+    }
+
+    this.connection = undefined;
+    this.channel = undefined;
+    this.connectionPromise = undefined;
+    this.logger.warn(`RabbitMQ disconnected: ${reason}`);
+    void this.recoverConsumers();
+  }
+
+  private async recoverConsumers(): Promise<void> {
+    if (this.recoveryPromise) {
+      return this.recoveryPromise;
+    }
+
+    if (this.stopping) {
+      return;
+    }
+
+    this.recoveryPromise = (async () => {
+      let attempt = 0;
+
+      while (!this.stopping) {
+        try {
+          const channel = await this.connect();
+          await Promise.all(
+            [...this.commandHandlers].map((handler) =>
+              this.registerCommandConsumer(channel, handler),
+            ),
+          );
+          this.logger.log(
+            `RabbitMQ recovery succeeded after ${attempt + 1} attempt(s)`,
+          );
+          return;
+        } catch (error) {
+          const delay = this.reconnectDelay(attempt);
+          attempt += 1;
+          this.logger.warn(
+            `RabbitMQ recovery attempt ${attempt} failed; retrying in ${delay}ms: ${this.errorMessage(error)}`,
+          );
+          await this.delay(delay);
+        }
+      }
+    })().finally(() => {
+      this.recoveryPromise = undefined;
     });
-    await channel.bindQueue(EVENTS_QUEUE, EVENTS_EXCHANGE, '#');
-    await channel.assertQueue(`${EVENTS_QUEUE}.dead`, { durable: true });
-    await channel.bindQueue(`${EVENTS_QUEUE}.dead`, eventDeadExchange, '#');
+
+    return this.recoveryPromise;
+  }
+
+  private reconnectDelay(attempt: number): number {
+    const exponential = Math.min(
+      RECONNECT_MAX_DELAY_MS,
+      RECONNECT_INITIAL_DELAY_MS * 2 ** Math.min(attempt, 16),
+    );
+    const jitter = Math.floor(exponential * Math.random() * 0.2);
+
+    return exponential + jitter;
+  }
+
+  private async delay(milliseconds: number): Promise<void> {
+    await new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
+  }
+
+  private errorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
   }
 }

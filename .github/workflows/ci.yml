@@ -305,6 +305,78 @@ jobs:
         working-directory: payment-server
         run: npm run build
 
+  db-schema:
+    name: Database schema drift
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' || needs.changes.outputs.payments == 'true' || needs.changes.outputs.tooling == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DB_SCHEMA_PG_HOST: localhost
+      DB_SCHEMA_PG_PORT: '5432'
+      DB_SCHEMA_PG_USER: postgres
+      DB_SCHEMA_PG_PASSWORD: postgres
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Install the PostgreSQL 17 client
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+            -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-client-17
+          pg_dump --version
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, dom, exif, gd, intl, mbstring, pcntl, pdo_pgsql, pgsql, zip
+          coverage: none
+
+      - name: Install repository tooling
+        run: npm ci
+
+      - name: Install Laravel dependencies
+        working-directory: server
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install payments API dependencies
+        working-directory: payment-server
+        run: npm ci
+
+      - name: Check for database schema drift
+        run: npm run quality:db-schema:check -- --reuse
+
   compose:
     name: Docker Compose validation
     needs: changes
@@ -459,6 +531,7 @@ jobs:
       - server
       - dashboard
       - payments
+      - db-schema
       - compose
       - server-image
       - dashboard-image
@@ -479,6 +552,7 @@ jobs:
             'docker-structure:${{ needs.docker-structure.result }}'
             'server:${{ needs.server.result }}'
             'payments:${{ needs.payments.result }}'
+            'db-schema:${{ needs.db-schema.result }}'
             'compose:${{ needs.compose.result }}'
             'server-image:${{ needs.server-image.result }}'
             'dashboard:${{ needs.dashboard.result }}'

@@ -7,10 +7,12 @@ import { run, runCapture } from './run.mjs'
 const requiredFiles = [
   'docker-compose.yml',
   'docker-compose.dev.yml',
+  'docker-compose.podman.yml',
   'docker/crm-server/Dockerfile',
   'docker/dashboard/Dockerfile',
   'docker/payment-server/Dockerfile',
   'docker/nginx/nginx.conf',
+  'docker/postgres/reconcile-dev-access.sh',
   'docker/postgres/postgresql.conf',
   'docker/redis/redis.conf',
 ]

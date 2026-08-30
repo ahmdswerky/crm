@@ -10,7 +10,15 @@ const tests = [
     docker: false,
     api: false,
     all: false,
+    dbSchema: false,
   })
+  }],
+
+  ['flags database schema work from migration and generator paths', () => {
+  assert.equal(classifyFiles(['server/database/migrations/2026_01_01_000000_create_x.php']).dbSchema, true)
+  assert.equal(classifyFiles(['payment-server/src/database/migrations/1700000000000-Add.ts']).dbSchema, true)
+  assert.equal(classifyFiles(['scripts/quality/db-schema/dump.mjs']).dbSchema, true)
+  assert.equal(classifyFiles(['dashboard/src/App.tsx']).dbSchema, false)
   }],
 
   ['classifies API and Docker changes without inventing unrelated projects', () => {

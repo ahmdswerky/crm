@@ -1,0 +1,3356 @@
+{
+  "tables": {
+    "accounts": {
+      "name": "accounts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "industry": {
+          "name": "industry",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "accounts_name_unique": {
+          "type": "UNIQUE",
+          "name": "accounts_name_unique",
+          "columnNames": [
+            "name"
+          ]
+        },
+        "accounts_phone_unique": {
+          "type": "UNIQUE",
+          "name": "accounts_phone_unique",
+          "columnNames": [
+            "phone"
+          ]
+        },
+        "accounts_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "accounts_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "activity_log": {
+      "name": "activity_log",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "log_name": {
+          "name": "log_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "subject_type": {
+          "name": "subject_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "event": {
+          "name": "event",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "causer_type": {
+          "name": "causer_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "causer_id": {
+          "name": "causer_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "attribute_changes": {
+          "name": "attribute_changes",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "properties": {
+          "name": "properties",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "activity_log_log_name_index": {
+          "name": "activity_log_log_name_index",
+          "unique": false,
+          "columns": [
+            "log_name"
+          ],
+          "type": "btree"
+        },
+        "activity_log_subject_timeline_index": {
+          "name": "activity_log_subject_timeline_index",
+          "unique": false,
+          "columns": [
+            "subject_type",
+            "subject_id",
+            "created_at",
+            "id"
+          ],
+          "type": "btree"
+        },
+        "causer": {
+          "name": "causer",
+          "unique": false,
+          "columns": [
+            "causer_type",
+            "causer_id"
+          ],
+          "type": "btree"
+        },
+        "subject": {
+          "name": "subject",
+          "unique": false,
+          "columns": [
+            "subject_type",
+            "subject_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "activity_log_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "activity_log_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "cache": {
+      "name": "cache",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "expiration": {
+          "name": "expiration",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "cache_expiration_index": {
+          "name": "cache_expiration_index",
+          "unique": false,
+          "columns": [
+            "expiration"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "cache_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "cache_pkey",
+          "columnNames": [
+            "key"
+          ]
+        }
+      }
+    },
+    "cache_locks": {
+      "name": "cache_locks",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "owner": {
+          "name": "owner",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "expiration": {
+          "name": "expiration",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "cache_locks_expiration_index": {
+          "name": "cache_locks_expiration_index",
+          "unique": false,
+          "columns": [
+            "expiration"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "cache_locks_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "cache_locks_pkey",
+          "columnNames": [
+            "key"
+          ]
+        }
+      }
+    },
+    "commission_allocations": {
+      "name": "commission_allocations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "deal_id": {
+          "name": "deal_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "version": {
+          "name": "version",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "recipient_type": {
+          "name": "recipient_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "recipient_user_id": {
+          "name": "recipient_user_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "commission_policy_id": {
+          "name": "commission_policy_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "base_amount": {
+          "name": "base_amount",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "rate": {
+          "name": "rate",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "snapshotted_at": {
+          "name": "snapshotted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "commission_allocations_deal_id_state_index": {
+          "name": "commission_allocations_deal_id_state_index",
+          "unique": false,
+          "columns": [
+            "deal_id",
+            "state"
+          ],
+          "type": "btree"
+        },
+        "commission_allocations_recipient_user_id_state_index": {
+          "name": "commission_allocations_recipient_user_id_state_index",
+          "unique": false,
+          "columns": [
+            "recipient_user_id",
+            "state"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "commission_allocations_deal_id_version_recipient_type_unique": {
+          "type": "UNIQUE",
+          "name": "commission_allocations_deal_id_version_recipient_type_unique",
+          "columnNames": [
+            "deal_id",
+            "version",
+            "recipient_type"
+          ]
+        },
+        "commission_allocations_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "commission_allocations_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "commission_allocations_deal_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "commission_allocations_deal_id_foreign",
+          "columnNames": [
+            "deal_id"
+          ],
+          "targetTableName": "deals",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "CASCADE"
+        },
+        "commission_allocations_recipient_user_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "commission_allocations_recipient_user_id_foreign",
+          "columnNames": [
+            "recipient_user_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "SET_NULL"
+        }
+      }
+    },
+    "commission_policies": {
+      "name": "commission_policies",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "recipient_type": {
+          "name": "recipient_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "rate": {
+          "name": "rate",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "effective_from": {
+          "name": "effective_from",
+          "type": "date",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "effective_to": {
+          "name": "effective_to",
+          "type": "date",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "commission_policies_recipient_type_user_id_effective_from_effec": {
+          "name": "commission_policies_recipient_type_user_id_effective_from_effec",
+          "unique": false,
+          "columns": [
+            "recipient_type",
+            "user_id",
+            "effective_from",
+            "effective_to"
+          ],
+          "type": "btree"
+        },
+        "commission_policies_user_id_index": {
+          "name": "commission_policies_user_id_index",
+          "unique": false,
+          "columns": [
+            "user_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "commission_policies_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "commission_policies_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "commission_policies_user_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "commission_policies_user_id_foreign",
+          "columnNames": [
+            "user_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "SET_NULL"
+        }
+      }
+    },
+    "contacts": {
+      "name": "contacts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "lead_id": {
+          "name": "lead_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "assigned_agent_id": {
+          "name": "assigned_agent_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "contacts_account_id_index": {
+          "name": "contacts_account_id_index",
+          "unique": false,
+          "columns": [
+            "account_id"
+          ],
+          "type": "btree"
+        },
+        "contacts_assigned_agent_id_index": {
+          "name": "contacts_assigned_agent_id_index",
+          "unique": false,
+          "columns": [
+            "assigned_agent_id"
+          ],
+          "type": "btree"
+        },
+        "contacts_created_at_index": {
+          "name": "contacts_created_at_index",
+          "unique": false,
+          "columns": [
+            "created_at"
+          ],
+          "type": "btree"
+        },
+        "contacts_name_index": {
+          "name": "contacts_name_index",
+          "unique": false,
+          "columns": [
+            "name"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "contacts_lead_id_unique": {
+          "type": "UNIQUE",
+          "name": "contacts_lead_id_unique",
+          "columnNames": [
+            "lead_id"
+          ]
+        },
+        "contacts_phone_unique": {
+          "type": "UNIQUE",
+          "name": "contacts_phone_unique",
+          "columnNames": [
+            "phone"
+          ]
+        },
+        "contacts_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "contacts_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "contacts_account_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "contacts_account_id_foreign",
+          "columnNames": [
+            "account_id"
+          ],
+          "targetTableName": "accounts",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "NO_ACTION"
+        },
+        "contacts_assigned_agent_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "contacts_assigned_agent_id_foreign",
+          "columnNames": [
+            "assigned_agent_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "NO_ACTION"
+        },
+        "contacts_lead_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "contacts_lead_id_foreign",
+          "columnNames": [
+            "lead_id"
+          ],
+          "targetTableName": "leads",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "NO_ACTION"
+        }
+      }
+    },
+    "deals": {
+      "name": "deals",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "value": {
+          "name": "value",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "deal_value": {
+          "name": "deal_value",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "contact_id": {
+          "name": "contact_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "agent_id": {
+          "name": "agent_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status_updated_at": {
+          "name": "status_updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_rate": {
+          "name": "commission_rate",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "closed_at": {
+          "name": "closed_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "commission_version": {
+          "name": "commission_version",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_status": {
+          "name": "commission_status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_agent_amount": {
+          "name": "commission_agent_amount",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_manager_amount": {
+          "name": "commission_manager_amount",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_company_amount": {
+          "name": "commission_company_amount",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_total_amount": {
+          "name": "commission_total_amount",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "commission_calculated_at": {
+          "name": "commission_calculated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "commission_finalized_at": {
+          "name": "commission_finalized_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "deals_agent_id_status_id_index": {
+          "name": "deals_agent_id_status_id_index",
+          "unique": false,
+          "columns": [
+            "agent_id",
+            "status",
+            "id"
+          ],
+          "type": "btree"
+        },
+        "deals_commission_status_commission_version_index": {
+          "name": "deals_commission_status_commission_version_index",
+          "unique": false,
+          "columns": [
+            "commission_status",
+            "commission_version"
+          ],
+          "type": "btree"
+        },
+        "deals_contact_id_index": {
+          "name": "deals_contact_id_index",
+          "unique": false,
+          "columns": [
+            "contact_id"
+          ],
+          "type": "btree"
+        },
+        "deals_created_at_index": {
+          "name": "deals_created_at_index",
+          "unique": false,
+          "columns": [
+            "created_at"
+          ],
+          "type": "btree"
+        },
+        "deals_property_id_index": {
+          "name": "deals_property_id_index",
+          "unique": false,
+          "columns": [
+            "property_id"
+          ],
+          "type": "btree"
+        },
+        "deals_status_closed_at_index": {
+          "name": "deals_status_closed_at_index",
+          "unique": false,
+          "columns": [
+            "status",
+            "closed_at"
+          ],
+          "type": "btree"
+        },
+        "deals_status_updated_at_status_index": {
+          "name": "deals_status_updated_at_status_index",
+          "unique": false,
+          "columns": [
+            "status_updated_at",
+            "status"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "deals_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "deals_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "deals_agent_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "deals_agent_id_foreign",
+          "columnNames": [
+            "agent_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        },
+        "deals_contact_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "deals_contact_id_foreign",
+          "columnNames": [
+            "contact_id"
+          ],
+          "targetTableName": "contacts",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "NO_ACTION"
+        },
+        "deals_property_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "deals_property_id_foreign",
+          "columnNames": [
+            "property_id"
+          ],
+          "targetTableName": "properties",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "NO_ACTION"
+        }
+      }
+    },
+    "failed_jobs": {
+      "name": "failed_jobs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "uuid": {
+          "name": "uuid",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "connection": {
+          "name": "connection",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "queue": {
+          "name": "queue",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "exception": {
+          "name": "exception",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "failed_at": {
+          "name": "failed_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "failed_jobs_connection_queue_failed_at_index": {
+          "name": "failed_jobs_connection_queue_failed_at_index",
+          "unique": false,
+          "columns": [
+            "connection",
+            "queue",
+            "failed_at"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "failed_jobs_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "failed_jobs_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "failed_jobs_uuid_unique": {
+          "type": "UNIQUE",
+          "name": "failed_jobs_uuid_unique",
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      }
+    },
+    "job_batches": {
+      "name": "job_batches",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "total_jobs": {
+          "name": "total_jobs",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "pending_jobs": {
+          "name": "pending_jobs",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "failed_jobs": {
+          "name": "failed_jobs",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "failed_job_ids": {
+          "name": "failed_job_ids",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "options": {
+          "name": "options",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "cancelled_at": {
+          "name": "cancelled_at",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "finished_at": {
+          "name": "finished_at",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "job_batches_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "job_batches_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "jobs": {
+      "name": "jobs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "queue": {
+          "name": "queue",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "int2",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "reserved_at": {
+          "name": "reserved_at",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "available_at": {
+          "name": "available_at",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "jobs_queue_index": {
+          "name": "jobs_queue_index",
+          "unique": false,
+          "columns": [
+            "queue"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "jobs_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "jobs_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "leads": {
+      "name": "leads",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "company_name": {
+          "name": "company_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "source": {
+          "name": "source",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "assigned_agent_id": {
+          "name": "assigned_agent_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "leads_assigned_agent_id_index": {
+          "name": "leads_assigned_agent_id_index",
+          "unique": false,
+          "columns": [
+            "assigned_agent_id"
+          ],
+          "type": "btree"
+        },
+        "leads_assigned_agent_id_status_created_at_id_index": {
+          "name": "leads_assigned_agent_id_status_created_at_id_index",
+          "unique": false,
+          "columns": [
+            "assigned_agent_id",
+            "status",
+            "created_at",
+            "id"
+          ],
+          "type": "btree"
+        },
+        "leads_created_at_index": {
+          "name": "leads_created_at_index",
+          "unique": false,
+          "columns": [
+            "created_at"
+          ],
+          "type": "btree"
+        },
+        "leads_status_created_at_id_index": {
+          "name": "leads_status_created_at_id_index",
+          "unique": false,
+          "columns": [
+            "status",
+            "created_at",
+            "id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "leads_email_unique": {
+          "type": "UNIQUE",
+          "name": "leads_email_unique",
+          "columnNames": [
+            "email"
+          ]
+        },
+        "leads_phone_unique": {
+          "type": "UNIQUE",
+          "name": "leads_phone_unique",
+          "columnNames": [
+            "phone"
+          ]
+        },
+        "leads_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "leads_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "leads_assigned_agent_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "leads_assigned_agent_id_foreign",
+          "columnNames": [
+            "assigned_agent_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "SET_NULL"
+        }
+      }
+    },
+    "media": {
+      "name": "media",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "model_type": {
+          "name": "model_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "collection_name": {
+          "name": "collection_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "mime_type": {
+          "name": "mime_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "disk": {
+          "name": "disk",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "conversions_disk": {
+          "name": "conversions_disk",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "size": {
+          "name": "size",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "manipulations": {
+          "name": "manipulations",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "custom_properties": {
+          "name": "custom_properties",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "generated_conversions": {
+          "name": "generated_conversions",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "responsive_images": {
+          "name": "responsive_images",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "order_column": {
+          "name": "order_column",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "media_model_type_model_id_index": {
+          "name": "media_model_type_model_id_index",
+          "unique": false,
+          "columns": [
+            "model_type",
+            "model_id"
+          ],
+          "type": "btree"
+        },
+        "media_order_column_index": {
+          "name": "media_order_column_index",
+          "unique": false,
+          "columns": [
+            "order_column"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "media_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "media_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "media_uuid_unique": {
+          "type": "UNIQUE",
+          "name": "media_uuid_unique",
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      }
+    },
+    "migrations": {
+      "name": "migrations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "migration": {
+          "name": "migration",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "batch": {
+          "name": "batch",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "migrations_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "migrations_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "model_has_permissions": {
+      "name": "model_has_permissions",
+      "columns": {
+        "permission_id": {
+          "name": "permission_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "model_type": {
+          "name": "model_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "model_has_permissions_model_id_model_type_index": {
+          "name": "model_has_permissions_model_id_model_type_index",
+          "unique": false,
+          "columns": [
+            "model_id",
+            "model_type"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "model_has_permissions_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "model_has_permissions_pkey",
+          "columnNames": [
+            "permission_id",
+            "model_id",
+            "model_type"
+          ]
+        },
+        "model_has_permissions_permission_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "model_has_permissions_permission_id_foreign",
+          "columnNames": [
+            "permission_id"
+          ],
+          "targetTableName": "permissions",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "CASCADE"
+        }
+      }
+    },
+    "model_has_roles": {
+      "name": "model_has_roles",
+      "columns": {
+        "role_id": {
+          "name": "role_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "model_type": {
+          "name": "model_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "model_has_roles_model_id_model_type_index": {
+          "name": "model_has_roles_model_id_model_type_index",
+          "unique": false,
+          "columns": [
+            "model_id",
+            "model_type"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "model_has_roles_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "model_has_roles_pkey",
+          "columnNames": [
+            "role_id",
+            "model_id",
+            "model_type"
+          ]
+        },
+        "model_has_roles_role_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "model_has_roles_role_id_foreign",
+          "columnNames": [
+            "role_id"
+          ],
+          "targetTableName": "roles",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "CASCADE"
+        }
+      }
+    },
+    "password_reset_tokens": {
+      "name": "password_reset_tokens",
+      "columns": {
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "password_reset_tokens_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "password_reset_tokens_pkey",
+          "columnNames": [
+            "email"
+          ]
+        }
+      }
+    },
+    "payment_commands": {
+      "name": "payment_commands",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "message_id": {
+          "name": "message_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "version": {
+          "name": "version",
+          "type": "int2",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "result": {
+          "name": "result",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "failure_code": {
+          "name": "failure_code",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "failure_message": {
+          "name": "failure_message",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "payment_commands_correlation_id_index": {
+          "name": "payment_commands_correlation_id_index",
+          "unique": false,
+          "columns": [
+            "correlation_id"
+          ],
+          "type": "btree"
+        },
+        "payment_commands_status_created_at_index": {
+          "name": "payment_commands_status_created_at_index",
+          "unique": false,
+          "columns": [
+            "status",
+            "created_at"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "payment_commands_message_id_unique": {
+          "type": "UNIQUE",
+          "name": "payment_commands_message_id_unique",
+          "columnNames": [
+            "message_id"
+          ]
+        },
+        "payment_commands_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "payment_commands_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "payment_event_inbox": {
+      "name": "payment_event_inbox",
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "version": {
+          "name": "version",
+          "type": "int2",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "source": {
+          "name": "source",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "received_at": {
+          "name": "received_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "applied_at": {
+          "name": "applied_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "payment_event_inbox_correlation_id_index": {
+          "name": "payment_event_inbox_correlation_id_index",
+          "unique": false,
+          "columns": [
+            "correlation_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "payment_event_inbox_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "payment_event_inbox_pkey",
+          "columnNames": [
+            "event_id"
+          ]
+        }
+      }
+    },
+    "permissions": {
+      "name": "permissions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "guard_name": {
+          "name": "guard_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "permissions_name_guard_name_unique": {
+          "type": "UNIQUE",
+          "name": "permissions_name_guard_name_unique",
+          "columnNames": [
+            "name",
+            "guard_name"
+          ]
+        },
+        "permissions_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "permissions_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "personal_access_tokens": {
+      "name": "personal_access_tokens",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "tokenable_type": {
+          "name": "tokenable_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "tokenable_id": {
+          "name": "tokenable_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "abilities": {
+          "name": "abilities",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "last_used_at": {
+          "name": "last_used_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "personal_access_tokens_expires_at_index": {
+          "name": "personal_access_tokens_expires_at_index",
+          "unique": false,
+          "columns": [
+            "expires_at"
+          ],
+          "type": "btree"
+        },
+        "personal_access_tokens_tokenable_type_tokenable_id_index": {
+          "name": "personal_access_tokens_tokenable_type_tokenable_id_index",
+          "unique": false,
+          "columns": [
+            "tokenable_type",
+            "tokenable_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "personal_access_tokens_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "personal_access_tokens_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "personal_access_tokens_token_unique": {
+          "type": "UNIQUE",
+          "name": "personal_access_tokens_token_unique",
+          "columnNames": [
+            "token"
+          ]
+        }
+      }
+    },
+    "properties": {
+      "name": "properties",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "purpose": {
+          "name": "purpose",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "properties_city_index": {
+          "name": "properties_city_index",
+          "unique": false,
+          "columns": [
+            "city"
+          ],
+          "type": "btree"
+        },
+        "properties_created_at_index": {
+          "name": "properties_created_at_index",
+          "unique": false,
+          "columns": [
+            "created_at"
+          ],
+          "type": "btree"
+        },
+        "properties_created_by_index": {
+          "name": "properties_created_by_index",
+          "unique": false,
+          "columns": [
+            "created_by"
+          ],
+          "type": "btree"
+        },
+        "properties_price_index": {
+          "name": "properties_price_index",
+          "unique": false,
+          "columns": [
+            "price"
+          ],
+          "type": "btree"
+        },
+        "properties_type_status_index": {
+          "name": "properties_type_status_index",
+          "unique": false,
+          "columns": [
+            "type",
+            "status"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "properties_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "properties_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "properties_title_unique": {
+          "type": "UNIQUE",
+          "name": "properties_title_unique",
+          "columnNames": [
+            "title"
+          ]
+        }
+      }
+    },
+    "report_runs": {
+      "name": "report_runs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "definition": {
+          "name": "definition",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "cadence": {
+          "name": "cadence",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "period_start": {
+          "name": "period_start",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "period_end": {
+          "name": "period_end",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "int2",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "duration_ms": {
+          "name": "duration_ms",
+          "type": "float8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "snapshot": {
+          "name": "snapshot",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "csv_path": {
+          "name": "csv_path",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "csv_checksum": {
+          "name": "csv_checksum",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "csv_size": {
+          "name": "csv_size",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "failure_code": {
+          "name": "failure_code",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "failure_message": {
+          "name": "failure_message",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "report_runs_cadence_period_start_index": {
+          "name": "report_runs_cadence_period_start_index",
+          "unique": false,
+          "columns": [
+            "cadence",
+            "period_start"
+          ],
+          "type": "btree"
+        },
+        "report_runs_status_expires_at_index": {
+          "name": "report_runs_status_expires_at_index",
+          "unique": false,
+          "columns": [
+            "status",
+            "expires_at"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "report_runs_period_unique": {
+          "type": "UNIQUE",
+          "name": "report_runs_period_unique",
+          "columnNames": [
+            "definition",
+            "cadence",
+            "period_start"
+          ]
+        },
+        "report_runs_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "report_runs_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "report_runs_uuid_unique": {
+          "type": "UNIQUE",
+          "name": "report_runs_uuid_unique",
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      }
+    },
+    "role_has_permissions": {
+      "name": "role_has_permissions",
+      "columns": {
+        "permission_id": {
+          "name": "permission_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "role_id": {
+          "name": "role_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "role_has_permissions_role_id_index": {
+          "name": "role_has_permissions_role_id_index",
+          "unique": false,
+          "columns": [
+            "role_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "role_has_permissions_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "role_has_permissions_pkey",
+          "columnNames": [
+            "permission_id",
+            "role_id"
+          ]
+        },
+        "role_has_permissions_permission_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "role_has_permissions_permission_id_foreign",
+          "columnNames": [
+            "permission_id"
+          ],
+          "targetTableName": "permissions",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "CASCADE"
+        },
+        "role_has_permissions_role_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "role_has_permissions_role_id_foreign",
+          "columnNames": [
+            "role_id"
+          ],
+          "targetTableName": "roles",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "CASCADE"
+        }
+      }
+    },
+    "roles": {
+      "name": "roles",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "guard_name": {
+          "name": "guard_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "roles_name_guard_name_unique": {
+          "type": "UNIQUE",
+          "name": "roles_name_guard_name_unique",
+          "columnNames": [
+            "name",
+            "guard_name"
+          ]
+        },
+        "roles_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "roles_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "sessions": {
+      "name": "sessions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "last_activity": {
+          "name": "last_activity",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "sessions_last_activity_index": {
+          "name": "sessions_last_activity_index",
+          "unique": false,
+          "columns": [
+            "last_activity"
+          ],
+          "type": "btree"
+        },
+        "sessions_user_id_index": {
+          "name": "sessions_user_id_index",
+          "unique": false,
+          "columns": [
+            "user_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "sessions_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "sessions_pkey",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "telescope_entries": {
+      "name": "telescope_entries",
+      "columns": {
+        "sequence": {
+          "name": "sequence",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "batch_id": {
+          "name": "batch_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "family_hash": {
+          "name": "family_hash",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "should_display_on_index": {
+          "name": "should_display_on_index",
+          "type": "bool",
+          "default": true,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "telescope_entries_batch_id_index": {
+          "name": "telescope_entries_batch_id_index",
+          "unique": false,
+          "columns": [
+            "batch_id"
+          ],
+          "type": "btree"
+        },
+        "telescope_entries_created_at_index": {
+          "name": "telescope_entries_created_at_index",
+          "unique": false,
+          "columns": [
+            "created_at"
+          ],
+          "type": "btree"
+        },
+        "telescope_entries_family_hash_index": {
+          "name": "telescope_entries_family_hash_index",
+          "unique": false,
+          "columns": [
+            "family_hash"
+          ],
+          "type": "btree"
+        },
+        "telescope_entries_type_should_display_on_index_index": {
+          "name": "telescope_entries_type_should_display_on_index_index",
+          "unique": false,
+          "columns": [
+            "type",
+            "should_display_on_index"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "telescope_entries_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "telescope_entries_pkey",
+          "columnNames": [
+            "sequence"
+          ]
+        },
+        "telescope_entries_uuid_unique": {
+          "type": "UNIQUE",
+          "name": "telescope_entries_uuid_unique",
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      }
+    },
+    "telescope_entries_tags": {
+      "name": "telescope_entries_tags",
+      "columns": {
+        "entry_uuid": {
+          "name": "entry_uuid",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "tag": {
+          "name": "tag",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "telescope_entries_tags_tag_index": {
+          "name": "telescope_entries_tags_tag_index",
+          "unique": false,
+          "columns": [
+            "tag"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "telescope_entries_tags_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "telescope_entries_tags_pkey",
+          "columnNames": [
+            "entry_uuid",
+            "tag"
+          ]
+        },
+        "telescope_entries_tags_entry_uuid_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "telescope_entries_tags_entry_uuid_foreign",
+          "columnNames": [
+            "entry_uuid"
+          ],
+          "targetTableName": "telescope_entries",
+          "targetColumnNames": [
+            "uuid"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "CASCADE"
+        }
+      }
+    },
+    "telescope_monitoring": {
+      "name": "telescope_monitoring",
+      "columns": {
+        "tag": {
+          "name": "tag",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "telescope_monitoring_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "telescope_monitoring_pkey",
+          "columnNames": [
+            "tag"
+          ]
+        }
+      }
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "email_verified_at": {
+          "name": "email_verified_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "is_super": {
+          "name": "is_super",
+          "type": "bool",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "direct_manager_id": {
+          "name": "direct_manager_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "remember_token": {
+          "name": "remember_token",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "total_potential_commission": {
+          "name": "total_potential_commission",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "total_actual_commission": {
+          "name": "total_actual_commission",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "users_direct_manager_id_index": {
+          "name": "users_direct_manager_id_index",
+          "unique": false,
+          "columns": [
+            "direct_manager_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "users_email_unique": {
+          "type": "UNIQUE",
+          "name": "users_email_unique",
+          "columnNames": [
+            "email"
+          ]
+        },
+        "users_phone_unique": {
+          "type": "UNIQUE",
+          "name": "users_phone_unique",
+          "columnNames": [
+            "phone"
+          ]
+        },
+        "users_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "users_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "users_username_unique": {
+          "type": "UNIQUE",
+          "name": "users_username_unique",
+          "columnNames": [
+            "username"
+          ]
+        },
+        "users_direct_manager_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "users_direct_manager_id_foreign",
+          "columnNames": [
+            "direct_manager_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "NO_ACTION"
+        }
+      }
+    }
+  },
+  "enums": {},
+  "extensions": {}
+}

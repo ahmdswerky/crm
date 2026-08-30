@@ -1,0 +1,401 @@
+{
+  "tables": {
+    "invoices": {
+      "name": "invoices",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "invoicable_type": {
+          "name": "invoicable_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "invoicable_id": {
+          "name": "invoicable_id",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "value": {
+          "name": "value",
+          "type": "numeric",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "invoices_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "invoices_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "invoices_source_type_id_type_unique": {
+          "type": "UNIQUE",
+          "name": "invoices_source_type_id_type_unique",
+          "columnNames": [
+            "invoicable_type",
+            "invoicable_id",
+            "type"
+          ]
+        }
+      }
+    },
+    "migrations": {
+      "name": "migrations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "PK_8c82d7f526340ab734260ea46be": {
+          "type": "PRIMARY KEY",
+          "name": "PK_8c82d7f526340ab734260ea46be",
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    },
+    "payment_event_outbox": {
+      "name": "payment_event_outbox",
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "command_message_id": {
+          "name": "command_message_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "version": {
+          "name": "version",
+          "type": "int2",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "source": {
+          "name": "source",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "int4",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "last_error": {
+          "name": "last_error",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "claimed_at": {
+          "name": "claimed_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "claim_token": {
+          "name": "claim_token",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "payment_event_outbox_correlation_id_idx": {
+          "name": "payment_event_outbox_correlation_id_idx",
+          "unique": false,
+          "columns": [
+            "correlation_id"
+          ],
+          "type": "btree"
+        },
+        "payment_event_outbox_ready_idx": {
+          "name": "payment_event_outbox_ready_idx",
+          "unique": false,
+          "columns": [
+            "published_at",
+            "claimed_at"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "payment_event_outbox_command_message_id_key": {
+          "type": "UNIQUE",
+          "name": "payment_event_outbox_command_message_id_key",
+          "columnNames": [
+            "command_message_id"
+          ]
+        },
+        "payment_event_outbox_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "payment_event_outbox_pkey",
+          "columnNames": [
+            "event_id"
+          ]
+        }
+      }
+    },
+    "payment_job_receipts": {
+      "name": "payment_job_receipts",
+      "columns": {
+        "message_id": {
+          "name": "message_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "command_type": {
+          "name": "command_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "result": {
+          "name": "result",
+          "type": "jsonb",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "failure_code": {
+          "name": "failure_code",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "failure_message": {
+          "name": "failure_message",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "payment_job_receipts_correlation_id_idx": {
+          "name": "payment_job_receipts_correlation_id_idx",
+          "unique": false,
+          "columns": [
+            "correlation_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "payment_job_receipts_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "payment_job_receipts_pkey",
+          "columnNames": [
+            "message_id"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "extensions": {}
+}

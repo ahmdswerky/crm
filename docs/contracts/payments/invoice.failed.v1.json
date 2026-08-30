@@ -1,0 +1,12 @@
+{
+  "event_id": "33333333-3333-4333-8333-333333333333",
+  "correlation_id": "22222222-2222-4222-8222-222222222222",
+  "type": "invoice.failed",
+  "version": 1,
+  "source": "payments",
+  "occurred_at": "2026-08-25T00:00:00.000Z",
+  "payload": {
+    "failure_code": "invalid_payload",
+    "failure_message": "Invalid invoice.generate payload"
+  }
+}

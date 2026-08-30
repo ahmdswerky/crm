@@ -95,6 +95,9 @@ The full technical guide covers prerequisites, environment and secrets,
 development and production Compose, service boundaries, migrations, health
 checks, backups, deployment, and troubleshooting: [Docker and technical documentation](docs/docker-operations.md).
 
+Production on Podman uses the Podman-only `docker-compose.podman.yml` entrypoint
+documented in the technical guide.
+
 ## Hard problems
 
 | Problem | How it is handled |

@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 
 import { stagedFiles } from './git-files.mjs'
+import { classifyFiles } from './project-map.mjs'
 
 console.log('Generating API documentation...')
 execFileSync('npm', ['run', 'api:docs'], {
@@ -20,6 +21,12 @@ if (files.length > 20) {
   const message = `Warning: this commit contains ${files.length} staged files. Consider splitting it into a smaller feature or fix.`
   console.warn(`${yellow}${message}${reset}`)
   console.warn(`::warning title=Large commit::${message}`)
+}
+
+if (classifyFiles(files).dbSchema) {
+  console.log('Regenerating database schema and ERDs...')
+  execFileSync('node', ['scripts/quality/generate-db-schema.mjs'], { stdio: 'inherit' })
+  execFileSync('git', ['add', '--', 'docs/db'], { stdio: 'inherit' })
 }
 
 execFileSync('npm', ['exec', '--', 'lint-staged', '--config', 'lint-staged.config.mjs'], { stdio: 'inherit' })

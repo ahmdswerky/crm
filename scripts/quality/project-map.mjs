@@ -17,6 +17,7 @@ export function classifyFiles(files) {
   let docker = false
   let api = false
   let all = false
+  let dbSchema = false
 
   for (const file of normalized) {
     if (matches(file, 'server') || matches(file, 'docker/crm-server')) projects.add('server')
@@ -38,10 +39,21 @@ export function classifyFiles(files) {
       matches(file, 'server/app/Http')
     ) api = true
     if (file.startsWith('.github/') || file.startsWith('scripts/quality/') || file === 'commitlint.config.cjs') all = true
+    if (
+      matches(file, 'server/database/migrations') ||
+      matches(file, 'payment-server/src/database/migrations') ||
+      file === 'payment-server/src/database/data-source.ts' ||
+      matches(file, 'scripts/quality/db-schema') ||
+      file === 'scripts/quality/generate-db-schema.mjs' ||
+      matches(file, 'docs/db')
+    ) dbSchema = true
   }
 
-  if (all) projectNames.forEach((project) => projects.add(project))
-  return { files: normalized, projects: [...projects], docker, api, all }
+  if (all) {
+    projectNames.forEach((project) => projects.add(project))
+    dbSchema = true
+  }
+  return { files: normalized, projects: [...projects], docker, api, all, dbSchema }
 }
 
 export function changedFilesFromGit(output) {
