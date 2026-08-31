@@ -48,7 +48,7 @@ skip every build-time/CI moving part.
 - Host tooling present: `codex` 0.151.0 at `~/.local/bin/codex`, logged in;
   `~/.codex/config.toml` already sets `model = "gpt-5.6-terra"`,
   `model_reasoning_effort = "high"`.
-- The system under diagram: React dashboard (Vite) · Laravel API (`server/`,
+- The system under diagram: React dashboard (Vite) · Laravel API (`crm-server/`,
   Postgres `crm`) · NestJS payment service (`payment-server/`, Postgres
   `payments`, TypeORM) · RabbitMQ between API and payments · Redis · nginx
   gateway · Cloudflare edge. ~10–12 primary nodes — within archify's "≤ 12" rule.

@@ -59,7 +59,7 @@ separate ownership for CRM and payment data:
 
 | Component | Owns | Connects to |
 | --- | --- | --- |
-| `server/` | CRM API, users, roles, CRM permissions, reports, and payment command outbox | `crm` database, CRM Redis, RabbitMQ |
+| `crm-server/` | CRM API, users, roles, CRM permissions, reports, and payment command outbox | `crm` database, CRM Redis, RabbitMQ |
 | `payment-server/` | Payment API boundary, invoice data, command receipts, and payment permissions | `payments` database, payment Redis, CRM auth tables, RabbitMQ |
 | `dashboard/` | Browser UI and generated API client types | Gateway only |
 | Docker NGINX | Same-origin routing and upstream balancing | Dashboard, Laravel, and payment service |

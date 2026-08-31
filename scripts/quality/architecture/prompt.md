@@ -45,7 +45,7 @@ application code) — but use `<BASE_URL>` in any endpoint labels and reflect
 - `README.md` "## Architecture" section — canonical topology.
 - `<COMPOSE>` — service list, replica counts, ports, wiring for `<ENV>`.
 - `<NGINX>` — gateway routing (`/api/`, `/api/v1/payments`, `/api/v1/invoices`, `/`).
-- `server/routes/api/**`, `server/app/**` — Laravel endpoints, lead/deal/
+- `crm-server/routes/api/**`, `crm-server/app/**` — Laravel endpoints, lead/deal/
   commission flow, RabbitMQ producer/consumer.
 - `payment-server/src/**` — NestJS payment API, TypeORM data-source, RabbitMQ
   service, invoice module.

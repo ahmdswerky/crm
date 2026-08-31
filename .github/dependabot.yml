@@ -28,12 +28,12 @@ updates:
         update-types: [minor, patch]
 
   - package-ecosystem: composer
-    directory: /server
+    directory: /crm-server
     schedule:
       interval: weekly
       day: monday
     groups:
-      server-minor-and-patch:
+      crm-minor-and-patch:
         update-types: [minor, patch]
 
   - package-ecosystem: github-actions

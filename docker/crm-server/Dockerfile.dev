@@ -45,9 +45,9 @@ COPY docker/crm-server/entrypoint.dev.sh /usr/local/bin/crm-dev-entrypoint
 RUN chmod 0755 /usr/local/bin/crm-dev-entrypoint
 
 WORKDIR /var/www/html
-COPY --chown=app:app server/composer.json server/composer.lock ./
+COPY --chown=app:app crm-server/composer.json crm-server/composer.lock ./
 RUN composer install --prefer-dist --no-interaction --no-progress --no-scripts
-COPY --chown=app:app server/ .
+COPY --chown=app:app crm-server/ .
 RUN composer dump-autoload --no-interaction --no-scripts \
     && php artisan package:discover --ansi
 

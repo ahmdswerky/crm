@@ -15,22 +15,22 @@ const tests = [
   }],
 
   ['flags database schema work from migration and generator paths', () => {
-  assert.equal(classifyFiles(['server/database/migrations/2026_01_01_000000_create_x.php']).dbSchema, true)
+  assert.equal(classifyFiles(['crm-server/database/migrations/2026_01_01_000000_create_x.php']).dbSchema, true)
   assert.equal(classifyFiles(['payment-server/src/database/migrations/1700000000000-Add.ts']).dbSchema, true)
   assert.equal(classifyFiles(['scripts/quality/db-schema/dump.mjs']).dbSchema, true)
   assert.equal(classifyFiles(['dashboard/src/App.tsx']).dbSchema, false)
   }],
 
   ['classifies API and Docker changes without inventing unrelated projects', () => {
-  const result = classifyFiles(['server/routes/api/v1/leads.php', 'docker/nginx/nginx.conf'])
-  assert.deepEqual(result.projects, ['server'])
+  const result = classifyFiles(['crm-server/routes/api/v1/leads.php', 'docker/nginx/nginx.conf'])
+  assert.deepEqual(result.projects, ['crm'])
   assert.equal(result.api, true)
   assert.equal(result.docker, true)
   }],
 
   ['quality tooling changes run all project checks', () => {
   const result = classifyFiles(['scripts/quality/check-projects.mjs'])
-  assert.deepEqual(result.projects, ['server', 'dashboard', 'payments'])
+  assert.deepEqual(result.projects, ['crm', 'dashboard', 'payments'])
   assert.equal(result.all, true)
   }],
 ]

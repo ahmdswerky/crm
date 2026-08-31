@@ -39,7 +39,7 @@ services:
       LOG_CHANNEL: stderr
       LOG_LEVEL: debug
     volumes:
-      - ./server:/var/www/html
+      - ./crm-server:/var/www/html
       - ./docs/contracts:/contracts:ro
       - crm_vendor_dev:/var/www/html/vendor
       - crm_storage_dev:/var/www/html/storage
@@ -101,7 +101,7 @@ services:
       LOG_LEVEL: debug
     command: ["php", "artisan", "horizon"]
     volumes:
-      - ./server:/var/www/html
+      - ./crm-server:/var/www/html
       - crm_vendor_dev:/var/www/html/vendor
       - crm_storage_dev:/var/www/html/storage
     networks: [data_net, egress_net]
@@ -153,7 +153,7 @@ services:
       LOG_LEVEL: debug
     command: ["php", "artisan", "schedule:work"]
     volumes:
-      - ./server:/var/www/html
+      - ./crm-server:/var/www/html
       - crm_vendor_dev:/var/www/html/vendor
       - crm_storage_dev:/var/www/html/storage
     networks: [data_net, egress_net]
@@ -200,7 +200,7 @@ services:
       LOG_LEVEL: debug
     command: ["php", "artisan", "payments:consume-events"]
     volumes:
-      - ./server:/var/www/html
+      - ./crm-server:/var/www/html
       - crm_vendor_dev:/var/www/html/vendor
       - crm_storage_dev:/var/www/html/storage
     networks: [data_net, egress_net]

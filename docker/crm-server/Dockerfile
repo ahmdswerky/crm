@@ -40,12 +40,12 @@ RUN apk add --no-cache \
 FROM php-base AS vendor
 COPY --from=docker.io/library/composer:2.8@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
-COPY server/composer.json server/composer.lock ./
+COPY crm-server/composer.json crm-server/composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --classmap-authoritative --no-scripts
 
 FROM vendor AS build
 WORKDIR /var/www/html
-COPY --chown=app:app server/ .
+COPY --chown=app:app crm-server/ .
 RUN rm -f bootstrap/cache/*.php \
     && composer dump-autoload --no-dev --classmap-authoritative --no-scripts \
     && php artisan package:discover --ansi

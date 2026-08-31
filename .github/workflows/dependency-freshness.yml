@@ -47,7 +47,7 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        working-directory: server
+        working-directory: crm-server
         run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Report current and latest versions

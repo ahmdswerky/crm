@@ -54,7 +54,7 @@
       "size": [150, 62],
       "sources": [
         { "path": "docker-compose.dev.yml", "line": 4, "label": "crm-api service" },
-        { "path": "server/routes/api.php", "line": 7, "label": "v1 routes" }
+        { "path": "crm-server/routes/api.php", "line": 7, "label": "v1 routes" }
       ]
     },
     {

@@ -46,4 +46,4 @@ function report(directory, command, args) {
 
 report('dashboard', 'npm', ['outdated', '--json'])
 report('payment-server', 'npm', ['outdated', '--json'])
-report('server', 'composer', ['outdated', '--direct', '--format=json', '--no-interaction'])
+report('crm-server', 'composer', ['outdated', '--direct', '--format=json', '--no-interaction'])

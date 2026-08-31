@@ -3,9 +3,9 @@ import { readFileSync } from 'node:fs'
 const definitions = JSON.parse(
   readFileSync('docker/rabbitmq/definitions.json', 'utf8'),
 )
-const laravelConfig = readFileSync('server/config/services.php', 'utf8')
+const laravelConfig = readFileSync('crm-server/config/services.php', 'utf8')
 const laravelClient = readFileSync(
-  'server/app/Services/Payments/RabbitMqClient.php',
+  'crm-server/app/Services/Payments/RabbitMqClient.php',
   'utf8',
 )
 const nestService = readFileSync('payment-server/src/messaging/rabbitmq.service.ts', 'utf8')

@@ -7,11 +7,11 @@
 **/dist
 **/coverage
 **/*.log
-server/bootstrap/cache/*.php
-server/tests
-server/storage
-server/db.jpg
-server/public/users.csv
-server/public/users.xlsx
+crm-server/bootstrap/cache/*.php
+crm-server/tests
+crm-server/storage
+crm-server/db.jpg
+crm-server/public/users.csv
+crm-server/public/users.xlsx
 dashboard/docs
 dashboard/scripts

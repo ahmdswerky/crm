@@ -13,7 +13,7 @@ Build two complete, secure Docker environments for the CRM repository:
 
 The stack contains:
 
-- `server/`: Laravel API, PHP-FPM, Horizon, and the scheduler.
+- `crm-server/`: Laravel API, PHP-FPM, Horizon, and the scheduler.
 - `payment-server/`: NestJS payment API.
 - `dashboard/`: React 19 dashboard built with Vite.
 - PostgreSQL: the database server, with isolated databases and users for Laravel and NestJS.
@@ -106,7 +106,7 @@ docker/redis/users.acl.example
 docker/postgres/init/01-create-application-databases.sh
 docker/postgres/postgresql.conf
 docker/nginx/vps-site.example.conf
-server/.dockerignore
+crm-server/.dockerignore
 payment-server/.dockerignore
 dashboard/.dockerignore
 .env.docker.example
@@ -876,4 +876,3 @@ Implementation is complete only when all of the following are true:
 - Health, readiness, graceful shutdown, replica-loss, DNS-recreation, backup/restore, and persistence tests pass.
 - Cloudflare-to-origin TLS uses Full (Strict), and the public origin cannot bypass the intended edge controls.
 - Operations documentation supports repeatable development, deployment, recovery, rotation, and rollback.
-

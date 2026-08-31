@@ -1,17 +1,17 @@
 ---
 name: create-api-endpoint
-description: Create a complete REST API endpoint for a model in this CRM Laravel project by reading its table schema from a database diagram image in the root of `server/`, running `php artisan make:api` with the requested model name and non-interactive column options, then finishing the generated module according to the repository's existing API conventions. Use whenever the user says "create an api endpoint for [model name]", asks to add a REST endpoint or API module for a model, or explicitly invokes `$create-api-endpoint`.
+description: Create a complete REST API endpoint for a model in this CRM Laravel project by reading its table schema from a database diagram image in the root of `crm-server/`, running `php artisan make:api` with the requested model name and non-interactive column options, then finishing the generated module according to the repository's existing API conventions. Use whenever the user says "create an api endpoint for [model name]", asks to add a REST endpoint or API module for a model, or explicitly invokes `$create-api-endpoint`.
 ---
 
 # Create API Endpoint
 
-Create the requested endpoint from `server/`. Treat the existing modules, especially the closest domain analogue among `Contact`, `Account`, `Lead`, and `Property`, as the source of truth.
+Create the requested endpoint from `crm-server/`. Treat the existing modules, especially the closest domain analogue among `Contact`, `Account`, `Lead`, and `Property`, as the source of truth.
 
 ## Constraints
 
 - Make the first implementation action `php artisan make:api` with the requested model name, repeatable `--column` options, and `--no-interaction`.
 - Pass the model name to the command as supplied by the user. Do not convert it to camelCase, StudlyCase, singular, plural, snake_case, or kebab-case before invocation. The command owns model-name validation, singularization, and StudlyCase conversion.
-- Derive the table columns and types from the database diagram image in the root of `server/`. Treat that image as the database-schema source of truth.
+- Derive the table columns and types from the database diagram image in the root of `crm-server/`. Treat that image as the database-schema source of truth.
 - Build every `--column` option from the diagram. If the image is missing, unreadable, or does not contain the requested table, ask only for the blocking schema information before running the command; do not suggest additional fields or features.
 - Edit the generated module and only the project wiring required to expose it.
 - Do not edit `MakeApiModuleCommand.php`, existing modules, frontend code, documentation, or unrelated files.
@@ -22,7 +22,7 @@ Create the requested endpoint from `server/`. Treat the existing modules, especi
 
 ### 1. Read the database diagram
 
-Before constructing the command, list image files directly inside `server/`. Prefer case-insensitive filenames containing `db`, `database`, `diagram`, `schema`, or `erd` and extensions such as `.png`, `.jpg`, `.jpeg`, or `.webp`.
+Before constructing the command, list image files directly inside `crm-server/`. Prefer case-insensitive filenames containing `db`, `database`, `diagram`, `schema`, or `erd` and extensions such as `.png`, `.jpg`, `.jpeg`, or `.webp`.
 
 Open the matching image with the available image-viewing tool. Use original detail when the diagram text is small. If multiple candidate images exist, inspect each candidate needed to locate the requested table.
 
@@ -87,7 +87,7 @@ Follow the current files rather than generic Laravel preferences.
 
 ### 3. Run the generator
 
-From `server/`, run:
+From `crm-server/`, run:
 
 ```bash
 php artisan make:api "{model name as supplied}" \

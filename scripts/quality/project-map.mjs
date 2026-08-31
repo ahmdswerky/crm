@@ -1,4 +1,4 @@
-export const projectNames = ['server', 'dashboard', 'payments']
+export const projectNames = ['crm', 'dashboard', 'payments']
 
 const rootFiles = new Set([
   '.dockerignore',
@@ -20,7 +20,7 @@ export function classifyFiles(files) {
   let dbSchema = false
 
   for (const file of normalized) {
-    if (matches(file, 'server') || matches(file, 'docker/crm-server')) projects.add('server')
+    if (matches(file, 'crm-server') || matches(file, 'docker/crm-server')) projects.add('crm')
     if (matches(file, 'dashboard') || matches(file, 'docs/openapi') || matches(file, 'docker/dashboard')) projects.add('dashboard')
     if (matches(file, 'payment-server') || matches(file, 'docker/payment-server')) projects.add('payments')
     if (
@@ -35,12 +35,12 @@ export function classifyFiles(files) {
       matches(file, 'dashboard/scripts') ||
       file === 'dashboard/public/openapi.json' ||
       matches(file, 'dashboard/src/api/generated') ||
-      matches(file, 'server/routes/api') ||
-      matches(file, 'server/app/Http')
+      matches(file, 'crm-server/routes/api') ||
+      matches(file, 'crm-server/app/Http')
     ) api = true
     if (file.startsWith('.github/') || file.startsWith('scripts/quality/') || file === 'commitlint.config.cjs') all = true
     if (
-      matches(file, 'server/database/migrations') ||
+      matches(file, 'crm-server/database/migrations') ||
       matches(file, 'payment-server/src/database/migrations') ||
       file === 'payment-server/src/database/data-source.ts' ||
       matches(file, 'scripts/quality/db-schema') ||

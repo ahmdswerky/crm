@@ -5,7 +5,7 @@ import { runCapture } from '../run.mjs'
 /** @param {import('./config.mjs').PgServer} server */
 function laravel(server, database) {
   const result = runCapture('php', ['artisan', 'migrate', '--force', '--no-interaction'], {
-    cwd: 'server',
+    cwd: 'crm-server',
     capture: true,
     env: {
       DB_CONNECTION: 'pgsql',

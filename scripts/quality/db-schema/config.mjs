@@ -27,7 +27,7 @@ export const DEV_POSTGRES = {
 
 // Paths whose change means the committed schema might be stale.
 export const TRIGGER_PATHS = [
-  'server/database/migrations',
+  'crm-server/database/migrations',
   'payment-server/src/database/migrations',
   'payment-server/src/database/data-source.ts',
   'scripts/quality/db-schema',
@@ -48,7 +48,7 @@ export const DATABASES = [
     database: scratch('crm'),
     // Laravel migrations, applied with `php artisan migrate`.
     kind: 'laravel',
-    cwd: 'server',
+    cwd: 'crm-server',
     urls: {
       dev: 'http://localhost:8080/docs/db/crm/',
       prod: 'https://crm.swerky.dev/docs/db/crm/',
