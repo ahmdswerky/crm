@@ -1,0 +1,135 @@
+docs/architecture/prod/architecture.json
+  s_0c3ecba731e3e6::t_b97df2bcb5d2fc 78
+docs/architecture/dev/architecture.json
+  s_f652881add45eb::t_7adead2d470574 57
+scripts/quality/db-schema/config.mjs
+  s_eea70215478e36::t_2cab9ece891435 30,51
+docs/docker-implementation-plan.md
+  s_076e545a841c9c::t_7a64d01fd49f05 16,109
+docs/docker-operations.md
+  s_d5719c13ddf000::t_305812a62eea54 62
+docs/architecture/dev/architecture.html
+  s_f652881add45eb::t_ffbb3c8ef68b9c 4963
+scripts/quality/check-projects.mjs
+  s_d85ad5126a7127::t_9f8356445cefb8 13
+  s_d85ad5126a7127::t_c860a9abf79cb0 14-16
+  s_d85ad5126a7127::t_9b2e7fba614518 17
+scripts/quality/validate-rabbitmq-topology.mjs
+  s_0c68bebaef7099::t_310078aaf61b1a 6
+  s_0c68bebaef7099::t_e3e7bf2cf87437 8
+scripts/quality/project-map.test.mjs
+  s_eea70215478e36::t_70595521423189 18
+  s_d85ad5126a7127::t_2539a174cad8d3 26
+  s_d85ad5126a7127::t_6b94e43bb15ce8 33
+  s_d85ad5126a7127::t_bec1bc9b7e87de 25
+docs/architecture/prod/architecture.html
+  s_0c3ecba731e3e6::t_bd9a8199228cd4 4963
+lint-staged.config.mjs
+  s_841f69504a4383::t_9e490048b001f4 8
+scripts/quality/db-schema/migrate.mjs
+  s_eea70215478e36::t_34d174eff1eb07 8
+.github/dependabot.yml
+  s_d85ad5126a7127::t_2e7c34abbe2400 36
+  s_d85ad5126a7127::t_c588d167ffc7ee 31
+.claude/plans/archify-architecture-generator.md
+  s_9ac1cd9504645a::t_0236c9ed531e34 51
+.github/workflows/ci.yml
+  s_d85ad5126a7127::t_73b56d2b43469d 311
+  s_d85ad5126a7127::t_cab2b3450c2bb5 22
+  s_d85ad5126a7127::t_1cf468d69071c2 177,180
+  s_d85ad5126a7127::t_2fbedbda6bc22a 39-40
+  s_d85ad5126a7127::t_0cd969aab2561b 449,452
+  s_d85ad5126a7127::t_cc6922847bf1b7 557
+  s_d85ad5126a7127::t_1f10177364ca68 531,536
+  s_eea70215478e36::t_8603de6fb030ce 173,203,207,211,215,219,370
+  s_d85ad5126a7127::t_e1fb32fb0fda88 553
+  s_eea70215478e36::t_2de622c126e513 174
+  s_d85ad5126a7127::t_7c4c18867917fa 200
+scripts/quality/architecture/prompt.md
+  s_9ac1cd9504645a::t_53ee5cda2ae0ce 48
+scripts/quality/project-map.mjs
+  s_d85ad5126a7127::t_ae114cae6cd64b 23
+  s_eea70215478e36::t_917a12569e91ec 43
+  s_d85ad5126a7127::t_a76778d483bffd 1
+  s_d85ad5126a7127::t_52407dec2e8947 38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "2d16530ad7964afc5de8edf5ccdaad50c0e573a4",
+  "prompts": {},
+  "sessions": {
+    "s_076e545a841c9c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a00ca1-6c3e-76e3-926f-9de147911809",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_0c3ecba731e3e6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a05360-3ef6-77a1-9fc3-449b9d66f2b3",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_0c68bebaef7099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a031b9-6f19-7e30-9e82-11ffa0e693f1",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": null
+    },
+    "s_841f69504a4383": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02c6a-fe46-7492-9808-9cbeba1e6fc8",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_9ac1cd9504645a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a4e07533-096a-4513-804d-d5662f23dbff",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_d5719c13ddf000": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02dc6-7f80-7a63-a0e8-d91d7cb17b5e",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_d85ad5126a7127": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d261b2ff-a663-4ee0-94d5-134f9f9ce170",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_eea70215478e36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d74737b-300b-46a9-8f4e-0144ee7ce6fc",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_f652881add45eb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a05356-fd31-7203-b407-dd639a8158bf",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
