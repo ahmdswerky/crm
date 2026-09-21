@@ -1,4 +1,4 @@
-FROM node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS dependencies
+FROM node:26.9.0-alpine@sha256:dbaa92e5758cbbcf85d65d5403fdb530fe3442cbe8c6dbfb7ef23365450d5070 AS dependencies
 WORKDIR /app
 COPY payment-server/package.json payment-server/package-lock.json ./
 RUN npm ci
@@ -7,12 +7,12 @@ FROM dependencies AS build
 COPY payment-server/ .
 RUN npm run build
 
-FROM node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS production-dependencies
+FROM node:26.9.0-alpine@sha256:dbaa92e5758cbbcf85d65d5403fdb530fe3442cbe8c6dbfb7ef23365450d5070 AS production-dependencies
 WORKDIR /app
 COPY payment-server/package.json payment-server/package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-FROM node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS runtime
+FROM node:26.9.0-alpine@sha256:dbaa92e5758cbbcf85d65d5403fdb530fe3442cbe8c6dbfb7ef23365450d5070 AS runtime
 ARG SOURCE_REVISION=unknown
 ARG BUILD_DATE=unknown
 LABEL org.opencontainers.image.title="CRM Payments API" \
