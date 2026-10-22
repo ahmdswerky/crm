@@ -405,20 +405,29 @@ Use the Podman-only entrypoint for production on Podman:
 Always pass `-f docker-compose.podman.yml`; a bare `podman-compose` command
 uses its default Compose-file search order and may load a different file.
 
+Sequential builds keep a 2 GB host out of swap; a new `IMAGE_TAG` makes podman-compose recreate app containers because it compares config hashes, not image digests. With `IMAGE_TAG` unset (`latest`), use `up -d --force-recreate` after a rebuild.
+
 ```sh
-podman-compose --env-file .env.docker -f docker-compose.podman.yml config
-podman-compose --env-file .env.docker -f docker-compose.podman.yml build
-podman-compose --env-file .env.docker -f docker-compose.podman.yml up --no-build -d postgres redis
-podman-compose --env-file .env.docker -f docker-compose.podman.yml run --rm crm-migrate
-podman-compose --env-file .env.docker -f docker-compose.podman.yml run --rm auth-grants
-podman-compose --env-file .env.docker -f docker-compose.podman.yml --profile seed run --rm payment-auth-seed
-podman-compose --env-file .env.docker -f docker-compose.podman.yml up -d
+export IMAGE_TAG="$(git rev-parse --short HEAD)"
+P="podman-compose --env-file .env.docker -f docker-compose.podman.yml"
+$P config
+$P build crm-migrate && $P build payment-api-1 && $P build dashboard-1
+$P up --no-build -d postgres redis
+$P run --rm crm-migrate
+$P run --rm auth-grants
+$P --profile seed run --rm payment-auth-seed
+$P up -d
+# after health + smoke checks pass: drop previous release tags, keep build cache
+podman images --format '{{.Repository}}:{{.Tag}}' | grep -E '^localhost/crm-(server|payment|dashboard):' | grep -v ":$IMAGE_TAG\$" | xargs -r podman rmi
+# monthly or when `podman system df` grows: clear stale build cache (next build is a full rebuild)
+podman image prune -f
 ```
 
 The Podman file includes the canonical production file and sets `x-podman.in_pod: false`. This is required because the gateway routes to services by Compose service name; placing the entire stack in Podman's default shared pod would change that network topology. Use the same health and smoke checks described above after startup.
 
-Production image references are qualified with `docker.io/library/` so Podman
-does not depend on host-wide unqualified-search registry settings.
+Production app images use `localhost/`; base and infrastructure image references
+use `docker.io/library/` so Podman does not depend on host-wide unqualified-search
+registry settings.
 
 For the remaining production inspection and recovery commands below, replace
 the Docker Compose command and file with `podman-compose --env-file .env.docker

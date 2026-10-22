@@ -1,6 +1,11 @@
 name: ${COMPOSE_PROJECT_NAME:-crm}
 
+x-logging: &logging
+  driver: json-file
+  options: {max-size: "10m"}
+
 x-app-defaults: &app-defaults
+  logging: *logging
   init: true
   restart: unless-stopped
   read_only: true
@@ -11,10 +16,9 @@ x-app-defaults: &app-defaults
 
 services:
   crm-api-1:
+    mem_limit: 320m
+    image: localhost/crm-server:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/crm-server/Dockerfile
     environment: &crm-environment
       APP_ENV: production
       APP_DEBUG: "false"
@@ -36,6 +40,7 @@ services:
       SESSION_DRIVER: redis
       MEDIA_DISK: public
       HORIZON_PREFIX: "crm:horizon:"
+      HORIZON_MAX_PROCESSES: ${HORIZON_MAX_PROCESSES:-2}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-crm}
@@ -73,10 +78,9 @@ services:
       retries: 5
 
   crm-api-2:
+    mem_limit: 320m
+    image: localhost/crm-server:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/crm-server/Dockerfile
     environment: *crm-environment
     volumes:
       - laravel_private:/var/www/html/storage/app/private
@@ -103,10 +107,9 @@ services:
         condition: service_healthy
 
   payment-events:
+    mem_limit: 192m
+    image: localhost/crm-server:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/crm-server/Dockerfile
     environment: *crm-environment
     profiles: ["payments"]
     command: ["php", "artisan", "payments:consume-events"]
@@ -138,6 +141,9 @@ services:
       retries: 5
 
   crm-migrate:
+    logging: *logging
+    mem_limit: 384m
+    image: localhost/crm-server:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/crm-server/Dockerfile
@@ -174,6 +180,7 @@ services:
     command: ["php", "artisan", "migrate", "--force", "--seed"]
 
   auth-grants:
+    mem_limit: 64m
     <<: *app-defaults
     image: docker.io/library/postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
     restart: "no"
@@ -196,6 +203,8 @@ services:
     command: ["/bin/sh", "/usr/local/bin/grant-auth-access"]
 
   payment-api-1:
+    mem_limit: 256m
+    image: localhost/crm-payment:${IMAGE_TAG:-latest}
     <<: *app-defaults
     build:
       context: .
@@ -243,10 +252,9 @@ services:
       retries: 5
 
   payment-api-2:
+    mem_limit: 256m
+    image: localhost/crm-payment:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/payment-server/Dockerfile
     environment: *payment-environment
     networks: [proxy_net, data_net, egress_net]
     secrets: [payments_db_password, payments_redis_password, auth_db_password, rabbitmq_password]
@@ -266,11 +274,10 @@ services:
       retries: 5
 
   payment-auth-seed:
+    mem_limit: 192m
+    image: localhost/crm-payment:${IMAGE_TAG:-latest}
     profiles: [seed]
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/payment-server/Dockerfile
     environment:
       NODE_ENV: production
       PAYMENTS_AUTH_DB_HOST: postgres
@@ -287,10 +294,9 @@ services:
     command: ["node", "dist/seed-auth.js"]
 
   horizon:
+    mem_limit: 384m
+    image: localhost/crm-server:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/crm-server/Dockerfile
     environment: *crm-environment
     command: ["php", "artisan", "horizon"]
     volumes:
@@ -315,10 +321,9 @@ services:
         condition: service_completed_successfully
 
   scheduler:
+    mem_limit: 256m
+    image: localhost/crm-server:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/crm-server/Dockerfile
     environment: *crm-environment
     command: ["php", "artisan", "schedule:work"]
     volumes:
@@ -343,6 +348,8 @@ services:
         condition: service_completed_successfully
 
   dashboard-1:
+    mem_limit: 32m
+    image: localhost/crm-dashboard:${IMAGE_TAG:-latest}
     <<: *app-defaults
     build:
       context: .
@@ -359,12 +366,9 @@ services:
       retries: 5
 
   dashboard-2:
+    mem_limit: 32m
+    image: localhost/crm-dashboard:${IMAGE_TAG:-latest}
     <<: *app-defaults
-    build:
-      context: .
-      dockerfile: docker/dashboard/Dockerfile
-      args:
-        VITE_API_BASE_URL: /api
     entrypoint: ["nginx"]
     command: ["-g", "daemon off;"]
     networks: [proxy_net]
@@ -375,6 +379,8 @@ services:
       retries: 5
 
   postgres:
+    logging: *logging
+    mem_limit: 320m
     image: docker.io/library/postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
     restart: unless-stopped
     shm_size: 64m
@@ -406,6 +412,8 @@ services:
       retries: 10
 
   redis:
+    logging: *logging
+    mem_limit: 192m
     image: docker.io/library/redis:8-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
     restart: unless-stopped
     entrypoint: ["/bin/sh", "/usr/local/bin/redis-entrypoint"]
@@ -426,10 +434,14 @@ services:
       retries: 10
 
   rabbitmq:
+    logging: *logging
+    mem_limit: 384m
     image: docker.io/library/rabbitmq:4.1-management-alpine
     restart: unless-stopped
     entrypoint: ["/bin/sh", "/usr/local/bin/rabbitmq-entrypoint"]
     command: ["rabbitmq-server"]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
     environment:
       RABBITMQ_BOOTSTRAP_USER: ${RABBITMQ_USER:-crm}
       RABBITMQ_BOOTSTRAP_PASSWORD_FILE: /run/secrets/rabbitmq_password
@@ -447,6 +459,8 @@ services:
       retries: 12
 
   gateway:
+    logging: *logging
+    mem_limit: 64m
     image: docker.io/library/nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de
     entrypoint: ["nginx"]
     command: ["-g", "daemon off;"]
