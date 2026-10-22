@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'node:crypto';
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { DataSource, EntityNotFoundError, Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PaymentEventOutbox } from '../../messaging/entities/payment-event-outbox.entity';
 import {
   PaymentCommandMessage,
@@ -11,12 +12,17 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './entities/invoice.entity';
 import { PaymentJobReceipt } from './entities/payment-job-receipt.entity';
+import { ListInvoiceDto } from './dto/list-invoice.dto';
+import { type Paginated } from 'src/common/types/response';
+import { InvoiceStatus } from './enums/invoice-status.enum';
 
 @Injectable()
 export class InvoiceService {
   constructor(
     @InjectDataSource('payments')
     private readonly paymentsDataSource: DataSource,
+    @InjectRepository(Invoice, 'payments')
+    private invoiceRepository: Repository<Invoice>,
   ) {}
 
   create(_createInvoiceDto: CreateInvoiceDto) {
@@ -24,21 +30,45 @@ export class InvoiceService {
     return 'This action adds a new invoice';
   }
 
-  findAll() {
-    return `This action returns all invoice`;
+  async paginate(_listInvoiceDto: ListInvoiceDto): Paginated<Invoice> {
+    const { page, per_page } = _listInvoiceDto;
+    const [data, count] = await this.invoiceRepository.findAndCount({
+      skip: (page - 1) * per_page,
+      take: per_page,
+    });
+
+    return {
+      data,
+      count,
+      page,
+      per_page,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} invoice`;
+  async findOne(id: number): Promise<Invoice> {
+    return this.invoiceRepository.findOneByOrFail({ id });
   }
 
-  update(id: number, _updateInvoiceDto: UpdateInvoiceDto) {
-    void _updateInvoiceDto;
-    return `This action updates a #${id} invoice`;
+  async update(
+    id: number,
+    _updateInvoiceDto: UpdateInvoiceDto,
+  ): Promise<Invoice> {
+    const data = await this.invoiceRepository.preload({
+      id,
+      ..._updateInvoiceDto,
+    });
+
+    if (!data) {
+      throw EntityNotFoundError;
+    }
+
+    return this.invoiceRepository.save(data);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} invoice`;
+  async remove(id: number): Promise<boolean> {
+    const { affected } = await this.invoiceRepository.delete(id);
+
+    return !!affected;
   }
 
   async handleCommand(message: PaymentCommandMessage): Promise<void> {
@@ -58,19 +88,17 @@ export class InvoiceService {
       try {
         this.validatePayload(message);
       } catch (error) {
-        const receipt = await receiptRepository.save(
-          receiptRepository.create({
-            messageId: message.message_id,
-            correlationId: message.correlation_id,
-            commandType: message.type,
-            status: 'failed',
-            payload: message.payload,
-            result: null,
-            failureCode: 'invalid_payload',
-            failureMessage:
-              error instanceof Error ? error.message : String(error),
-          }),
-        );
+        const receipt = await this.claimReceipt(receiptRepository, {
+          messageId: message.message_id,
+          correlationId: message.correlation_id,
+          commandType: message.type,
+          status: InvoiceStatus.Failed,
+          payload: message.payload,
+          result: null,
+          failureCode: 'invalid_payload',
+          failureMessage:
+            error instanceof Error ? error.message : String(error),
+        });
         await this.ensureOutbox(message, receipt, outboxRepository);
         return;
       }
@@ -81,55 +109,56 @@ export class InvoiceService {
         type: message.payload.type,
       });
       if (!invoice) {
-        try {
-          invoice = await invoiceRepository.save(
-            invoiceRepository.create({
-              invoicableType: message.payload.invoicable_type,
-              invoicableId: message.payload.invoicable_id,
-              type: message.payload.type,
-              value: message.payload.value,
-              status: 'completed',
-            }),
-          );
-        } catch (error) {
-          if (!(error instanceof QueryFailedError)) {
-            throw error;
-          }
-          invoice = await invoiceRepository.findOneBy({
+        // ponytail: ON CONFLICT DO NOTHING. Catching the unique violation
+        // instead aborts the surrounding Postgres transaction, so every later
+        // statement fails with "current transaction is aborted".
+        await invoiceRepository
+          .createQueryBuilder()
+          .insert()
+          .values({
             invoicableType: message.payload.invoicable_type,
             invoicableId: message.payload.invoicable_id,
             type: message.payload.type,
-          });
-          if (!invoice) {
-            throw error;
-          }
-        }
-      }
-
-      let receipt: PaymentJobReceipt;
-      try {
-        receipt = await receiptRepository.save(
-          receiptRepository.create({
-            messageId: message.message_id,
-            correlationId: message.correlation_id,
-            commandType: message.type,
-            status: 'completed',
-            payload: message.payload,
-            result: { invoice_id: invoice.id, status: invoice.status },
-            failureCode: null,
-            failureMessage: null,
-          }),
-        );
-      } catch (error) {
-        if (!(error instanceof QueryFailedError)) {
-          throw error;
-        }
-        receipt = await receiptRepository.findOneByOrFail({
-          messageId: message.message_id,
+            value: message.payload.value,
+            status: InvoiceStatus.Generated,
+          })
+          .orIgnore()
+          .execute();
+        invoice = await invoiceRepository.findOneByOrFail({
+          invoicableType: message.payload.invoicable_type,
+          invoicableId: message.payload.invoicable_id,
+          type: message.payload.type,
         });
       }
 
+      const receipt = await this.claimReceipt(receiptRepository, {
+        messageId: message.message_id,
+        correlationId: message.correlation_id,
+        commandType: message.type,
+        status: 'completed',
+        payload: message.payload,
+        result: { invoice_id: invoice.id, status: invoice.status },
+        failureCode: null,
+        failureMessage: null,
+      });
+
       await this.ensureOutbox(message, receipt, outboxRepository);
+    });
+  }
+
+  private async claimReceipt(
+    receiptRepository: Repository<PaymentJobReceipt>,
+    values: Omit<PaymentJobReceipt, 'createdAt' | 'updatedAt'>,
+  ): Promise<PaymentJobReceipt> {
+    await receiptRepository
+      .createQueryBuilder()
+      .insert()
+      .values(values as QueryDeepPartialEntity<PaymentJobReceipt>)
+      .orIgnore()
+      .execute();
+
+    return receiptRepository.findOneByOrFail({
+      messageId: values.messageId,
     });
   }
 
@@ -158,36 +187,26 @@ export class InvoiceService {
             message_id: message.message_id,
           };
 
-    try {
-      await outboxRepository.save(
-        outboxRepository.create({
-          eventId: randomUUID(),
-          commandMessageId: message.message_id,
-          correlationId: message.correlation_id,
-          type,
-          version: 1,
-          source: 'payments',
-          occurredAt: new Date(),
-          payload,
-          publishedAt: null,
-          attempts: 0,
-          lastError: null,
-          claimedAt: null,
-          claimToken: null,
-        }),
-      );
-    } catch (error) {
-      if (!(error instanceof QueryFailedError)) {
-        throw error;
-      }
-
-      const concurrentEvent = await outboxRepository.findOneBy({
+    await outboxRepository
+      .createQueryBuilder()
+      .insert()
+      .values({
+        eventId: randomUUID(),
         commandMessageId: message.message_id,
-      });
-      if (!concurrentEvent) {
-        throw error;
-      }
-    }
+        correlationId: message.correlation_id,
+        type,
+        version: 1,
+        source: 'payments',
+        occurredAt: new Date(),
+        payload,
+        publishedAt: null,
+        attempts: 0,
+        lastError: null,
+        claimedAt: null,
+        claimToken: null,
+      } as QueryDeepPartialEntity<PaymentEventOutbox>)
+      .orIgnore()
+      .execute();
   }
 
   private validatePayload(message: PaymentCommandMessage): void {

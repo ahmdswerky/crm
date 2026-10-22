@@ -34,8 +34,7 @@ class PropertyMediaSeeder extends Seeder
             return;
         }
 
-        $properties = Property::query()
-            ->whereDoesntHave('media', fn ($query) => $query->where('collection_name', 'gallery'));
+        $properties = Property::query()->whereDoesntHave('media', fn ($query) => $query->where('collection_name', 'gallery'));
         $propertyIds = $properties->limit($count)->pluck('id');
         $count = $propertyIds->count();
 

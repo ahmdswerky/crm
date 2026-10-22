@@ -437,7 +437,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
       - ./docker/rabbitmq/entrypoint.sh:/usr/local/bin/rabbitmq-entrypoint:ro
       - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./docker/rabbitmq/topology.json:/etc/rabbitmq/topology.json:ro
     networks: [data_net]
     secrets: [rabbitmq_password]
     healthcheck:

@@ -1,43 +1,50 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
-  Patch,
   Param,
   Delete,
-  Request,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { Invoice } from './entities/invoice.entity';
+import { ListInvoiceDto } from './dto/list-invoice.dto';
+import { type TResponse, type Paginated } from 'src/common/types/response';
 
 @Controller('invoices')
 export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) {}
 
-  @Post()
-  create(@Body() createInvoiceDto: CreateInvoiceDto) {
-    return this.invoiceService.create(createInvoiceDto);
-  }
-
   @Get()
-  findAll() {
-    return this.invoiceService.findAll();
+  paginate(@Query() listInvoiceDto: ListInvoiceDto): Paginated<Invoice> {
+    return this.invoiceService.paginate(listInvoiceDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.invoiceService.findOne(+id);
+  async findOne(@Param('id') id: string): TResponse<Invoice> {
+    const data = await this.invoiceService.findOne(+id);
+
+    return {
+      data,
+    };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
-    return this.invoiceService.update(+id, updateInvoiceDto);
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateInvoiceDto: UpdateInvoiceDto,
+  ): TResponse<Invoice> {
+    const data = await this.invoiceService.update(+id, updateInvoiceDto);
+
+    return {
+      data,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.invoiceService.remove(+id);
+  async remove(@Param('id') id: string) {
+    await this.invoiceService.remove(+id);
   }
 }

@@ -7,23 +7,42 @@ import { PaymentJobReceipt } from './entities/payment-job-receipt.entity';
 
 jest.mock('node:crypto', () => ({ randomUUID: jest.fn() }));
 
+type InsertBuilder = {
+  insert: jest.Mock;
+  values: jest.Mock;
+  orIgnore: jest.Mock;
+  execute: jest.Mock;
+};
+
+const createInsertBuilder = (): InsertBuilder => {
+  const builder: InsertBuilder = {
+    insert: jest.fn(() => builder),
+    values: jest.fn(() => builder),
+    orIgnore: jest.fn(() => builder),
+    execute: jest.fn().mockResolvedValue({ identifiers: [] }),
+  };
+
+  return builder;
+};
+
 describe('InvoiceService', () => {
   let service: InvoiceService;
+  const invoiceBuilder = createInsertBuilder();
+  const receiptBuilder = createInsertBuilder();
+  const outboxBuilder = createInsertBuilder();
   const invoiceRepository = {
-    create: jest.fn((value: unknown) => value),
-    findOneBy: jest.fn(),
-    save: jest.fn(),
-  };
-  const receiptRepository = {
-    create: jest.fn((value: unknown) => value),
     findOneBy: jest.fn(),
     findOneByOrFail: jest.fn(),
-    save: jest.fn(),
+    createQueryBuilder: jest.fn(() => invoiceBuilder),
+  };
+  const receiptRepository = {
+    findOneBy: jest.fn(),
+    findOneByOrFail: jest.fn(),
+    createQueryBuilder: jest.fn(() => receiptBuilder),
   };
   const outboxRepository = {
-    create: jest.fn((value: unknown) => value),
     findOneBy: jest.fn(),
-    save: jest.fn(),
+    createQueryBuilder: jest.fn(() => outboxBuilder),
   };
   const manager = {
     getRepository: jest.fn((entity: unknown) => {
@@ -54,7 +73,25 @@ describe('InvoiceService', () => {
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
+    invoiceRepository.createQueryBuilder.mockReturnValue(invoiceBuilder);
+    receiptRepository.createQueryBuilder.mockReturnValue(receiptBuilder);
+    outboxRepository.createQueryBuilder.mockReturnValue(outboxBuilder);
+    for (const builder of [invoiceBuilder, receiptBuilder, outboxBuilder]) {
+      builder.insert.mockReturnValue(builder);
+      builder.values.mockReturnValue(builder);
+      builder.orIgnore.mockReturnValue(builder);
+      builder.execute.mockResolvedValue({ identifiers: [] });
+    }
+    manager.getRepository.mockImplementation((entity: unknown) => {
+      if (entity === Invoice) return invoiceRepository;
+      if (entity === PaymentJobReceipt) return receiptRepository;
+      return outboxRepository;
+    });
+    paymentsDataSource.transaction.mockImplementation(
+      (callback: (transactionManager: typeof manager) => Promise<unknown>) =>
+        callback(manager),
+    );
     jest.useFakeTimers().setSystemTime(new Date('2026-08-25T00:00:00.000Z'));
     (randomUUID as jest.Mock).mockReturnValue(
       '33333333-3333-4333-8333-333333333333',
@@ -76,24 +113,21 @@ describe('InvoiceService', () => {
   it('creates an invoice, receipt, and stable event in one transaction', async () => {
     receiptRepository.findOneBy.mockResolvedValueOnce(null);
     invoiceRepository.findOneBy.mockResolvedValueOnce(null);
-    invoiceRepository.save.mockResolvedValueOnce({
+    invoiceRepository.findOneByOrFail.mockResolvedValueOnce({
       id: 7,
       status: 'completed',
     });
-    receiptRepository.save.mockResolvedValueOnce({
+    receiptRepository.findOneByOrFail.mockResolvedValueOnce({
       messageId: command.message_id,
       status: 'completed',
       result: { invoice_id: 7, status: 'completed' },
     });
     outboxRepository.findOneBy.mockResolvedValueOnce(null);
-    outboxRepository.save.mockImplementationOnce((event: unknown) =>
-      Promise.resolve(event),
-    );
 
     await service.handleCommand(command);
 
     expect(paymentsDataSource.transaction).toHaveBeenCalledTimes(1);
-    expect(outboxRepository.save).toHaveBeenCalledWith(
+    expect(outboxBuilder.values).toHaveBeenCalledWith(
       expect.objectContaining({
         eventId: '33333333-3333-4333-8333-333333333333',
         commandMessageId: command.message_id,
@@ -110,6 +144,28 @@ describe('InvoiceService', () => {
     );
   });
 
+  it('inserts with ON CONFLICT DO NOTHING so a duplicate never aborts the transaction', async () => {
+    receiptRepository.findOneBy.mockResolvedValueOnce(null);
+    invoiceRepository.findOneBy.mockResolvedValueOnce(null);
+    invoiceRepository.findOneByOrFail.mockResolvedValueOnce({
+      id: 7,
+      status: 'completed',
+    });
+    receiptRepository.findOneByOrFail.mockResolvedValueOnce({
+      messageId: command.message_id,
+      status: 'completed',
+      result: { invoice_id: 7, status: 'completed' },
+    });
+    outboxRepository.findOneBy.mockResolvedValueOnce(null);
+
+    await service.handleCommand(command);
+
+    for (const builder of [invoiceBuilder, receiptBuilder, outboxBuilder]) {
+      expect(builder.orIgnore).toHaveBeenCalledTimes(1);
+      expect(builder.execute).toHaveBeenCalledTimes(1);
+    }
+  });
+
   it('reuses the existing receipt and event for a duplicate command', async () => {
     receiptRepository.findOneBy.mockResolvedValueOnce({
       messageId: command.message_id,
@@ -124,8 +180,8 @@ describe('InvoiceService', () => {
 
     await service.handleCommand(command);
 
-    expect(invoiceRepository.save).not.toHaveBeenCalled();
-    expect(receiptRepository.save).not.toHaveBeenCalled();
-    expect(outboxRepository.save).not.toHaveBeenCalled();
+    expect(invoiceRepository.createQueryBuilder).not.toHaveBeenCalled();
+    expect(receiptRepository.createQueryBuilder).not.toHaveBeenCalled();
+    expect(outboxBuilder.execute).not.toHaveBeenCalled();
   });
 });

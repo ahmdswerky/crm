@@ -1,8 +1,9 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from 'typeorm/browser';
 
 @Entity('invoices')
 @Index(['invoicableType', 'invoicableId', 'type'], { unique: true })
-export class Invoice {
+export class Invoice extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

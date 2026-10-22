@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthController } from './health.controller';
 import { RedisHealthService } from './redis-health.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { CRM_AUTH_ENTITIES } from './modules/auth/entities';
 import { InvoiceModule } from './modules/invoice/invoice.module';
+import { CommonModule } from './common/common.module';
 
 const databaseModule =
   process.env.NODE_ENV === 'test'
@@ -44,8 +44,8 @@ const databaseModule =
       ];
 
 @Module({
-  imports: [...databaseModule, AuthModule, InvoiceModule],
-  controllers: [AppController, HealthController],
+  imports: [...databaseModule, AuthModule, InvoiceModule, CommonModule],
+  controllers: [HealthController],
   providers: [AppService, RedisHealthService],
 })
 export class AppModule {}

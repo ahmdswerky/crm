@@ -124,6 +124,10 @@ export class CrmAuthRepository {
             ModelHasPermissionEntity,
             'direct',
             'direct.permission_id = permission.id AND direct.model_id = :modelId AND direct.model_type = :modelType',
+            {
+              modelType: CRM_TOKENABLE_TYPE,
+              modelId: userId,
+            },
           )
           .leftJoin(
             ModelHasRoleEntity,

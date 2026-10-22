@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RabbitMQ invoice contract reference</title><link rel="stylesheet" href="../assets/lesson.css"><script defer src="../assets/highlight.js"></script></head>
+<body><main>
+<p class="eyebrow">Reference · current source reviewed 2026-09-22</p>
+<h1>Invoice command and result contract</h1>
+<p class="lede">A lookup sheet for the wire contract implemented in this repository—not a proposed architecture.</p>
+<div class="callout"><span class="badge verified">Verified</span>RabbitMQ imports topology from <code>docker/rabbitmq/topology.json</code>. The apps use this named topology; they do not declare it at runtime.</div>
+<h2>Broker map</h2>
+<table><thead><tr><th>Exchange</th><th>Routing key</th><th>Queue</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>payments.commands</code></td><td><code>invoice.generate</code></td><td><code>payments</code></td><td>CRM command to payment-server</td></tr>
+<tr><td><code>payments.commands.retry</code></td><td><code>invoice.generate</code></td><td><code>payments.retry</code></td><td>10-second delayed retry; it dead-letters back to commands</td></tr>
+<tr><td><code>payments.commands.dead</code></td><td><code>invoice.generate</code></td><td><code>payments.dead</code></td><td>Terminal command failures</td></tr>
+<tr><td><code>payments.events</code></td><td><code>invoice.completed</code> / <code>invoice.failed</code></td><td><code>crm.payment-events</code></td><td>Result to CRM</td></tr>
+<tr><td><code>payments.events.dead</code></td><td>same two keys</td><td><code>crm.payment-events.dead</code></td><td>CRM event-consumption failures</td></tr>
+</tbody></table>
+<p class="source">Source: <code>docker/rabbitmq/topology.json:L7-L27</code>; CRM config <code>crm-server/config/services.php:L38-L52</code>; payment config <code>payment-server/src/messaging/rabbitmq.service.ts:L19-L23</code>.</p>
+<h2>Example messages</h2>
+<h3><code>invoice.generate</code> — CRM → payment-server</h3>
+<pre>{"message_id":"b5c4224e-4fc0-46a9-bf68-50a972776b8f","correlation_id":"a65ef986-f2e3-463b-b1e6-ae37e4c0e6f7","type":"invoice.generate","version":1,"source":"crm","occurred_at":"2026-09-22T10:00:00+00:00","payload":{"invoicable_type":"deal","invoicable_id":42,"type":"deposit","value":"1250.00"}}</pre>
+<h3><code>invoice.completed</code> — payment-server → CRM</h3>
+<pre>{"event_id":"9e85b15e-6350-45bd-a323-194cf8a522f2","correlation_id":"a65ef986-f2e3-463b-b1e6-ae37e4c0e6f7","type":"invoice.completed","version":1,"source":"payments","occurred_at":"2026-09-22T10:00:01.000Z","payload":{"invoice_id":7,"status":"generated","message_id":"b5c4224e-4fc0-46a9-bf68-50a972776b8f"}}</pre>
+<h3><code>invoice.failed</code> — payment-server → CRM</h3>
+<pre>{"event_id":"5428e88b-5cce-4e30-844d-1579e2ccee2f","correlation_id":"a65ef986-f2e3-463b-b1e6-ae37e4c0e6f7","type":"invoice.failed","version":1,"source":"payments","occurred_at":"2026-09-22T10:00:01.000Z","payload":{"failure_code":"invalid_payload","failure_message":"Invalid invoice.generate payload"}}</pre>
+<p class="source">Validation sources: <code>payment-server/src/messaging/payment-command-codec.ts:L5-L40</code>; <code>crm-server/app/Services/Payments/PaymentEventCodec.php:L21-L104</code>.</p>
+<h2 id="plain-english-dictionary">Plain-English dictionary</h2>
+<table><thead><tr><th>Term</th><th>Meaning in this workflow</th></tr></thead><tbody>
+<tr><td>Message / event</td><td>A small JSON letter sent between programs. A command asks for work; an event reports an outcome.</td></tr>
+<tr><td>Producer / publisher</td><td>The sender: CRM publishes the command; payment-server publishes the result.</td></tr>
+<tr><td>Consumer</td><td>The receiver that opens the letter and does work.</td></tr>
+<tr><td>Exchange</td><td>RabbitMQ's sorting desk: it directs a message to one or more queues.</td></tr>
+<tr><td>Routing key</td><td>The address label, here an event type such as <code>invoice.generate</code>.</td></tr>
+<tr><td>Queue</td><td>The waiting tray where messages remain until a consumer handles them.</td></tr>
+<tr><td>Binding</td><td>The sorting rule connecting an exchange + routing key to a queue.</td></tr>
+<tr><td>Payload / envelope</td><td>Payload is business data; the envelope adds IDs, type, version, source, and time.</td></tr>
+<tr><td>Correlation ID</td><td>The return-address sticker: it links a result to CRM's original command.</td></tr>
+<tr><td>Acknowledgement (ack)</td><td>The consumer saying “I finished with this copy; RabbitMQ may remove it.”</td></tr>
+<tr><td>Retry</td><td>Another attempt after a temporary failure. This command path waits 10 seconds.</td></tr>
+<tr><td>Dead-letter queue (DLQ)</td><td>The problem tray where unprocessable messages are retained for investigation.</td></tr>
+<tr><td>Outbox</td><td>A database table holding an outgoing event until it is safely published.</td></tr>
+<tr><td>Inbox</td><td>A database table of received event IDs, used to ignore repeated deliveries.</td></tr>
+<tr><td>Idempotency</td><td>Doing an accidental repeat has the same lasting outcome as doing it once.</td></tr>
+<tr><td>Publisher confirm</td><td>RabbitMQ accepted the message. It does not mean the other service finished work.</td></tr>
+</tbody></table>
+<div class="callout bad"><span class="badge gap">Not implemented / not found</span>No card charge, gateway call, payment method, settlement, refund, or payment webhook was found in the reviewed source. An invoice with status <code>generated</code> is not evidence that money was collected.</div>
+</main></body></html>

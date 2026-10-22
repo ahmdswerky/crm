@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 
 const definitions = JSON.parse(
-  readFileSync('docker/rabbitmq/definitions.json', 'utf8'),
+  readFileSync('docker/rabbitmq/topology.json', 'utf8'),
 )
 const laravelConfig = readFileSync('crm-server/config/services.php', 'utf8')
 const laravelClient = readFileSync(

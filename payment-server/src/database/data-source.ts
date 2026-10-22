@@ -16,6 +16,5 @@ export default new DataSource({
   migrations: [join(__dirname, 'migrations', `*.${migrationExtension}`)],
   synchronize: false,
   migrationsRun: false,
-  retryAttempts: 1,
   connectTimeoutMS: 1000,
 });
