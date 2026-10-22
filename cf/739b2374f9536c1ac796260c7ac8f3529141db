@@ -1,0 +1,38 @@
+crm-server/database/migrations/2026_09_06_000001_add_country_code_to_leads_table.php
+  s_4e31f75b708b73::t_63f3ca1bb34b9c 13,20
+  s_4e31f75b708b73::t_4a27e0fd12d1cb 1-12,14-19,21-24
+crm-server/app/Models/Lead.php
+  s_4e31f75b708b73::t_4a27e0fd12d1cb 16
+crm-server/app/Http/Controllers/AnalyticsController.php
+  s_4e31f75b708b73::t_4a27e0fd12d1cb 72-76
+  s_4e31f75b708b73::t_d2f746a487d373 71
+crm-server/app/Services/OverviewAnalyticsService.php
+  s_4e31f75b708b73::t_c1c85e108e1c3a 172,180
+  s_4e31f75b708b73::t_dd1a03b7874d05 139,153
+  s_4e31f75b708b73::t_5a1a1ae4c98b85 141
+  s_4e31f75b708b73::t_23dbd353477d4a 171,173-175
+  s_4e31f75b708b73::t_4a27e0fd12d1cb 135-138,140,144,150,159-170,176-179,182-187,190
+  s_4e31f75b708b73::t_d4d192b70adf9c 146,181
+  s_4e31f75b708b73::t_32f715d8a804e6 142-143,145,147-149,151-152,154-158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cf739b2374f9536c1ac796260c7ac8f3529141db",
+  "prompts": {},
+  "humans": {
+    "h_aa9d2f4bca268e": {
+      "author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_4e31f75b708b73": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07460-332d-73b1-863a-249bcc92bd52",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
