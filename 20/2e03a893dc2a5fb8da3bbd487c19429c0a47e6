@@ -1,0 +1,42 @@
+docker-compose.dev.yml
+  s_ca50550ac0bde2::t_84906a67636ed7 418-419,427,429
+reference/rabbitmq-payment-contract.html
+  s_ce326c88954c1b::t_4b6c235ea496d3 2
+  s_ce326c88954c1b::t_52b967611bde1d 1,3-45
+payment-server/src/modules/invoice/invoice.service.ts
+  s_ca50550ac0bde2::t_202adf3b855d66 151,161
+  s_ca50550ac0bde2::t_fac86b45164a16 5,156,207
+  s_ca50550ac0bde2::t_5a3f52a58151e2 91-101,112-118,122-130,134-144,149-150,152-155,157-160,190-194,196-206,208-209
+  s_ca50550ac0bde2::t_7c00c8d6d9fccc 4
+  s_ca50550ac0bde2::t_06b711e0a1c919 162-164
+scripts/quality/validate-rabbitmq-topology.mjs
+  s_ca50550ac0bde2::t_66c454cb2458b9 4
+payment-server/src/modules/invoice/invoice.service.spec.ts
+  s_ca50550ac0bde2::t_d265783612db68 10-27,30-32,35-36,41,45,76-94,116,120,130,147-168,183-185
+docker-compose.yml
+  s_ca50550ac0bde2::t_84906a67636ed7 440
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "202e03a893dc2a5fb8da3bbd487c19429c0a47e6",
+  "prompts": {},
+  "sessions": {
+    "s_ca50550ac0bde2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bef9381d-eba5-4edf-882a-3f83e7742689",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_ce326c88954c1b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c673-f50c-73f3-a763-0c02150e6884",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
