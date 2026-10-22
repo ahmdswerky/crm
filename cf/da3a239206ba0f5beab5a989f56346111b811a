@@ -1,0 +1,159 @@
+dashboard/src/pages/overview/index.tsx
+  s_4e31f75b708b73::t_f174ac7ee04447 116-120,131-154,158,160,164,166-169,185,187
+  s_4e31f75b708b73::t_970370066e408c 8
+  s_4e31f75b708b73::t_23dbd353477d4a 3,28,36,100-111,128,130
+  s_4e31f75b708b73::t_1a36b9f0a5abb1 112-115,186
+dashboard/src/components/shadcnmaps/map-context.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-183
+dashboard/src/pages/overview/components/overview-refresh-button.tsx
+  s_4e31f75b708b73::t_11005654b74de3 1-14
+dashboard/src/components/shadcnmaps/map-marker.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-115
+dashboard/src/api/contracts.ts
+  s_4e31f75b708b73::t_23dbd353477d4a 50
+dashboard/src/api/generated/Analytics.ts
+  s_4e31f75b708b73::t_a0b408ccb632a2 534
+  s_4e31f75b708b73::t_f876136ad21a2a 517-533,535-568,833-838
+dashboard/src/pages/overview/components/sales-leaderboard.tsx
+  s_4e31f75b708b73::t_c84e07dd8763b2 5,11,15
+dashboard/src/pages/docs.tsx
+  s_e6c6bf84086ebc::t_a9de8629b8f434 60
+  s_e6c6bf84086ebc::t_a927f5ab99be6d 33,36-39,41,81-84
+  s_e6c6bf84086ebc::t_4dde9986f31da4 1-32,34-35,40,42-59,61-80
+dashboard/src/components/shadcnmaps/map-controls.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-246
+dashboard/src/pages/overview/components/overview-data-cards.tsx
+  s_4e31f75b708b73::t_cc01422ff11b0e 8,10,12-14,17-19,22-24,27-29,32-33,39-40
+dashboard/src/components/shadcnmaps/map-region.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-63,66-121
+  s_4e31f75b708b73::t_94b93c43209c49 64-65
+dashboard/src/components/shadcnmaps/map-listbox.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-194
+dashboard/src/components/shadcnmaps/map-tooltip.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-68
+dashboard/src/pages/overview/components/revenue-performance.tsx
+  s_4e31f75b708b73::t_c84e07dd8763b2 5,12,18
+dashboard/src/components/shared/app-shell.tsx
+  s_c0a118518b73cc::t_083e58aafa1174 263-276,278-281
+  s_c0a118518b73cc::t_a6a24548df933e 1
+  s_c0a118518b73cc::t_249996f0746c0e 243
+  s_e6c6bf84086ebc::t_623ef69bba7afb 44
+  s_c0a118518b73cc::t_fb50209b393418 277
+  s_e6c6bf84086ebc::t_874975fc323a97 45
+  s_e6c6bf84086ebc::t_7907b51e1a9a5f 112
+  s_e6c6bf84086ebc::t_7e64038e226139 244
+  s_c0a118518b73cc::t_a82968962d8aa3 282-284
+dashboard/src/components/shadcnmaps/types.ts
+  s_4e31f75b708b73::t_15d5477a857fd2 1-110
+dashboard/src/components/shadcnmaps/maps/world.tsx
+  s_4e31f75b708b73::t_ddb0929259cf85 8
+  s_4e31f75b708b73::t_15d5477a857fd2 1-7,9-12
+dashboard/src/pages/auth/login.tsx
+  s_e6c6bf84086ebc::t_4cd50a4c9277e3 3
+  s_e6c6bf84086ebc::t_341bff4fefabed 8
+  s_e6c6bf84086ebc::t_b92bc9b48b9def 147-148
+  s_e6c6bf84086ebc::t_97472f09389d28 77
+  s_e6c6bf84086ebc::t_fdc8c144dbccca 98-107
+  s_e6c6bf84086ebc::t_c1a06973e2f0c7 79-89
+  s_e6c6bf84086ebc::t_a5f94896bef424 151
+  s_e6c6bf84086ebc::t_5c1df0f512ff40 9
+  s_a9a4ce873bdd46::t_d5ccc6423ac139 76,78,150
+  s_a9a4ce873bdd46::t_2597653a806867 149
+dashboard/src/pages/overview/index.test.tsx
+  s_4e31f75b708b73::t_23dbd353477d4a 77,129-130,132-135,137
+  s_4e31f75b708b73::t_94b93c43209c49 53-55
+  s_4e31f75b708b73::t_843b2019a18b28 131
+  s_4e31f75b708b73::t_0c74a626ea4b5d 43-45
+  s_4e31f75b708b73::t_7f358641f35afb 47-50
+  s_4e31f75b708b73::t_fe7456ab5cca0d 41
+  s_4e31f75b708b73::t_5f6a1bcb77db0e 69
+  s_4e31f75b708b73::t_9122ec16e5aa05 46,51,66,116
+  s_4e31f75b708b73::t_96a4c1fb7147d7 136
+  s_4e31f75b708b73::t_07dab6b4f6a452 67-68,117
+  s_4e31f75b708b73::t_13ddfa1bd6c426 52
+  s_4e31f75b708b73::t_d08701205996ed 57
+  s_4e31f75b708b73::t_f92c0ccb3fd32c 56,58-65
+  s_4e31f75b708b73::t_47cbb71b17f8b0 81-84
+  s_4e31f75b708b73::t_970370066e408c 40,42
+dashboard/components.json
+  s_4e31f75b708b73::t_15d5477a857fd2 23-24
+dashboard/index.html
+  s_c0a118518b73cc::t_e64bda54c558ce 7
+dashboard/src/pages/overview/components/world-map-card.tsx
+  s_4e31f75b708b73::t_23dbd353477d4a 4,7-13,16-18,20,27,29-30,32-48
+  s_4e31f75b708b73::t_5f6a1bcb77db0e 106-113
+  s_4e31f75b708b73::t_f92c0ccb3fd32c 2,21,31
+  s_4e31f75b708b73::t_04dd009fa66590 55
+  s_4e31f75b708b73::t_0c74a626ea4b5d 50
+  s_4e31f75b708b73::t_32f715d8a804e6 23-24,26,28,93-95,97-99
+  s_4e31f75b708b73::t_7d3257293f1094 19,22,49,54
+  s_4e31f75b708b73::t_f9f09db598214d 63
+  s_4e31f75b708b73::t_459f7a30f27b92 25,96,100-105
+  s_4e31f75b708b73::t_970370066e408c 1,6,52,80-81,114
+  s_4e31f75b708b73::t_13ddfa1bd6c426 14-15,57-62,64-66,79
+  s_4e31f75b708b73::t_2aa879da4b5c8c 3,53,56,67-78,82-92
+  s_4e31f75b708b73::t_11005654b74de3 5,51
+dashboard/src/App.tsx
+  s_e6c6bf84086ebc::t_c32ee633b4f27c 99-101
+  s_e6c6bf84086ebc::t_67b4c9ace178c1 12
+dashboard/src/styles/globals.css
+  s_4e31f75b708b73::t_f9f09db598214d 210-216
+  s_4e31f75b708b73::t_15d5477a857fd2 42-51,87-96,138-147
+  s_4e31f75b708b73::t_7ab9a9768992de 217-218
+dashboard/src/components/shadcnmaps/map.tsx
+  s_4e31f75b708b73::t_15d5477a857fd2 1-622
+dashboard/src/components/shared/doc-links.tsx
+  s_e6c6bf84086ebc::t_d903c779e45f40 1-32
+dashboard/src/components/shadcnmaps/map-data/world.ts
+  s_4e31f75b708b73::t_15d5477a857fd2 1-1545
+dashboard/public/logo.svg
+  s_86c971a37d5b4b::t_a46040979a3409 1-543
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cfda3a239206ba0f5beab5a989f56346111b811a",
+  "prompts": {},
+  "sessions": {
+    "s_4e31f75b708b73": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07460-332d-73b1-863a-249bcc92bd52",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_86c971a37d5b4b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a16543-b43b-7b80-9d93-d313bb1a99d0",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_a9a4ce873bdd46": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1654f-5cfb-7a53-873b-4dd87ff5b24b",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_c0a118518b73cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "627fa53a-0cf7-4613-b25e-2ef23c975b8c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_e6c6bf84086ebc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1c794177-11f9-4080-956d-32a1da84c5c6",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
