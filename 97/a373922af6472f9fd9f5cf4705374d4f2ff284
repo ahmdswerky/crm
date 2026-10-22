@@ -1,0 +1,33 @@
+docs/openapi/Analytics.openapi.json
+  s_4e31f75b708b73::t_89fa917985cd3d 518-527,529-566,1085-1111
+  s_4e31f75b708b73::t_32f715d8a804e6 528
+  s_4e31f75b708b73::t_82ecab44f3cd97 1112
+crm-server/routes/api/v1/analytics.php
+  s_4e31f75b708b73::t_4a27e0fd12d1cb 15
+payment-server/src/modules/invoice/dto/list-invoice.dto.ts
+  s_ab95639b7de12f::t_3d3b8ca964d803 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "97a373922af6472f9fd9f5cf4705374d4f2ff284",
+  "prompts": {},
+  "sessions": {
+    "s_4e31f75b708b73": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a07460-332d-73b1-863a-249bcc92bd52",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_ab95639b7de12f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba92a6c3-2a9c-4640-b8ad-75b1766ebddc",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
