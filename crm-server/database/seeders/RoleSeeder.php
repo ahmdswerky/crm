@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use App\Models\User;
+use Spatie\Permission\Guard;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Guard;
@@ -17,8 +18,13 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+<<<<<<< HEAD:crm-server/database/seeders/RoleSeeder.php
         $guard = Guard::getDefaultName(User::class);
         echo $guard."\n";
+=======
+	$guard = Guard::getDefaultName(User::class);
+echo $guard . "\n";
+>>>>>>> origin/stage:server/database/seeders/RoleSeeder.php
         $manager = Role::firstOrCreate([
             'name' => 'manager',
             'guard_name' => $guard,
