@@ -12,6 +12,7 @@ Route::middleware('auth:sanctum')->prefix('analytics')->controller(AnalyticsCont
     Route::get('deals', 'deals');
     Route::get('accounts', 'accounts');
     Route::get('properties', 'properties');
+    Route::get('countries', 'countries');
     Route::get('reports', 'reports');
     Route::get('reports/{reportRun}', 'showReport');
     Route::get('reports/{reportRun}/download', 'downloadReport');
