@@ -1,0 +1,46 @@
+docker-compose.yml
+  s_749b422e455718::t_fb9106a5402796 3-6,8,19-20,43,81-82,110-111,144-146,183,206-207,255-256,277-278,297-298,324-325,351-352,369-370,382-383,415-416,437-438,460-461
+.env.docker.example
+  s_749b422e455718::t_2fb008f8c2cb44 4-7
+docs/issues/prod-compose-optimization/analytics-loadtest.sh
+  s_ab95639b7de12f::t_791d48b3b112bd 1-48
+docs/issues/prod-compose-optimization/plan.html
+  s_ab95639b7de12f::t_462abe6a32c0c6 1-527
+docs/issues/prod-compose-optimization/plan.md
+  s_ab95639b7de12f::t_462abe6a32c0c6 1-2,5-113
+  s_ab95639b7de12f::t_a4c82c60f583f5 3-4
+  s_ab95639b7de12f::t_cf79857bcd07e6 114
+crm-server/config/horizon.php
+  s_749b422e455718::t_fb9106a5402796 218
+docs/docker-operations.md
+  s_749b422e455718::t_2fb008f8c2cb44 408-409,411-423,428-430
+docker/dashboard/Dockerfile
+  s_ab95639b7de12f::t_d81a36f84a5c73 9-10
+  s_749b422e455718::t_fb9106a5402796 1,8,11-17
+.dockerignore
+  s_749b422e455718::t_fb9106a5402796 18-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bd8ea692e690fe4f14132da295b611270117becf",
+  "prompts": {},
+  "sessions": {
+    "s_749b422e455718": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1649a-3bb0-7313-ad8f-d25adb11050e",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_ab95639b7de12f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba92a6c3-2a9c-4640-b8ad-75b1766ebddc",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
