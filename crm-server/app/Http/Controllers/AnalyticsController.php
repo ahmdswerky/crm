@@ -69,6 +69,12 @@ class AnalyticsController extends Controller
     }
 
     #[Authorize('viewAny', ReportRun::class)]
+    public function countries()
+    {
+        return $this->overviewResponse(['countries' => $this->overviewAnalytics->countries()]);
+    }
+
+    #[Authorize('viewAny', ReportRun::class)]
     public function reports(AnalyticsReportIndexRequest $request)
     {
         $filters = $request->validated();

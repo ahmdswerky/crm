@@ -132,9 +132,62 @@ class OverviewAnalyticsService
             ->all());
     }
 
+    /** @return array<int, array{code: string, country: string, customer_count: int, percentage: int}> */
+    public function countries(): array
+    {
+        return $this->remember('countries', function (): array {
+            $countries = Lead::query()
+                ->qualified()
+                ->whereHas('contact')
+                ->whereNotNull('country_code')
+                ->selectRaw('country_code as code, COUNT(*) as customer_count')
+                ->groupBy('country_code')
+                ->orderByDesc('customer_count')
+                ->orderBy('country_code')
+                ->get()
+                ->map(static function ($row): array {
+                    $code = strtoupper((string) $row->code);
+
+                    return [
+                        'code' => $code,
+                        'country' => \Locale::getDisplayRegion("und-{$code}", 'en') ?: $code,
+                        'customer_count' => (int) $row->customer_count,
+                        'percentage' => 0,
+                    ];
+                })
+                ->all();
+
+            $total = array_sum(array_column($countries, 'customer_count'));
+            if ($total > 0) {
+                $fractions = [];
+                $assigned = 0;
+                foreach ($countries as $index => $entry) {
+                    $rawPercentage = $entry['customer_count'] / $total * 100;
+                    $countries[$index]['percentage'] = (int) floor($rawPercentage);
+                    $fractions[$index] = $rawPercentage - $countries[$index]['percentage'];
+                    $assigned += $countries[$index]['percentage'];
+                }
+
+                $rankedIndices = array_keys($fractions);
+                usort($rankedIndices, static fn (int $left, int $right): int => $fractions[$right] <=> $fractions[$left] ?: $left <=> $right
+                );
+
+                foreach (array_slice($rankedIndices, 0, 100 - $assigned) as $index) {
+                    $countries[$index]['percentage']++;
+                }
+            }
+
+            usort($countries, static fn (array $left, array $right): int => $right['customer_count'] <=> $left['customer_count']
+                ?: $left['code'] <=> $right['code']
+            );
+
+            return $countries;
+        });
+    }
+
     public function forgetAll(): void
     {
-        foreach (['metrics', 'customers', 'deals', 'accounts', 'properties'] as $key) {
+        foreach (['metrics', 'customers', 'deals', 'accounts', 'properties', 'countries'] as $key) {
             $this->cache()->forget($this->cacheKey($key));
         }
 

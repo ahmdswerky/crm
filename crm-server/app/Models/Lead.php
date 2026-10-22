@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'email', 'phone', 'status', 'city', 'address', 'company_name', 'source', 'assigned_agent_id'])]
+#[Fillable(['name', 'email', 'phone', 'status', 'city', 'country_code', 'address', 'company_name', 'source', 'assigned_agent_id'])]
 class Lead extends Model
 {
     use HasFactory, LogsCrmActivity, SoftDeletes;

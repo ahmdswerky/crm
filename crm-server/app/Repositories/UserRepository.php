@@ -70,7 +70,7 @@ class UserRepository implements UserRepositoryInterface
             ->where('email', $username)
             ->orWhere('username', $username)
             ->with($with)
-            ->firstOrFail();
+            ->first();
     }
 
     public function store(array $data): User

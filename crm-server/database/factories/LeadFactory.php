@@ -21,6 +21,9 @@ class LeadFactory extends Factory
     public function definition(): array
     {
         $startInDays = config('crm.seeds.period.start');
+        $countries = ['US', 'GB', 'EG', 'CA', 'DE', 'AU', 'EG', 'SA'];
+        $country = fake()->randomElement($countries);
+        $city = fake('en_'.$country)->city();
         $companies = [
             'Nike',
             'IKEA',
@@ -34,7 +37,8 @@ class LeadFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->unique()->e164PhoneNumber(),
             'status' => fake()->randomElement(LeadStatus::cases()),
-            'city' => fake()->city(),
+            'city' => $city,
+            'country_code' => $country,
             'address' => fake()->streetAddress(),
             'company_name' => fake()->randomElement($companies),
             'source' => fake()->randomElement(LeadSource::cases()),
