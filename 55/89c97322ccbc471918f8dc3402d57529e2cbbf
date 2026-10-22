@@ -1,0 +1,38 @@
+docker/rabbitmq/entrypoint.sh
+  s_ab95639b7de12f::t_4df70e39af1608 23-24,31-32
+  s_ca50550ac0bde2::t_f67a10b13edc3d 9,13-22,25-30,33-34
+  s_ca50550ac0bde2::t_229d73fc393b8b 35
+docker/rabbitmq/rabbitmq.conf
+  s_ab95639b7de12f::t_cf5c13e7e599be 4
+  s_ca50550ac0bde2::t_f67a10b13edc3d 1-3
+docker-compose.yml
+  s_ab95639b7de12f::t_58bcdb5d52e2c0 443-444
+docs/issues/prod-compose-optimization/plan.html
+  s_ab95639b7de12f::t_112ee46c92dd89 514
+docs/issues/prod-compose-optimization/plan.md
+  s_ab95639b7de12f::t_75686ef67e490d 114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5589c97322ccbc471918f8dc3402d57529e2cbbf",
+  "prompts": {},
+  "sessions": {
+    "s_ab95639b7de12f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba92a6c3-2a9c-4640-b8ad-75b1766ebddc",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_ca50550ac0bde2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bef9381d-eba5-4edf-882a-3f83e7742689",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
