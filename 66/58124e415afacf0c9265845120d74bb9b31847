@@ -1,0 +1,39 @@
+.dockerignore
+  s_ab95639b7de12f::t_a6b41771b8b8a9 18-24
+.env.docker.example
+  s_ab95639b7de12f::t_d0b57e3a47d6ba 4-7
+crm-server/config/horizon.php
+  s_ab95639b7de12f::t_53ca87ff65d9b3 218
+docker-compose.yml
+  s_ab95639b7de12f::t_85923e435877e0 3-6,8,19-20,43,81-82,110-111,144-146,183,206-207,255-256,277-278,297-298,324-325,351-352,369-370,382-383,415-416,437-438,443-444,462-463
+docker/dashboard/Dockerfile
+  s_ab95639b7de12f::t_8f704f902e3d57 1,8-17
+docker/rabbitmq/entrypoint.sh
+  s_ab95639b7de12f::t_47c0e2bba8fd03 9,13-35
+docker/rabbitmq/rabbitmq.conf
+  s_ab95639b7de12f::t_25e91894ab11f1 1-5
+docs/docker-operations.md
+  s_ab95639b7de12f::t_e4a6bae6b1b4b8 408-409,411-423,428-430
+docs/issues/prod-compose-optimization/analytics-loadtest.sh
+  s_ab95639b7de12f::t_688e52acdd4fb2 1-48
+docs/issues/prod-compose-optimization/plan.html
+  s_ab95639b7de12f::t_fcb64af8c820ae 1-527
+docs/issues/prod-compose-optimization/plan.md
+  s_ab95639b7de12f::t_02a25b569efbc5 1-114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6658124e415afacf0c9265845120d74bb9b31847",
+  "prompts": {},
+  "sessions": {
+    "s_ab95639b7de12f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba92a6c3-2a9c-4640-b8ad-75b1766ebddc",
+        "model": "unknown"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
