@@ -440,6 +440,8 @@ services:
     restart: unless-stopped
     entrypoint: ["/bin/sh", "/usr/local/bin/rabbitmq-entrypoint"]
     command: ["rabbitmq-server"]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
     environment:
       RABBITMQ_BOOTSTRAP_USER: ${RABBITMQ_USER:-crm}
       RABBITMQ_BOOTSTRAP_PASSWORD_FILE: /run/secrets/rabbitmq_password

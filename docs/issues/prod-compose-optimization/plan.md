@@ -111,4 +111,4 @@ podman image prune -f
 
 ## Out of scope (noticed, not touching)
 - **Warning:** `deploy.sh` runs `art migrate:fresh --seed` on the server, which wipes the CRM database on every deploy.
-- RabbitMQ definitions: `entrypoint.sh` now generates `/var/lib/rabbitmq/definitions.json` (bootstrap user + `topology.json`) at boot, and `rabbitmq.conf` loads it. The old duplicate `definitions.json` is deleted. The management plugin is unused in prod; switching to the plain `-alpine` image would need the `management.load_definitions` key changed to core `load_definitions`.
+- RabbitMQ definitions: `entrypoint.sh` now generates `/tmp/definitions.json` (bootstrap user + `topology.json`, tmpfs in production) at boot, and `rabbitmq.conf` loads it. The old duplicate `definitions.json` is deleted. The management plugin is unused in prod; switching to the plain `-alpine` image would need the `management.load_definitions` key changed to core `load_definitions`.

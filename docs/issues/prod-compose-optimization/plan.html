@@ -511,7 +511,7 @@ podman image prune -f</code></pre>
           <strong>Warning, not in this plan:</strong> <code>deploy.sh</code> runs <code>art migrate:fresh --seed</code> on the server. That wipes the CRM database on every deploy.
         </div>
         <div class="rounded-md border-l-4 border-amber-400 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Noticed, not touching: <code>rabbitmq.conf</code> loads <code>definitions.json</code>, but compose mounts only <code>topology.json</code>. The management plugin is unused in prod. Switching to the plain <code>-alpine</code> image would save RAM, but that config needs fixing first.
+          RabbitMQ definitions: <code>entrypoint.sh</code> generates <code>/tmp/definitions.json</code> (bootstrap user + <code>topology.json</code>) on a tmpfs at boot, and <code>rabbitmq.conf</code> loads it. The management plugin is unused in prod; the plain <code>-alpine</code> image would need core <code>load_definitions</code> instead of <code>management.load_definitions</code>.
         </div>
       </section>
 
