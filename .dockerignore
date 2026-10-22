@@ -15,3 +15,10 @@ crm-server/public/users.csv
 crm-server/public/users.xlsx
 dashboard/docs
 dashboard/scripts
+.secrets
+.worktrees
+.claude
+.gemini
+.agents
+api-testing
+dashboard/screenshots

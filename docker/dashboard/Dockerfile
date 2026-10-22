@@ -1,16 +1,20 @@
-FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS build
-WORKDIR /app
-COPY dashboard/package.json dashboard/package-lock.json ./
-RUN npm ci
-COPY dashboard/ .
+FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS erd
 # Committed schema snapshots → Liam ERD single-page apps served at /docs/db/<name>/.
 # Kept in step with scripts/quality/db-schema/config.mjs and dashboard/scripts/build-erd.mjs.
 COPY docs/db /docs/db
 RUN set -eu; \
     for schema in /docs/db/*/schema.sql; do \
       name="$(basename "$(dirname "$schema")")"; \
-      npx --yes @liam-hq/cli@0.7.24 erd build --input "$schema" --format postgres --output-dir "public/docs/db/$name"; \
-    done
+      npx --yes @liam-hq/cli@0.7.24 erd build --input "$schema" --format postgres --output-dir "/erd/$name"; \
+    done; \
+    rm -rf /root/.npm
+
+FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS build
+WORKDIR /app
+COPY dashboard/package.json dashboard/package-lock.json ./
+RUN npm ci
+COPY dashboard/ .
+COPY --from=erd /erd public/docs/db
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
