@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react"
 import { API_BASE_URL, apiJson } from "@/api/client"
-import type { OverviewAccount as OverviewAccountResponse, OverviewCustomer, OverviewDeal as OverviewDealResponse, OverviewLeaderboard, OverviewMetrics, OverviewProperty as OverviewPropertyResponse, OverviewRevenue } from "@/api/contracts"
+import type { OverviewAccount as OverviewAccountResponse, OverviewCountryDistribution, OverviewCustomer, OverviewDeal as OverviewDealResponse, OverviewLeaderboard, OverviewMetrics, OverviewProperty as OverviewPropertyResponse, OverviewRevenue } from "@/api/contracts"
 import { AccountCard, CustomerCard, DealCard, PropertyCard } from "./components/overview-data-cards"
 import { MetricTrendCard } from "./components/metric-trend-card"
 import { RevenuePerformance } from "./components/revenue-performance"
 import { SalesLeaderboard } from "./components/sales-leaderboard"
+import { WorldMapCard } from "./components/world-map-card"
 import type { Customer, LeaderboardEntry, Metric, OverviewAccount, OverviewDeal, OverviewProperty, OverviewRange, TrendPoint } from "./data"
 
 const overviewUrl = `${API_BASE_URL}/v1/analytics`
@@ -24,6 +25,7 @@ export function OverviewPage() {
   const [deals, setDeals] = useState<OverviewDeal[]>([])
   const [accounts, setAccounts] = useState<OverviewAccount[]>([])
   const [properties, setProperties] = useState<OverviewProperty[]>([])
+  const [countries, setCountries] = useState<OverviewCountryDistribution[]>([])
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [revenue, setRevenue] = useState<{ current: TrendPoint[]; previous: TrendPoint[] }>({ current: [], previous: [] })
   const [kpiLoading, setKpiLoading] = useState(true)
@@ -31,6 +33,7 @@ export function OverviewPage() {
   const [dealsLoading, setDealsLoading] = useState(true)
   const [accountsLoading, setAccountsLoading] = useState(true)
   const [propertiesLoading, setPropertiesLoading] = useState(true)
+  const [countriesLoading, setCountriesLoading] = useState(true)
   const [leaderboardLoading, setLeaderboardLoading] = useState(true)
   const [revenueLoading, setRevenueLoading] = useState(true)
 
@@ -94,6 +97,27 @@ export function OverviewPage() {
     }
   }, [])
 
+  const loadCountries = useCallback(async (signal?: AbortSignal) => {
+    setCountriesLoading(true)
+    try {
+      const { countries: response } = await apiJson<{ countries: OverviewCountryDistribution[] }>(`${overviewUrl}/countries`, { signal })
+      if (!signal?.aborted) setCountries(response)
+    } catch {
+      // Keep the card empty rather than substituting stale or fabricated values.
+    } finally {
+      if (!signal?.aborted) setCountriesLoading(false)
+    }
+  }, [])
+
+  const refreshCountries = useCallback(() => {
+    void loadCountries()
+  }, [loadCountries])
+
+  const refreshCustomers = useCallback(() => { void loadCustomers() }, [loadCustomers])
+  const refreshDeals = useCallback(() => { void loadDeals() }, [loadDeals])
+  const refreshAccounts = useCallback(() => { void loadAccounts() }, [loadAccounts])
+  const refreshProperties = useCallback(() => { void loadProperties() }, [loadProperties])
+
   useEffect(() => {
     const controller = new AbortController()
     void loadMetrics(controller.signal)
@@ -101,28 +125,48 @@ export function OverviewPage() {
     void loadDeals(controller.signal)
     void loadAccounts(controller.signal)
     void loadProperties(controller.signal)
+    void loadCountries(controller.signal)
     return () => controller.abort()
-  }, [loadAccounts, loadCustomers, loadDeals, loadMetrics, loadProperties])
+  }, [loadAccounts, loadCountries, loadCustomers, loadDeals, loadMetrics, loadProperties])
 
-  useEffect(() => {
-    const controller = new AbortController()
+  const loadLeaderboard = useCallback(async (range: OverviewRange, signal?: AbortSignal) => {
     setLeaderboardLoading(true)
-    void apiJson<{ leaderboard: OverviewLeaderboard }>(`${overviewUrl}/leaderboard?range=${leaderboardRange}`, { signal: controller.signal })
-      .then(({ leaderboard: response }) => { if (!controller.signal.aborted) setLeaderboard(response.data) })
-      .catch(() => undefined)
-      .finally(() => { if (!controller.signal.aborted) setLeaderboardLoading(false) })
-    return () => controller.abort()
-  }, [leaderboardRange])
+    try {
+      const { leaderboard: response } = await apiJson<{ leaderboard: OverviewLeaderboard }>(`${overviewUrl}/leaderboard?range=${range}`, { signal })
+      if (!signal?.aborted) setLeaderboard(response.data)
+    } catch {
+      // Keep the chart empty rather than substituting stale or fabricated values.
+    } finally {
+      if (!signal?.aborted) setLeaderboardLoading(false)
+    }
+  }, [])
+
+  const loadRevenue = useCallback(async (range: OverviewRange, signal?: AbortSignal) => {
+    setRevenueLoading(true)
+    try {
+      const { revenue: response } = await apiJson<{ revenue: OverviewRevenue }>(`${overviewUrl}/revenue?range=${range}`, { signal })
+      if (!signal?.aborted) setRevenue({ current: response.current, previous: response.previous })
+    } catch {
+      // Keep the chart empty rather than substituting stale or fabricated values.
+    } finally {
+      if (!signal?.aborted) setRevenueLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     const controller = new AbortController()
-    setRevenueLoading(true)
-    void apiJson<{ revenue: OverviewRevenue }>(`${overviewUrl}/revenue?range=${revenueRange}`, { signal: controller.signal })
-      .then(({ revenue: response }) => { if (!controller.signal.aborted) setRevenue({ current: response.current, previous: response.previous }) })
-      .catch(() => undefined)
-      .finally(() => { if (!controller.signal.aborted) setRevenueLoading(false) })
+    void loadLeaderboard(leaderboardRange, controller.signal)
     return () => controller.abort()
-  }, [revenueRange])
+  }, [leaderboardRange, loadLeaderboard])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    void loadRevenue(revenueRange, controller.signal)
+    return () => controller.abort()
+  }, [revenueRange, loadRevenue])
+
+  const refreshLeaderboard = useCallback(() => { void loadLeaderboard(leaderboardRange) }, [leaderboardRange, loadLeaderboard])
+  const refreshRevenue = useCallback(() => { void loadRevenue(revenueRange) }, [loadRevenue, revenueRange])
 
   const selectLeaderboardRange = useCallback((range: OverviewRange) => {
     if (range === leaderboardRange) return
@@ -138,8 +182,9 @@ export function OverviewPage() {
 
   return <main className="space-y-5 p-5 sm:p-6 lg:p-8">
     <section aria-label="Key metrics" className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-4">{metricDefinitions.map(({ key, label }) => <MetricTrendCard key={key} label={label} metric={metrics[label]} isLoading={kpiLoading} />)}</section>
-    <section aria-label="Performance charts" className="grid gap-5 xl:grid-cols-3"><RevenuePerformance range={revenueRange} current={revenue.current} previous={revenue.previous} isLoading={revenueLoading} onRangeChange={selectRevenueRange} /><SalesLeaderboard range={leaderboardRange} data={leaderboard} isLoading={leaderboardLoading} onRangeChange={selectLeaderboardRange} /></section>
-    <section aria-label="Record summaries" className="grid gap-5 xl:grid-cols-2"><CustomerCard data={customers} isLoading={customersLoading} /><DealCard data={deals} isLoading={dealsLoading} /><AccountCard data={accounts} isLoading={accountsLoading} /><PropertyCard data={properties} isLoading={propertiesLoading} /></section>
+    <section aria-label="Performance charts" className="grid gap-5 xl:grid-cols-3"><RevenuePerformance range={revenueRange} current={revenue.current} previous={revenue.previous} isLoading={revenueLoading} onRangeChange={selectRevenueRange} onRefresh={refreshRevenue} /><SalesLeaderboard range={leaderboardRange} data={leaderboard} isLoading={leaderboardLoading} onRangeChange={selectLeaderboardRange} onRefresh={refreshLeaderboard} /></section>
+    <WorldMapCard countries={countries} isLoading={countriesLoading} onRefresh={refreshCountries} />
+    <section aria-label="Record summaries" className="grid gap-5 xl:grid-cols-2"><CustomerCard data={customers} isLoading={customersLoading} onRefresh={refreshCustomers} /><DealCard data={deals} isLoading={dealsLoading} onRefresh={refreshDeals} /><AccountCard data={accounts} isLoading={accountsLoading} onRefresh={refreshAccounts} /><PropertyCard data={properties} isLoading={propertiesLoading} onRefresh={refreshProperties} /></section>
   </main>
 }
 

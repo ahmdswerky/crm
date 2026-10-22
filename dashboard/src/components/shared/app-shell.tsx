@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import {
   BarChart3,
@@ -41,6 +41,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { useAuth } from "@/auth/auth-provider"
 import { PersonAvatar } from "@/components/shared/person-avatar"
+import { DocLinks } from "@/components/shared/doc-links"
+import { version } from "../../../package.json"
 import { useTheme } from "@/components/theme-provider"
 
 type DashboardLanguage = "en" | "ar"
@@ -107,9 +109,7 @@ export function AppShell() {
       <Sidebar variant="sidebar" collapsible="icon">
         <SidebarHeader className="border-b border-sidebar-border">
           <div className="flex h-12 items-center gap-2 px-2">
-            <div className="grid size-7 place-items-center rounded-md bg-sidebar-primary text-white">
-              <Building2 className="size-4" aria-hidden="true" />
-            </div>
+            <img src="/logo.png" alt="" className="size-7 rounded-md object-cover" />
             <span className="truncate text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">CRM</span>
           </div>
         </SidebarHeader>
@@ -240,6 +240,8 @@ export function AppShell() {
           <SidebarTrigger className="-ms-1" />
           <Separator orientation="vertical" className="me-2 h-full" />
           <span className="text-sm text-muted-foreground">{pageLabel}</span>
+          <VersionIndicator />
+          <DocLinks />
         </header>
         <main className="min-w-0 flex-1"><Outlet /></main>
       </SidebarInset>
@@ -255,6 +257,28 @@ export function AppShell() {
         </CommandList>
       </CommandDialog>
     </SidebarProvider>
+  )
+}
+
+function VersionIndicator() {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [pinned, setPinned] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => setPinned(!entry.isIntersecting))
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return (
+    <>
+      <span ref={ref} className="ms-auto text-xs text-muted-foreground">v{version}</span>
+      {pinned && (
+        <span className="fixed bottom-0 end-0 z-50 rounded-ss-md border-s border-t border-border bg-background px-2 py-1 text-xs text-muted-foreground">
+          v{version}
+        </span>
+      )}
+    </>
   )
 }
 

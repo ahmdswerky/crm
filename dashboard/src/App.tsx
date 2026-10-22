@@ -9,6 +9,7 @@ const OverviewPage = lazy(() => import("@/pages/overview").then(({ OverviewPage 
 const ReportsPage = lazy(() => import("@/pages/reports").then(({ ReportsPage }) => ({ default: ReportsPage })))
 const InvoicesPage = lazy(() => import("@/pages/invoices").then(({ InvoicesPage }) => ({ default: InvoicesPage })))
 const ApiDocsPage = lazy(() => import("@/pages/api-docs").then(({ ApiDocsPage }) => ({ default: ApiDocsPage })))
+const DocsPage = lazy(() => import("@/pages/docs").then(({ DocsPage }) => ({ default: DocsPage })))
 const ReportDetailsPage = lazy(() => import("@/pages/reports/details").then(({ ReportDetailsPage }) => ({ default: ReportDetailsPage })))
 const LeadsKanbanPage = lazy(() => import("@/pages/leads").then(({ LeadsKanbanPage }) => ({ default: LeadsKanbanPage })))
 const LeadDetailsPage = lazy(() => import("@/pages/leads/details").then(({ LeadDetailsPage }) => ({ default: LeadDetailsPage })))
@@ -95,9 +96,9 @@ function AuthenticatedApp() {
 function AppRoutes() {
   const location = useLocation()
 
-  return location.pathname === "/api-docs"
-    ? <LazyRoute><ApiDocsPage /></LazyRoute>
-    : <AuthenticatedApp />
+  if (location.pathname === "/api-docs") return <LazyRoute><ApiDocsPage /></LazyRoute>
+  if (location.pathname === "/docs") return <LazyRoute><DocsPage /></LazyRoute>
+  return <AuthenticatedApp />
 }
 
 export default function App() {

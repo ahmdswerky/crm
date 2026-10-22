@@ -20,7 +20,8 @@
   },
   "registries": {
     "@reui": "https://reui.io/r/{style}/{name}.json",
-    "@evilcharts": "https://evilcharts.com/r/{name}.json"
+    "@evilcharts": "https://evilcharts.com/r/{name}.json",
+    "@shadcnmaps": "https://shadcnmaps.com/r/{name}.json"
   },
   "iconLibrary": "lucide"
 }

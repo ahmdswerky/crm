@@ -37,6 +37,36 @@ describe("OverviewPage", () => {
     await waitFor(() => expect(screen.getAllByText("API customer")).not.toHaveLength(0))
     expect(screen.getAllByText("API property")).not.toHaveLength(0)
     expect(screen.getByText("API account")).toBeInTheDocument()
+    expect(screen.getByTestId("world-map-card")).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByTestId("world-map-card")).toHaveAttribute("aria-busy", "false"))
+    expect(screen.getByRole("group", { name: "World map" })).toBeInTheDocument()
+    expect(screen.queryByText("100% total")).not.toBeInTheDocument()
+    expect(screen.queryByText("Country distribution")).not.toBeInTheDocument()
+    expect(screen.queryByText("Share")).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Refresh customer growth data" })).toBeEnabled()
+    for (const label of ["Refresh revenue", "Refresh sales leaderboard", "Refresh customers", "Refresh deals", "Refresh accounts", "Refresh properties"]) {
+      expect(screen.getByRole("button", { name: label })).toBeEnabled()
+    }
+    expect(screen.queryByRole("button", { name: "Refresh New Leads" })).not.toBeInTheDocument()
+    expect(screen.getByRole("list", { name: "Customer distribution" })).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "Zoom in" })).not.toBeInTheDocument()
+    const mapRegions = [...document.querySelectorAll('[data-slot="map-region"]')]
+    expect(mapRegions.length).toBeGreaterThan(0)
+    expect(mapRegions.every((region) => region.classList.contains("stroke-0"))).toBe(true)
+    expect(mapRegions.filter((region) => region.classList.contains("fill-primary"))).toHaveLength(6)
+    expect(mapRegions.some((region) => region.classList.contains("fill-primary/25"))).toBe(true)
+    expect([...document.querySelectorAll('[data-slot="map-region-label"]')].map((label) => label.textContent)).toEqual(expect.arrayContaining([
+      "United States",
+      "United Kingdom",
+      "Egypt",
+      "Canada",
+      "Germany",
+      "Australia",
+    ]))
+    const countryList = screen.getByRole("list", { name: "Customer distribution" })
+    expect(countryList).toHaveTextContent("Japan")
+    expect(countryList.querySelectorAll("li")).toHaveLength(7)
+    expect(document.querySelectorAll('[data-slot="map-marker"]')).toHaveLength(6)
     expect(screen.getByRole("img", { name: "Sales leaderboard by month" })).toHaveAttribute("aria-busy", "false")
     expect(apiJsonMock).toHaveBeenCalledWith("http://api.test/api/v1/analytics/metrics", expect.objectContaining({ signal: expect.any(AbortSignal) }))
     expect(apiJsonMock.mock.calls.map(([url]) => url)).toEqual(expect.arrayContaining([
@@ -44,9 +74,14 @@ describe("OverviewPage", () => {
       "http://api.test/api/v1/analytics/deals",
       "http://api.test/api/v1/analytics/accounts",
       "http://api.test/api/v1/analytics/properties",
+      "http://api.test/api/v1/analytics/countries",
       "http://api.test/api/v1/analytics/leaderboard?range=month",
       "http://api.test/api/v1/analytics/revenue?range=month",
     ]))
+    apiJsonMock.mockClear()
+    await userEvent.click(screen.getByRole("button", { name: "Refresh customer growth data" }))
+    await waitFor(() => expect(apiJsonMock).toHaveBeenCalledWith("http://api.test/api/v1/analytics/countries", expect.anything()))
+    expect(apiJsonMock).toHaveBeenCalledTimes(1)
   })
 
   it("reloads only the changed chart range", async () => {
@@ -78,6 +113,8 @@ describe("OverviewPage", () => {
     expect(screen.getAllByTestId("area-chart").every((chart) => chart.dataset.loading === "true")).toBe(true)
     expect(screen.getByTestId("line-chart")).toHaveAttribute("data-loading", "true")
     expect(screen.getByTestId("bar-chart")).toHaveAttribute("data-loading", "true")
+    expect(screen.getByRole("list", { name: "Customer distribution" })).toHaveAttribute("aria-busy", "true")
+    expect(screen.getAllByTestId("country-skeleton-row")).toHaveLength(5)
   })
 })
 
@@ -89,6 +126,15 @@ function responseFor(url: string) {
   if (url.endsWith("/deals")) return { deals: [{ id: 1, name: "API property", customer: "API customer", deal_value: 1000, status: "inquiry" }] }
   if (url.endsWith("/accounts")) return { accounts: [{ id: 1, name: "API account", logo: null, industry: "API industry", leads_count: 1 }] }
   if (url.endsWith("/properties")) return { properties: [{ id: 1, name: "API property", status: "showing", price: 1000 }] }
+  if (url.endsWith("/countries")) return { countries: [
+    { code: "US", country: "United States", customer_count: 28, percentage: 28 },
+    { code: "UK", country: "United Kingdom", customer_count: 20, percentage: 20 },
+    { code: "EG", country: "Egypt", customer_count: 18, percentage: 18 },
+    { code: "CA", country: "Canada", customer_count: 14, percentage: 14 },
+    { code: "DE", country: "Germany", customer_count: 12, percentage: 12 },
+    { code: "AU", country: "Australia", customer_count: 8, percentage: 8 },
+    { code: "JP", country: "Japan", customer_count: 7, percentage: 7 },
+  ] }
   throw new Error(`Unhandled request ${url}`)
 }
 
