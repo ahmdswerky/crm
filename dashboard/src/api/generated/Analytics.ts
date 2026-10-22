@@ -514,6 +514,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/countries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Customer distribution by country */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Qualified customer distribution for every country represented by leads with contacts */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "countries": [
+                         *         {
+                         *           "code": "US",
+                         *           "country": "United States",
+                         *           "customer_count": 28,
+                         *           "percentage": 28
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": {
+                            countries: components["schemas"]["OverviewCountryDistribution"][];
+                        };
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/reports": {
         parameters: {
             query?: never;
@@ -777,6 +829,12 @@ export interface components {
             name: string;
             status: string | null;
             price: number;
+        };
+        OverviewCountryDistribution: {
+            code: string;
+            country: string;
+            customer_count: number;
+            percentage: number;
         };
         ReportSummary: {
             new_leads?: number;

@@ -39,6 +39,16 @@
   --sidebar-accent-foreground: oklch(0.36 0.09 230);
   --sidebar-border: oklch(0.86 0.006 230);
   --sidebar-ring: oklch(0.48 0.105 230);
+  --map-region: oklch(44.3% 0.11 240.79);
+  --map-region-hover: oklch(50% 0.134 242.748);
+  --map-region-selected: oklch(39.1% 0.09 240.875);
+  --map-region-disabled: oklch(55.4% 0.046 257.417);
+  --map-region-stroke: oklch(28.2% 0.091 267.935);
+  --map-region-stroke-hover: oklch(28.2% 0.091 267.935);
+  --map-region-focus-ring: oklch(70.7% 0.165 254.624);
+  --map-label: oklch(100% 0 0);
+  --map-label-hover: oklch(100% 0 0);
+  --map-label-selected: oklch(100% 0 0);
 }
 
 .dark {
@@ -74,6 +84,16 @@
   --sidebar-accent-foreground: oklch(0.92 0.006 230);
   --sidebar-border: oklch(0.31 0.008 230);
   --sidebar-ring: oklch(0.68 0.09 230);
+  --map-region: oklch(44.3% 0.11 240.79);
+  --map-region-hover: oklch(50% 0.134 242.748);
+  --map-region-selected: oklch(39.1% 0.09 240.875);
+  --map-region-disabled: oklch(55.4% 0.046 257.417);
+  --map-region-stroke: oklch(28.2% 0.091 267.935);
+  --map-region-stroke-hover: oklch(28.2% 0.091 267.935);
+  --map-region-focus-ring: oklch(70.7% 0.165 254.624);
+  --map-label: oklch(100% 0 0);
+  --map-label-hover: oklch(100% 0 0);
+  --map-label-selected: oklch(100% 0 0);
 }
 
 @theme inline {
@@ -115,6 +135,16 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-map-label-selected: var(--map-label-selected);
+  --color-map-label-hover: var(--map-label-hover);
+  --color-map-label: var(--map-label);
+  --color-map-region-focus-ring: var(--map-region-focus-ring);
+  --color-map-region-stroke-hover: var(--map-region-stroke-hover);
+  --color-map-region-stroke: var(--map-region-stroke);
+  --color-map-region-disabled: var(--map-region-disabled);
+  --color-map-region-selected: var(--map-region-selected);
+  --color-map-region-hover: var(--map-region-hover);
+  --color-map-region: var(--map-region);
 }
 
 @layer base {
@@ -174,6 +204,15 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@keyframes country-share-bar-grow {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--country-share);
   }
 }
 

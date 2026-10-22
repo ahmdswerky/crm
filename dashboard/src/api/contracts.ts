@@ -47,5 +47,6 @@ export type OverviewCustomer = AnalyticsComponents["schemas"]["OverviewCustomer"
 export type OverviewDeal = AnalyticsComponents["schemas"]["OverviewDeal"]
 export type OverviewAccount = AnalyticsComponents["schemas"]["OverviewAccount"]
 export type OverviewProperty = AnalyticsComponents["schemas"]["OverviewProperty"]
+export type OverviewCountryDistribution = AnalyticsComponents["schemas"]["OverviewCountryDistribution"]
 export type ReportRun = AnalyticsComponents["schemas"]["ReportRun"]
 export type ReportRunDetail = AnalyticsComponents["schemas"]["ReportRunDetail"]

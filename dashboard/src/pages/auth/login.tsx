@@ -1,11 +1,12 @@
 import { FormEvent, useEffect, useState } from "react"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
-import { BriefcaseBusiness, ShieldCheck, UserRound } from "lucide-react"
-import welcomeImage from "@/assets/illustrations/welcome.png"
+import { BriefcaseBusiness, Info, ShieldCheck, UserRound } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { DocLinks } from "@/components/shared/doc-links"
+import { version } from "../../../package.json"
 import { useAuth } from "@/auth/auth-provider"
 import { apiJson, API_BASE_URL } from "@/api/client"
 import type { LoginUser } from "@/api/contracts"
@@ -72,13 +73,20 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center gap-4 bg-muted p-6 md:p-10">
-      <div className="grid w-full max-w-sm overflow-hidden rounded-xl border border-border bg-card shadow-sm md:max-w-4xl md:grid-cols-2">
-        <section className="p-6 md:p-8">
-          <form onSubmit={submit} className="flex flex-col gap-6">
-            <div className="flex flex-col items-center gap-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-            </div>
+    <main className="relative grid min-h-svh grid-rows-[minmax(4.5rem,1fr)_auto_minmax(4.5rem,1fr)] justify-items-center bg-muted px-6 md:px-10">
+      <DocLinks className="absolute end-6 top-6" />
+      <div className="relative row-start-2 w-full max-w-sm">
+        <img
+          src="/logo.png"
+          alt="CRM"
+          className="absolute -top-9 left-1/2 size-16 -translate-x-1/2 rounded-2xl border border-border bg-card object-cover p-1.5 shadow-sm"
+        />
+        <div className="w-full overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <section className="px-6 pb-6 pt-12 md:px-8 md:pb-8">
+            <form onSubmit={submit} className="flex flex-col gap-6">
+              <div className="flex flex-col items-center gap-2 text-center">
+                <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+              </div>
             <div className="grid gap-5">
               <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>
@@ -87,7 +95,16 @@ export function LoginPage() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <Button type="button" variant="link" size="sm" className="ms-auto h-auto px-0 text-xs" disabled>Forgot your password?</Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button type="button" aria-label="Forgot your password?" className="ms-auto text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full">
+                        <Info className="size-4" aria-hidden="true" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-56 text-center">
+                      Forgot your password? A manager or super admin can set a new one for your account.
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 <Input id="password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
               </div>
@@ -127,14 +144,11 @@ export function LoginPage() {
               )}
             </section>
           </form>
-        </section>
-        <aside className="relative hidden min-h-full overflow-hidden bg-muted md:block" aria-label="Real-estate city illustration">
-        <img
-          src={welcomeImage}
-          alt="Illustrated city of connected real-estate buildings"
-          className="absolute start-1/2 top-1/2 w-4/5 max-w-[32rem] -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_28px_56px_rgb(15_23_42_/_0.2)] dark:drop-shadow-[0_28px_56px_rgb(0_0_0_/_0.35)]"
-        />
-        </aside>
+          </section>
+        </div>
+      </div>
+      <div className="pointer-events-none row-start-3 flex items-center justify-center">
+        <span className="text-xs text-muted-foreground">v{version}</span>
       </div>
     </main>
   )

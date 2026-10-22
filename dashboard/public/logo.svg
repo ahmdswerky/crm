@@ -1,0 +1,543 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254" width="1254" height="1254" version="1.1" role="img" aria-labelledby="logo-title logo-description">
+  <title id="logo-title">Emerald crystal skyline</title>
+  <desc id="logo-description">Editable geometric vector reconstruction of the supplied emerald gemstone and building logo. Transparent background; individually named polygon facets and linear gradients; no embedded raster artwork.</desc>
+  <defs>
+    <clipPath id="silhouette">
+      <polygon points="627,117 745,224 746,341 793,299 927,421 1081,606 927,792 627,1087 327,791 172,606 327,420 460,299 508,341 508,224" />
+    </clipPath>
+    <linearGradient id="crown-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="517.72" y1="206.04" x2="518.28" y2="340.96">
+      <stop offset="0.00" stop-color="#08996b" />
+      <stop offset="0.25" stop-color="#16a677" />
+      <stop offset="0.50" stop-color="#3dbd8e" />
+      <stop offset="0.75" stop-color="#66d2a5" />
+      <stop offset="1.00" stop-color="#79dbb0" />
+    </linearGradient>
+    <linearGradient id="crown-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="587.34" y1="212.37" x2="498.38" y2="288.30">
+      <stop offset="0.00" stop-color="#42cb99" />
+      <stop offset="0.25" stop-color="#4bcc9c" />
+      <stop offset="0.50" stop-color="#5dd1a3" />
+      <stop offset="0.75" stop-color="#6fd7ab" />
+      <stop offset="1.00" stop-color="#7bdcb1" />
+    </linearGradient>
+    <linearGradient id="crown-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="646.39" y1="131.38" x2="537.21" y2="278.58">
+      <stop offset="0.00" stop-color="#026348" />
+      <stop offset="0.25" stop-color="#026c4f" />
+      <stop offset="0.50" stop-color="#077d5c" />
+      <stop offset="0.75" stop-color="#19946e" />
+      <stop offset="1.00" stop-color="#31aa80" />
+    </linearGradient>
+    <linearGradient id="crown-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="708.88" y1="188.73" x2="644.15" y2="249.37">
+      <stop offset="0.00" stop-color="#adefd8" />
+      <stop offset="0.25" stop-color="#b9f2e0" />
+      <stop offset="0.50" stop-color="#ccf6ea" />
+      <stop offset="0.75" stop-color="#def9f2" />
+      <stop offset="1.00" stop-color="#e8fbf5" />
+    </linearGradient>
+    <linearGradient id="crown-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="765.70" y1="245.66" x2="706.81" y2="301.92">
+      <stop offset="0.00" stop-color="#5cd6ab" />
+      <stop offset="0.25" stop-color="#6edcb5" />
+      <stop offset="0.50" stop-color="#99e9cb" />
+      <stop offset="0.75" stop-color="#c5f4e2" />
+      <stop offset="1.00" stop-color="#d8f8ec" />
+    </linearGradient>
+    <linearGradient id="left-roof-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="236.33" y1="486.04" x2="274.93" y2="539.04">
+      <stop offset="0.00" stop-color="#018860" />
+      <stop offset="0.25" stop-color="#01825c" />
+      <stop offset="0.50" stop-color="#016f4f" />
+      <stop offset="0.75" stop-color="#016648" />
+      <stop offset="1.00" stop-color="#017653" />
+    </linearGradient>
+    <linearGradient id="left-roof-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="353.46" y1="481.40" x2="164.42" y2="562.88">
+      <stop offset="0.00" stop-color="#015f45" />
+      <stop offset="0.25" stop-color="#016c4f" />
+      <stop offset="0.50" stop-color="#038d68" />
+      <stop offset="0.75" stop-color="#11b88a" />
+      <stop offset="1.00" stop-color="#29cf9d" />
+    </linearGradient>
+    <linearGradient id="left-roof-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="343.18" y1="370.39" x2="427.73" y2="397.96">
+      <stop offset="0.00" stop-color="#40c79c" />
+      <stop offset="0.25" stop-color="#4ecda2" />
+      <stop offset="0.50" stop-color="#61d6ab" />
+      <stop offset="0.75" stop-color="#70dcb3" />
+      <stop offset="1.00" stop-color="#77dfb7" />
+    </linearGradient>
+    <linearGradient id="left-roof-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="322.72" y1="446.13" x2="379.09" y2="455.37">
+      <stop offset="0.00" stop-color="#1cb187" />
+      <stop offset="0.25" stop-color="#29b98f" />
+      <stop offset="0.50" stop-color="#3cc399" />
+      <stop offset="0.75" stop-color="#56d0a7" />
+      <stop offset="1.00" stop-color="#66d8af" />
+    </linearGradient>
+    <linearGradient id="left-roof-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="397.90" y1="374.13" x2="452.33" y2="403.51">
+      <stop offset="0.00" stop-color="#c2f3e1" />
+      <stop offset="0.25" stop-color="#caf5e5" />
+      <stop offset="0.50" stop-color="#d3f7ea" />
+      <stop offset="0.75" stop-color="#dcf9ee" />
+      <stop offset="1.00" stop-color="#e1fbf1" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="504.25" y1="330.44" x2="463.51" y2="387.79">
+      <stop offset="0.00" stop-color="#026145" />
+      <stop offset="0.25" stop-color="#026a4b" />
+      <stop offset="0.50" stop-color="#026347" />
+      <stop offset="0.75" stop-color="#02563e" />
+      <stop offset="1.00" stop-color="#02513b" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="557.05" y1="484.26" x2="395.79" y2="595.25">
+      <stop offset="0.00" stop-color="#024331" />
+      <stop offset="0.25" stop-color="#014130" />
+      <stop offset="0.50" stop-color="#024633" />
+      <stop offset="0.75" stop-color="#04553d" />
+      <stop offset="1.00" stop-color="#0a6749" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="523.74" y1="664.99" x2="462.96" y2="738.62">
+      <stop offset="0.00" stop-color="#035139" />
+      <stop offset="0.25" stop-color="#055a3f" />
+      <stop offset="0.50" stop-color="#0b694a" />
+      <stop offset="0.75" stop-color="#147b57" />
+      <stop offset="1.00" stop-color="#1b8660" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="367.24" y1="460.46" x2="343.33" y2="627.02">
+      <stop offset="0.00" stop-color="#02684d" />
+      <stop offset="0.25" stop-color="#047255" />
+      <stop offset="0.50" stop-color="#0f8967" />
+      <stop offset="0.75" stop-color="#27a880" />
+      <stop offset="1.00" stop-color="#3bba90" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="371.94" y1="450.26" x2="465.92" y2="591.49">
+      <stop offset="0.00" stop-color="#3fba92" />
+      <stop offset="0.25" stop-color="#44bf97" />
+      <stop offset="0.50" stop-color="#58cba2" />
+      <stop offset="0.75" stop-color="#7ad9b5" />
+      <stop offset="1.00" stop-color="#94e3c2" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-06-gradient" gradientUnits="userSpaceOnUse" x1="364.64" y1="626.73" x2="342.46" y2="682.99">
+      <stop offset="0.00" stop-color="#75d9b1" />
+      <stop offset="0.25" stop-color="#7bdcb5" />
+      <stop offset="0.50" stop-color="#8ce2be" />
+      <stop offset="0.75" stop-color="#a0e9ca" />
+      <stop offset="1.00" stop-color="#a9edd0" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-07-gradient" gradientUnits="userSpaceOnUse" x1="410.66" y1="582.55" x2="423.65" y2="669.15">
+      <stop offset="0.00" stop-color="#a8ebce" />
+      <stop offset="0.25" stop-color="#abeccf" />
+      <stop offset="0.50" stop-color="#b4eed4" />
+      <stop offset="0.75" stop-color="#bdf1d9" />
+      <stop offset="1.00" stop-color="#c4f3dd" />
+    </linearGradient>
+    <linearGradient id="left-building-facet-08-gradient" gradientUnits="userSpaceOnUse" x1="439.16" y1="604.15" x2="422.48" y2="731.97">
+      <stop offset="0.00" stop-color="#88e1bc" />
+      <stop offset="0.25" stop-color="#92e5c2" />
+      <stop offset="0.50" stop-color="#abedd0" />
+      <stop offset="0.75" stop-color="#c4f3dd" />
+      <stop offset="1.00" stop-color="#d1f7e4" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="568.59" y1="334.13" x2="510.25" y2="349.53">
+      <stop offset="0.00" stop-color="#078f68" />
+      <stop offset="0.25" stop-color="#0e986f" />
+      <stop offset="0.50" stop-color="#1ba479" />
+      <stop offset="0.75" stop-color="#31b589" />
+      <stop offset="1.00" stop-color="#45c496" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="625.32" y1="325.64" x2="545.46" y2="355.83">
+      <stop offset="0.00" stop-color="#013f2e" />
+      <stop offset="0.25" stop-color="#014432" />
+      <stop offset="0.50" stop-color="#014c37" />
+      <stop offset="0.75" stop-color="#01543d" />
+      <stop offset="1.00" stop-color="#015b41" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="585.70" y1="341.26" x2="644.10" y2="350.37">
+      <stop offset="0.00" stop-color="#01392a" />
+      <stop offset="0.25" stop-color="#013728" />
+      <stop offset="0.50" stop-color="#013526" />
+      <stop offset="0.75" stop-color="#013224" />
+      <stop offset="1.00" stop-color="#023023" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="464.78" y1="476.75" x2="587.94" y2="515.96">
+      <stop offset="0.00" stop-color="#b3edd3" />
+      <stop offset="0.25" stop-color="#a4e7c8" />
+      <stop offset="0.50" stop-color="#87dbb5" />
+      <stop offset="0.75" stop-color="#66cba1" />
+      <stop offset="1.00" stop-color="#53c096" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="531.86" y1="489.85" x2="615.46" y2="511.52">
+      <stop offset="0.00" stop-color="#299d75" />
+      <stop offset="0.25" stop-color="#21946e" />
+      <stop offset="0.50" stop-color="#1b8a66" />
+      <stop offset="0.75" stop-color="#178561" />
+      <stop offset="1.00" stop-color="#16825f" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-06-gradient" gradientUnits="userSpaceOnUse" x1="589.29" y1="501.71" x2="633.15" y2="507.82">
+      <stop offset="0.00" stop-color="#013829" />
+      <stop offset="0.25" stop-color="#013728" />
+      <stop offset="0.50" stop-color="#013627" />
+      <stop offset="0.75" stop-color="#013627" />
+      <stop offset="1.00" stop-color="#013426" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-07-gradient" gradientUnits="userSpaceOnUse" x1="561.31" y1="700.15" x2="505.95" y2="702.18">
+      <stop offset="0.00" stop-color="#138662" />
+      <stop offset="0.25" stop-color="#148863" />
+      <stop offset="0.50" stop-color="#178b67" />
+      <stop offset="0.75" stop-color="#1c916c" />
+      <stop offset="1.00" stop-color="#259a74" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-08-gradient" gradientUnits="userSpaceOnUse" x1="649.35" y1="634.58" x2="522.39" y2="741.86">
+      <stop offset="0.00" stop-color="#015a40" />
+      <stop offset="0.25" stop-color="#015940" />
+      <stop offset="0.50" stop-color="#01573f" />
+      <stop offset="0.75" stop-color="#016248" />
+      <stop offset="1.00" stop-color="#027051" />
+    </linearGradient>
+    <linearGradient id="central-left-facet-09-gradient" gradientUnits="userSpaceOnUse" x1="633.75" y1="553.02" x2="594.05" y2="815.01">
+      <stop offset="0.00" stop-color="#012c20" />
+      <stop offset="0.25" stop-color="#012e22" />
+      <stop offset="0.50" stop-color="#013929" />
+      <stop offset="0.75" stop-color="#01523b" />
+      <stop offset="1.00" stop-color="#01674a" />
+    </linearGradient>
+    <linearGradient id="central-right-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="568.86" y1="306.34" x2="738.44" y2="433.26">
+      <stop offset="0.00" stop-color="#6ed9ad" />
+      <stop offset="0.25" stop-color="#61d4a6" />
+      <stop offset="0.50" stop-color="#4acb9c" />
+      <stop offset="0.75" stop-color="#33c292" />
+      <stop offset="1.00" stop-color="#25bc8d" />
+    </linearGradient>
+    <linearGradient id="central-right-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="646.57" y1="300.33" x2="782.47" y2="555.58">
+      <stop offset="0.00" stop-color="#ccf6e4" />
+      <stop offset="0.25" stop-color="#c4f4e0" />
+      <stop offset="0.50" stop-color="#b3efd6" />
+      <stop offset="0.75" stop-color="#a0eacb" />
+      <stop offset="1.00" stop-color="#93e6c5" />
+    </linearGradient>
+    <linearGradient id="central-right-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="617.43" y1="643.93" x2="688.51" y2="647.62">
+      <stop offset="0.00" stop-color="#168b67" />
+      <stop offset="0.25" stop-color="#077354" />
+      <stop offset="0.50" stop-color="#02664a" />
+      <stop offset="0.75" stop-color="#016347" />
+      <stop offset="1.00" stop-color="#016247" />
+    </linearGradient>
+    <linearGradient id="central-right-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="629.74" y1="547.43" x2="770.80" y2="740.62">
+      <stop offset="0.00" stop-color="#37bf94" />
+      <stop offset="0.25" stop-color="#24b389" />
+      <stop offset="0.50" stop-color="#0d9f79" />
+      <stop offset="0.75" stop-color="#038a67" />
+      <stop offset="1.00" stop-color="#028764" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="752.08" y1="331.64" x2="807.98" y2="367.93">
+      <stop offset="0.00" stop-color="#045940" />
+      <stop offset="0.25" stop-color="#045c42" />
+      <stop offset="0.50" stop-color="#036248" />
+      <stop offset="0.75" stop-color="#026347" />
+      <stop offset="1.00" stop-color="#166e53" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="798.29" y1="344.22" x2="749.11" y2="349.97">
+      <stop offset="0.00" stop-color="#06845f" />
+      <stop offset="0.25" stop-color="#05815d" />
+      <stop offset="0.50" stop-color="#047c59" />
+      <stop offset="0.75" stop-color="#037756" />
+      <stop offset="1.00" stop-color="#027555" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="827.91" y1="442.10" x2="710.16" y2="522.54">
+      <stop offset="0.00" stop-color="#02553d" />
+      <stop offset="0.25" stop-color="#024834" />
+      <stop offset="0.50" stop-color="#013c2d" />
+      <stop offset="0.75" stop-color="#023d2d" />
+      <stop offset="1.00" stop-color="#024130" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="707.60" y1="616.66" x2="813.74" y2="714.49">
+      <stop offset="0.00" stop-color="#013025" />
+      <stop offset="0.25" stop-color="#013427" />
+      <stop offset="0.50" stop-color="#024230" />
+      <stop offset="0.75" stop-color="#055d42" />
+      <stop offset="1.00" stop-color="#0d7553" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="896.45" y1="378.20" x2="821.39" y2="431.77">
+      <stop offset="0.00" stop-color="#a9ecd5" />
+      <stop offset="0.25" stop-color="#bdf2df" />
+      <stop offset="0.50" stop-color="#d8f8ed" />
+      <stop offset="0.75" stop-color="#e9fbf5" />
+      <stop offset="1.00" stop-color="#f2fcf9" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-06-gradient" gradientUnits="userSpaceOnUse" x1="881.95" y1="471.05" x2="771.46" y2="580.19">
+      <stop offset="0.00" stop-color="#77d8b2" />
+      <stop offset="0.25" stop-color="#84debb" />
+      <stop offset="0.50" stop-color="#9fe8ca" />
+      <stop offset="0.75" stop-color="#b8efd8" />
+      <stop offset="1.00" stop-color="#c7f3e1" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-07-gradient" gradientUnits="userSpaceOnUse" x1="870.86" y1="463.97" x2="919.94" y2="623.18">
+      <stop offset="0.00" stop-color="#49c198" />
+      <stop offset="0.25" stop-color="#4bc198" />
+      <stop offset="0.50" stop-color="#55c69e" />
+      <stop offset="0.75" stop-color="#6bd2ab" />
+      <stop offset="1.00" stop-color="#7edbb7" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-08-gradient" gradientUnits="userSpaceOnUse" x1="841.34" y1="615.96" x2="805.34" y2="740.57">
+      <stop offset="0.00" stop-color="#7de0ba" />
+      <stop offset="0.25" stop-color="#89e4c1" />
+      <stop offset="0.50" stop-color="#a5eccf" />
+      <stop offset="0.75" stop-color="#c5f5e0" />
+      <stop offset="1.00" stop-color="#d9f9eb" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-09-gradient" gradientUnits="userSpaceOnUse" x1="870.50" y1="622.28" x2="830.21" y2="652.17">
+      <stop offset="0.00" stop-color="#c4f4df" />
+      <stop offset="0.25" stop-color="#c7f4e1" />
+      <stop offset="0.50" stop-color="#cbf5e3" />
+      <stop offset="0.75" stop-color="#cff6e6" />
+      <stop offset="1.00" stop-color="#d2f7e8" />
+    </linearGradient>
+    <linearGradient id="right-building-facet-10-gradient" gradientUnits="userSpaceOnUse" x1="869.34" y1="633.22" x2="926.31" y2="675.92">
+      <stop offset="0.00" stop-color="#98e6c6" />
+      <stop offset="0.25" stop-color="#a3eacd" />
+      <stop offset="0.50" stop-color="#b3efd5" />
+      <stop offset="0.75" stop-color="#c0f3dd" />
+      <stop offset="1.00" stop-color="#c7f5e1" />
+    </linearGradient>
+    <linearGradient id="right-roof-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="1045.11" y1="494.68" x2="1001.82" y2="564.09">
+      <stop offset="0.00" stop-color="#015c41" />
+      <stop offset="0.25" stop-color="#01563e" />
+      <stop offset="0.50" stop-color="#01553d" />
+      <stop offset="0.75" stop-color="#016849" />
+      <stop offset="1.00" stop-color="#027f57" />
+    </linearGradient>
+    <linearGradient id="right-roof-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="1043.24" y1="493.48" x2="929.42" y2="519.55">
+      <stop offset="0.00" stop-color="#3fcfa2" />
+      <stop offset="0.25" stop-color="#1fb68a" />
+      <stop offset="0.50" stop-color="#068e69" />
+      <stop offset="0.75" stop-color="#027959" />
+      <stop offset="1.00" stop-color="#027959" />
+    </linearGradient>
+    <linearGradient id="left-wing-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="326.64" y1="508.34" x2="254.39" y2="644.01">
+      <stop offset="0.00" stop-color="#012e22" />
+      <stop offset="0.25" stop-color="#013326" />
+      <stop offset="0.50" stop-color="#01402f" />
+      <stop offset="0.75" stop-color="#02513b" />
+      <stop offset="1.00" stop-color="#025d42" />
+    </linearGradient>
+    <linearGradient id="left-wing-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="242.00" y1="660.54" x2="216.13" y2="688.52">
+      <stop offset="0.00" stop-color="#048b62" />
+      <stop offset="0.25" stop-color="#03825b" />
+      <stop offset="0.50" stop-color="#037252" />
+      <stop offset="0.75" stop-color="#08684c" />
+      <stop offset="1.00" stop-color="#1f745a" />
+    </linearGradient>
+    <linearGradient id="left-wing-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="167.16" y1="654.81" x2="351.76" y2="714.72">
+      <stop offset="0.00" stop-color="#64deb3" />
+      <stop offset="0.25" stop-color="#33c093" />
+      <stop offset="0.50" stop-color="#0a8c66" />
+      <stop offset="0.75" stop-color="#026549" />
+      <stop offset="1.00" stop-color="#025e44" />
+    </linearGradient>
+    <linearGradient id="right-wing-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="948.72" y1="503.26" x2="989.72" y2="658.43">
+      <stop offset="0.00" stop-color="#013125" />
+      <stop offset="0.25" stop-color="#013729" />
+      <stop offset="0.50" stop-color="#024a36" />
+      <stop offset="0.75" stop-color="#06664a" />
+      <stop offset="1.00" stop-color="#107f5c" />
+    </linearGradient>
+    <linearGradient id="right-wing-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="1060.10" y1="615.17" x2="1079.89" y2="634.37">
+      <stop offset="0.00" stop-color="#029869" />
+      <stop offset="0.25" stop-color="#029768" />
+      <stop offset="0.50" stop-color="#029568" />
+      <stop offset="0.75" stop-color="#019467" />
+      <stop offset="1.00" stop-color="#019366" />
+    </linearGradient>
+    <linearGradient id="right-wing-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="1076.27" y1="615.95" x2="895.07" y2="748.28">
+      <stop offset="0.00" stop-color="#8ae5c3" />
+      <stop offset="0.25" stop-color="#51c9a0" />
+      <stop offset="0.50" stop-color="#159670" />
+      <stop offset="0.75" stop-color="#037153" />
+      <stop offset="1.00" stop-color="#026a4d" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="409.62" y1="737.04" x2="332.49" y2="797.95">
+      <stop offset="0.00" stop-color="#17906e" />
+      <stop offset="0.25" stop-color="#54b99c" />
+      <stop offset="0.50" stop-color="#96e4cc" />
+      <stop offset="0.75" stop-color="#b7f1e0" />
+      <stop offset="1.00" stop-color="#d1f8ec" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="363.95" y1="741.58" x2="485.89" y2="780.01">
+      <stop offset="0.00" stop-color="#047958" />
+      <stop offset="0.25" stop-color="#027657" />
+      <stop offset="0.50" stop-color="#02805f" />
+      <stop offset="0.75" stop-color="#028e69" />
+      <stop offset="1.00" stop-color="#01946d" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="415.61" y1="814.99" x2="691.77" y2="975.72">
+      <stop offset="0.00" stop-color="#023e2f" />
+      <stop offset="0.25" stop-color="#023e2e" />
+      <stop offset="0.50" stop-color="#014a36" />
+      <stop offset="0.75" stop-color="#016b4c" />
+      <stop offset="1.00" stop-color="#01815c" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="499.40" y1="886.02" x2="419.52" y2="936.73">
+      <stop offset="0.00" stop-color="#39c79f" />
+      <stop offset="0.25" stop-color="#31c29a" />
+      <stop offset="0.50" stop-color="#4bcda8" />
+      <stop offset="0.75" stop-color="#8ee6cb" />
+      <stop offset="1.00" stop-color="#b9f2e0" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="498.93" y1="800.52" x2="625.40" y2="827.50">
+      <stop offset="0.00" stop-color="#88e3c3" />
+      <stop offset="0.25" stop-color="#71dab6" />
+      <stop offset="0.50" stop-color="#53cba5" />
+      <stop offset="0.75" stop-color="#3abb96" />
+      <stop offset="1.00" stop-color="#2bb08b" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-06-gradient" gradientUnits="userSpaceOnUse" x1="618.89" y1="818.57" x2="573.12" y2="1077.48">
+      <stop offset="0.00" stop-color="#25a685" />
+      <stop offset="0.25" stop-color="#3db996" />
+      <stop offset="0.50" stop-color="#79d9b9" />
+      <stop offset="0.75" stop-color="#c4f2e1" />
+      <stop offset="1.00" stop-color="#eafbf4" />
+    </linearGradient>
+    <linearGradient id="lower-left-facet-07-gradient" gradientUnits="userSpaceOnUse" x1="565.94" y1="907.56" x2="559.92" y2="909.62">
+      <stop offset="0.00" stop-color="#a6ddcb" />
+      <stop offset="0.25" stop-color="#90c8b5" />
+      <stop offset="0.50" stop-color="#72ac99" />
+      <stop offset="0.75" stop-color="#5a9682" />
+      <stop offset="1.00" stop-color="#54927d" />
+    </linearGradient>
+    <linearGradient id="lower-right-facet-01-gradient" gradientUnits="userSpaceOnUse" x1="687.60" y1="763.25" x2="696.47" y2="863.58">
+      <stop offset="0.00" stop-color="#d3f7ea" />
+      <stop offset="0.25" stop-color="#c3f3e1" />
+      <stop offset="0.50" stop-color="#b7efda" />
+      <stop offset="0.75" stop-color="#adedd5" />
+      <stop offset="1.00" stop-color="#a5ebd1" />
+    </linearGradient>
+    <linearGradient id="lower-right-facet-02-gradient" gradientUnits="userSpaceOnUse" x1="645.64" y1="818.72" x2="663.90" y2="1084.46">
+      <stop offset="0.00" stop-color="#7edcbc" />
+      <stop offset="0.25" stop-color="#5acba9" />
+      <stop offset="0.50" stop-color="#25ac8b" />
+      <stop offset="0.75" stop-color="#079476" />
+      <stop offset="1.00" stop-color="#019071" />
+    </linearGradient>
+    <linearGradient id="lower-right-facet-03-gradient" gradientUnits="userSpaceOnUse" x1="685.79" y1="905.71" x2="698.06" y2="910.66">
+      <stop offset="0.00" stop-color="#7bb6a4" />
+      <stop offset="0.25" stop-color="#387563" />
+      <stop offset="0.50" stop-color="#084a38" />
+      <stop offset="0.75" stop-color="#014c39" />
+      <stop offset="1.00" stop-color="#03553e" />
+    </linearGradient>
+    <linearGradient id="lower-right-facet-04-gradient" gradientUnits="userSpaceOnUse" x1="682.98" y1="828.33" x2="781.13" y2="917.66">
+      <stop offset="0.00" stop-color="#06503c" />
+      <stop offset="0.25" stop-color="#024936" />
+      <stop offset="0.50" stop-color="#014935" />
+      <stop offset="0.75" stop-color="#01553e" />
+      <stop offset="1.00" stop-color="#016347" />
+    </linearGradient>
+    <linearGradient id="lower-right-facet-05-gradient" gradientUnits="userSpaceOnUse" x1="833.90" y1="676.78" x2="837.37" y2="858.15">
+      <stop offset="0.00" stop-color="#139a73" />
+      <stop offset="0.25" stop-color="#139e77" />
+      <stop offset="0.50" stop-color="#0da57c" />
+      <stop offset="0.75" stop-color="#05ab7f" />
+      <stop offset="1.00" stop-color="#02ad80" />
+    </linearGradient>
+    <linearGradient id="lower-right-facet-06-gradient" gradientUnits="userSpaceOnUse" x1="737.64" y1="803.64" x2="898.01" y2="866.26">
+      <stop offset="0.00" stop-color="#44cda4" />
+      <stop offset="0.25" stop-color="#3cc8a0" />
+      <stop offset="0.50" stop-color="#61d6b3" />
+      <stop offset="0.75" stop-color="#94e8cd" />
+      <stop offset="1.00" stop-color="#b1efdc" />
+    </linearGradient>
+  </defs>
+  <g id="emerald-crystal-skyline" clip-path="url(#silhouette)" stroke-linejoin="round">
+    <polygon id="silhouette-base" points="627,117 745,224 746,341 793,299 927,421 1081,606 927,792 627,1087 327,791 172,606 327,420 460,299 508,341 508,224" fill="#087b5b" />
+    <g id="crown">
+      <polygon id="crown-facet-01" points="508,224 528,206 528,323 508,341" fill="url(#crown-facet-01-gradient)" stroke="url(#crown-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="crown-facet-02" points="528,206 558,178 558,294 528,323" fill="url(#crown-facet-02-gradient)" stroke="url(#crown-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="crown-facet-03" points="558,178 627,117 626,230 558,294" fill="url(#crown-facet-03-gradient)" stroke="url(#crown-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="crown-facet-04" points="627,117 726,207 726,322 626,230" fill="url(#crown-facet-04-gradient)" stroke="url(#crown-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="crown-facet-05" points="726,207 745,224 746,341 726,322" fill="url(#crown-facet-05-gradient)" stroke="url(#crown-facet-05-gradient)" stroke-width=".7" />
+    </g>
+    <g id="left-roof">
+      <polygon id="left-roof-facet-01" points="172,606 327,420 306,462 183,606" fill="url(#left-roof-facet-01-gradient)" stroke="url(#left-roof-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="left-roof-facet-02" points="183,606 306,462 327,420 326,508" fill="url(#left-roof-facet-02-gradient)" stroke="url(#left-roof-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="left-roof-facet-03" points="327,420 460,299 378,411" fill="url(#left-roof-facet-03-gradient)" stroke="url(#left-roof-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="left-roof-facet-04" points="327,420 378,411 378,462 326,508" fill="url(#left-roof-facet-04-gradient)" stroke="url(#left-roof-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="left-roof-facet-05" points="378,411 460,299 458,393 378,462" fill="url(#left-roof-facet-05-gradient)" stroke="url(#left-roof-facet-05-gradient)" stroke-width=".7" />
+    </g>
+    <g id="left-building">
+      <polygon id="left-building-facet-01" points="460,299 508,341 508,413 461,386" fill="url(#left-building-facet-01-gradient)" stroke="url(#left-building-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-02" points="461,386 508,413 508,652 461,690" fill="url(#left-building-facet-02-gradient)" stroke="url(#left-building-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-03" points="461,690 508,652 508,758 461,737" fill="url(#left-building-facet-03-gradient)" stroke="url(#left-building-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-04" points="326,508 378,462 378,632 326,621" fill="url(#left-building-facet-04-gradient)" stroke="url(#left-building-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-05" points="378,462 458,393 461,575 378,650" fill="url(#left-building-facet-05-gradient)" stroke="url(#left-building-facet-05-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-06" points="326,621 378,632 378,697 327,675" fill="url(#left-building-facet-06-gradient)" stroke="url(#left-building-facet-06-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-07" points="378,632 461,575 461,607 378,676" fill="url(#left-building-facet-07-gradient)" stroke="url(#left-building-facet-07-gradient)" stroke-width=".7" />
+      <polygon id="left-building-facet-08" points="378,676 461,607 461,737 378,697" fill="url(#left-building-facet-08-gradient)" stroke="url(#left-building-facet-08-gradient)" stroke-width=".7" />
+    </g>
+    <g id="central-left">
+      <polygon id="central-left-facet-01" points="508,341 558,294 558,389" fill="url(#central-left-facet-01-gradient)" stroke="url(#central-left-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-02" points="558,294 599,256 599,432 558,389" fill="url(#central-left-facet-02-gradient)" stroke="url(#central-left-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-03" points="599,256 626,230 627,460 599,432" fill="url(#central-left-facet-03-gradient)" stroke="url(#central-left-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-04" points="508,341 558,389 558,610 508,652" fill="url(#central-left-facet-04-gradient)" stroke="url(#central-left-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-05" points="558,389 599,432 599,575 558,610" fill="url(#central-left-facet-05-gradient)" stroke="url(#central-left-facet-05-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-06" points="599,432 627,460 627,552 599,575" fill="url(#central-left-facet-06-gradient)" stroke="url(#central-left-facet-06-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-07" points="508,652 558,610 558,784 508,758" fill="url(#central-left-facet-07-gradient)" stroke="url(#central-left-facet-07-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-08" points="558,610 599,575 599,805 558,784" fill="url(#central-left-facet-08-gradient)" stroke="url(#central-left-facet-08-gradient)" stroke-width=".7" />
+      <polygon id="central-left-facet-09" points="599,575 627,552 627,820 599,805" fill="url(#central-left-facet-09-gradient)" stroke="url(#central-left-facet-09-gradient)" stroke-width=".7" />
+    </g>
+    <g id="central-right">
+      <polygon id="central-right-facet-01" points="626,230 681,282 681,510 627,460" fill="url(#central-right-facet-01-gradient)" stroke="url(#central-right-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="central-right-facet-02" points="681,282 746,341 746,575 681,510" fill="url(#central-right-facet-02-gradient)" stroke="url(#central-right-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="central-right-facet-03" points="627,460 681,510 681,792 627,820" fill="url(#central-right-facet-03-gradient)" stroke="url(#central-right-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="central-right-facet-04" points="681,510 746,575 747,758 681,792" fill="url(#central-right-facet-04-gradient)" stroke="url(#central-right-facet-04-gradient)" stroke-width=".7" />
+    </g>
+    <g id="right-building">
+      <polygon id="right-building-facet-01" points="746,341 793,299 749,349 793,391" fill="url(#right-building-facet-01-gradient)" stroke="url(#right-building-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-02" points="749,349 793,299 793,391" fill="url(#right-building-facet-02-gradient)" stroke="url(#right-building-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-03" points="746,341 793,391 793,621 746,575" fill="url(#right-building-facet-03-gradient)" stroke="url(#right-building-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-04" points="746,575 793,621 793,737 747,758" fill="url(#right-building-facet-04-gradient)" stroke="url(#right-building-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-05" points="793,299 927,421 927,509 793,392" fill="url(#right-building-facet-05-gradient)" stroke="url(#right-building-facet-05-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-06" points="793,392 874,463 874,627 793,602" fill="url(#right-building-facet-06-gradient)" stroke="url(#right-building-facet-06-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-07" points="874,463 927,509 927,621 874,627" fill="url(#right-building-facet-07-gradient)" stroke="url(#right-building-facet-07-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-08" points="793,602 874,680 874,700 793,737" fill="url(#right-building-facet-08-gradient)" stroke="url(#right-building-facet-08-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-09" points="793,602 874,627 874,680" fill="url(#right-building-facet-09-gradient)" stroke="url(#right-building-facet-09-gradient)" stroke-width=".7" />
+      <polygon id="right-building-facet-10" points="874,627 927,621 927,675 874,700" fill="url(#right-building-facet-10-gradient)" stroke="url(#right-building-facet-10-gradient)" stroke-width=".7" />
+    </g>
+    <g id="right-roof">
+      <polygon id="right-roof-facet-01" points="927,421 1081,606 1069,606 950,462" fill="url(#right-roof-facet-01-gradient)" stroke="url(#right-roof-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="right-roof-facet-02" points="927,421 950,462 1069,606 927,509" fill="url(#right-roof-facet-02-gradient)" stroke="url(#right-roof-facet-02-gradient)" stroke-width=".7" />
+    </g>
+    <g id="left-wing">
+      <polygon id="left-wing-facet-01" points="183,606 326,508 327,675" fill="url(#left-wing-facet-01-gradient)" stroke="url(#left-wing-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="left-wing-facet-02" points="172,606 183,606 327,791" fill="url(#left-wing-facet-02-gradient)" stroke="url(#left-wing-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="left-wing-facet-03" points="183,606 327,675 327,791" fill="url(#left-wing-facet-03-gradient)" stroke="url(#left-wing-facet-03-gradient)" stroke-width=".7" />
+    </g>
+    <g id="right-wing">
+      <polygon id="right-wing-facet-01" points="927,509 1069,606 927,675" fill="url(#right-wing-facet-01-gradient)" stroke="url(#right-wing-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="right-wing-facet-02" points="1069,606 1081,606 927,792" fill="url(#right-wing-facet-02-gradient)" stroke="url(#right-wing-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="right-wing-facet-03" points="927,675 1069,606 927,792" fill="url(#right-wing-facet-03-gradient)" stroke="url(#right-wing-facet-03-gradient)" stroke-width=".7" />
+    </g>
+    <g id="lower-left">
+      <polygon id="lower-left-facet-01" points="327,675 378,697 461,859 327,791" fill="url(#lower-left-facet-01-gradient)" stroke="url(#lower-left-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="lower-left-facet-02" points="378,697 461,737 461,859" fill="url(#lower-left-facet-02-gradient)" stroke="url(#lower-left-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="lower-left-facet-03" points="461,737 508,758 627,1087 461,859" fill="url(#lower-left-facet-03-gradient)" stroke="url(#lower-left-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="lower-left-facet-04" points="327,791 461,859 627,1087" fill="url(#lower-left-facet-04-gradient)" stroke="url(#lower-left-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="lower-left-facet-05" points="508,758 627,820 550,861" fill="url(#lower-left-facet-05-gradient)" stroke="url(#lower-left-facet-05-gradient)" stroke-width=".7" />
+      <polygon id="lower-left-facet-06" points="550,861 627,820 627,1087" fill="url(#lower-left-facet-06-gradient)" stroke="url(#lower-left-facet-06-gradient)" stroke-width=".7" />
+      <polygon id="lower-left-facet-07" points="508,758 550,861 627,1087" fill="url(#lower-left-facet-07-gradient)" stroke="url(#lower-left-facet-07-gradient)" stroke-width=".7" />
+    </g>
+    <g id="lower-right">
+      <polygon id="lower-right-facet-01" points="627,820 747,758 703,863" fill="url(#lower-right-facet-01-gradient)" stroke="url(#lower-right-facet-01-gradient)" stroke-width=".7" />
+      <polygon id="lower-right-facet-02" points="627,820 703,863 627,1087" fill="url(#lower-right-facet-02-gradient)" stroke="url(#lower-right-facet-02-gradient)" stroke-width=".7" />
+      <polygon id="lower-right-facet-03" points="703,863 747,758 627,1087" fill="url(#lower-right-facet-03-gradient)" stroke="url(#lower-right-facet-03-gradient)" stroke-width=".7" />
+      <polygon id="lower-right-facet-04" points="747,758 793,737 793,859 627,1087" fill="url(#lower-right-facet-04-gradient)" stroke="url(#lower-right-facet-04-gradient)" stroke-width=".7" />
+      <polygon id="lower-right-facet-05" points="793,737 927,675 793,859" fill="url(#lower-right-facet-05-gradient)" stroke="url(#lower-right-facet-05-gradient)" stroke-width=".7" />
+      <polygon id="lower-right-facet-06" points="793,859 927,675 927,792 627,1087" fill="url(#lower-right-facet-06-gradient)" stroke="url(#lower-right-facet-06-gradient)" stroke-width=".7" />
+    </g>
+    <g id="facet-edge-highlights" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path id="lower-crown-rim" d="M 183,606 627,820 1069,606" stroke="#d8fff1" stroke-width="3" stroke-opacity=".94" />
+      <path id="center-spine" d="M 626,230 629,819" stroke="#a7f5d4" stroke-width="3.3" stroke-opacity=".68" />
+      <path id="lower-center-edge" d="M 627,821 627,1086" stroke="#d4fff0" stroke-width="1.8" stroke-opacity=".8" />
+      <path id="left-building-edge" d="M 460,300 460,735" stroke="#d1fff0" stroke-width="3" stroke-opacity=".8" />
+      <path id="right-building-edge" d="M 793,300 794,736" stroke="#d5fff2" stroke-width="2.3" stroke-opacity=".86" />
+      <path id="top-center-edge" d="M 627,118 628,231" stroke="#d1fff1" stroke-width="3.3" stroke-opacity=".95" />
+      <path id="left-wing-edge" d="M 184,605 326,508" stroke="#a4ffdd" stroke-width="1.5" stroke-opacity=".75" />
+      <path id="right-wing-edge" d="M 928,510 1069,605" stroke="#baffdf" stroke-width="1.5" stroke-opacity=".7" />
+      <path id="lower-left-facet-edge" d="M 509,759 626,1086" stroke="#bdffe3" stroke-width="1.4" stroke-opacity=".55" />
+      <path id="lower-right-facet-edge" d="M 747,759 628,1086" stroke="#9ff6d8" stroke-width="1.2" stroke-opacity=".4" />
+    </g>
+  </g>
+</svg>
