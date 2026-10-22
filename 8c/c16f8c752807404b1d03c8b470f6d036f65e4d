@@ -1,0 +1,19 @@
+docker/rabbitmq/rabbitmq.conf
+  s_749b422e455718::t_0ca107e786dc33 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8cc16f8c752807404b1d03c8b470f6d036f65e4d",
+  "prompts": {},
+  "sessions": {
+    "s_749b422e455718": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1649a-3bb0-7313-ad8f-d25adb11050e",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
