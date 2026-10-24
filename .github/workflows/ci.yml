@@ -89,22 +89,30 @@ jobs:
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
           PUSH_AFTER: ${{ github.sha }}
         run: |
           set -euo pipefail
+          # Lint only the commits this event introduces; history already on the
+          # target branch cannot be rewritten.
           if [[ "$EVENT_NAME" == 'pull_request' ]]; then
+            from="$PR_BASE"
             to="$PR_HEAD"
           else
+            from="$PUSH_BEFORE"
             to="$PUSH_AFTER"
           fi
-          policy_origin="$(git log --reverse --format=%H -- .github/workflows/ci.yml | head -n 1)"
-          if [[ -z "$policy_origin" ]]; then
-            echo 'Unable to determine the commit-policy adoption point.' >&2
-            exit 1
+          if [[ -z "$from" || "$from" =~ ^0+$ ]] || ! git cat-file -e "$from^{commit}" 2>/dev/null; then
+            policy_origin="$(git log --reverse --format=%H -- .github/workflows/ci.yml | head -n 1)"
+            if [[ -z "$policy_origin" ]]; then
+              echo 'Unable to determine the commit-policy adoption point.' >&2
+              exit 1
+            fi
+            echo "No usable base commit; linting from CI policy adoption: $policy_origin"
+            from="$policy_origin^"
           fi
-          echo "Ignoring commits before CI policy adoption: $policy_origin"
-          from="$policy_origin^"
           npm exec -- commitlint --from "$from" --to "$to" --verbose
 
   workflow-policy:

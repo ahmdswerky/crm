@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 export const projectNames = ['crm', 'dashboard', 'payments']
 
 const rootFiles = new Set([
@@ -58,4 +60,39 @@ export function classifyFiles(files) {
 
 export function changedFilesFromGit(output) {
   return output.trim() ? output.trim().split(/\r?\n/).filter(Boolean) : []
+}
+
+const manifestEcosystems = [
+  [/(^|\/)package\.json$/, 'npm'],
+  [/(^|\/)composer\.json$/, 'composer'],
+  [/(^|\/)Dockerfile(\.[\w-]+)?$/, 'docker'],
+  [/^\.github\/workflows\/[^/]+\.ya?ml$/, 'github-actions'],
+]
+
+// ponytail: line-based read of dependabot.yml; switch to the yaml package if the config grows anchors or flow lists
+export function dependabotEntries(config) {
+  const entries = new Set()
+  let ecosystem
+  for (const line of config.split(/\r?\n/)) {
+    const ecosystemMatch = line.match(/^\s*-\s*package-ecosystem:\s*['"]?([\w-]+)/)
+    if (ecosystemMatch) ecosystem = ecosystemMatch[1]
+    const directoryMatch = line.match(/^\s*directory:\s*['"]?([^'"\s#]+)/)
+    if (directoryMatch && ecosystem) entries.add(`${ecosystem}:${directoryMatch[1].replace(/\/$/, '') || '/'}`)
+  }
+  return entries
+}
+
+export function dependabotCoverageGaps(config, files) {
+  const covered = dependabotEntries(config)
+  const gaps = new Set()
+  for (const file of files) {
+    // ponytail: dot-directories other than .github hold vendored agent tooling, not shipped code
+    if (/^\.(?!github\/)/.test(file)) continue
+    for (const [pattern, ecosystem] of manifestEcosystems) {
+      if (!pattern.test(file)) continue
+      const directory = ecosystem === 'github-actions' ? '/' : `/${path.posix.dirname(file)}`.replace(/^\/\.$/, '/')
+      if (!covered.has(`${ecosystem}:${directory}`)) gaps.add(`${ecosystem}:${directory}`)
+    }
+  }
+  return [...gaps]
 }

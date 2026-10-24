@@ -13,7 +13,7 @@ import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './entities/invoice.entity';
 import { PaymentJobReceipt } from './entities/payment-job-receipt.entity';
 import { ListInvoiceDto } from './dto/list-invoice.dto';
-import { type Paginated } from 'src/common/types/response';
+import { type Paginated } from '../../common/types/response';
 import { InvoiceStatus } from './enums/invoice-status.enum';
 
 @Injectable()

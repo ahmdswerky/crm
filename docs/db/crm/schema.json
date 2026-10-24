@@ -94,6 +94,485 @@
         }
       }
     },
+    "activities": {
+      "name": "activities",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "kind": {
+          "name": "kind",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "subject": {
+          "name": "subject",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "details": {
+          "name": "details",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "creator_id": {
+          "name": "creator_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "assignee_id": {
+          "name": "assignee_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "due_date": {
+          "name": "due_date",
+          "type": "date",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "starts_at": {
+          "name": "starts_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "ends_at": {
+          "name": "ends_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "outcome": {
+          "name": "outcome",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "version": {
+          "name": "version",
+          "type": "int4",
+          "default": 1,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "activities_assignee_id_status_starts_at_index": {
+          "name": "activities_assignee_id_status_starts_at_index",
+          "unique": false,
+          "columns": [
+            "assignee_id",
+            "status",
+            "starts_at"
+          ],
+          "type": "btree"
+        },
+        "activities_status_due_date_index": {
+          "name": "activities_status_due_date_index",
+          "unique": false,
+          "columns": [
+            "status",
+            "due_date"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "activities_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "activities_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "activities_assignee_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "activities_assignee_id_foreign",
+          "columnNames": [
+            "assignee_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        },
+        "activities_creator_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "activities_creator_id_foreign",
+          "columnNames": [
+            "creator_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        }
+      }
+    },
+    "activity_events": {
+      "name": "activity_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "activity_id": {
+          "name": "activity_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "actor_id": {
+          "name": "actor_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "actor_name": {
+          "name": "actor_name",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "before": {
+          "name": "before",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "after": {
+          "name": "after",
+          "type": "json",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "activity_events_activity_id_occurred_at_id_index": {
+          "name": "activity_events_activity_id_occurred_at_id_index",
+          "unique": false,
+          "columns": [
+            "activity_id",
+            "occurred_at",
+            "id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "activity_events_event_id_unique": {
+          "type": "UNIQUE",
+          "name": "activity_events_event_id_unique",
+          "columnNames": [
+            "event_id"
+          ]
+        },
+        "activity_events_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "activity_events_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "activity_events_activity_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "activity_events_activity_id_foreign",
+          "columnNames": [
+            "activity_id"
+          ],
+          "targetTableName": "activities",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        },
+        "activity_events_actor_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "activity_events_actor_id_foreign",
+          "columnNames": [
+            "actor_id"
+          ],
+          "targetTableName": "users",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        }
+      }
+    },
+    "activity_history_entries": {
+      "name": "activity_history_entries",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "activity_event_id": {
+          "name": "activity_event_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "recorded_at": {
+          "name": "recorded_at",
+          "type": "timestamptz",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {},
+      "constraints": {
+        "activity_history_entries_activity_event_id_unique": {
+          "type": "UNIQUE",
+          "name": "activity_history_entries_activity_event_id_unique",
+          "columnNames": [
+            "activity_event_id"
+          ]
+        },
+        "activity_history_entries_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "activity_history_entries_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "activity_history_entries_activity_event_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "activity_history_entries_activity_event_id_foreign",
+          "columnNames": [
+            "activity_event_id"
+          ],
+          "targetTableName": "activity_events",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        }
+      }
+    },
+    "activity_links": {
+      "name": "activity_links",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "activity_id": {
+          "name": "activity_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "subject_type": {
+          "name": "subject_type",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "int8",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": true,
+          "comment": null
+        }
+      },
+      "comment": null,
+      "indexes": {
+        "activity_links_subject_type_subject_id_activity_id_index": {
+          "name": "activity_links_subject_type_subject_id_activity_id_index",
+          "unique": false,
+          "columns": [
+            "subject_type",
+            "subject_id",
+            "activity_id"
+          ],
+          "type": "btree"
+        }
+      },
+      "constraints": {
+        "activity_links_activity_id_subject_type_subject_id_unique": {
+          "type": "UNIQUE",
+          "name": "activity_links_activity_id_subject_type_subject_id_unique",
+          "columnNames": [
+            "activity_id",
+            "subject_type",
+            "subject_id"
+          ]
+        },
+        "activity_links_pkey": {
+          "type": "PRIMARY KEY",
+          "name": "activity_links_pkey",
+          "columnNames": [
+            "id"
+          ]
+        },
+        "activity_links_activity_id_foreign": {
+          "type": "FOREIGN KEY",
+          "name": "activity_links_activity_id_foreign",
+          "columnNames": [
+            "activity_id"
+          ],
+          "targetTableName": "activities",
+          "targetColumnNames": [
+            "id"
+          ],
+          "updateConstraint": "NO_ACTION",
+          "deleteConstraint": "RESTRICT"
+        }
+      }
+    },
     "activity_log": {
       "name": "activity_log",
       "columns": {
@@ -1477,6 +1956,14 @@
           "check": null,
           "notNull": false,
           "comment": null
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "varchar",
+          "default": null,
+          "check": null,
+          "notNull": false,
+          "comment": null
         }
       },
       "comment": null,
@@ -1505,6 +1992,16 @@
           "unique": false,
           "columns": [
             "created_at"
+          ],
+          "type": "btree"
+        },
+        "leads_status_country_code_deleted_at_index": {
+          "name": "leads_status_country_code_deleted_at_index",
+          "unique": false,
+          "columns": [
+            "status",
+            "country_code",
+            "deleted_at"
           ],
           "type": "btree"
         },

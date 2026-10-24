@@ -8,7 +8,9 @@ export function run(command, args = [], options = {}) {
       : 'inherit'
   const result = spawnSync(command, args, {
     cwd: options.cwd,
-    env: { ...process.env, ...(options.env ?? {}) },
+    // `npm run` exports ~/.npmrc allow-scripts as npm_config_allow_scripts; nested
+    // npm install/audit rejects it as a CLI flag (EALLOWSCRIPTS) but still reads .npmrc.
+    env: { ...process.env, npm_config_allow_scripts: undefined, ...(options.env ?? {}) },
     encoding: 'utf8',
     input: options.input,
     stdio,

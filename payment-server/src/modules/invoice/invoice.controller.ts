@@ -11,7 +11,7 @@ import { InvoiceService } from './invoice.service';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './entities/invoice.entity';
 import { ListInvoiceDto } from './dto/list-invoice.dto';
-import { type TResponse, type Paginated } from 'src/common/types/response';
+import { type TResponse, type Paginated } from '../../common/types/response';
 
 @Controller('invoices')
 export class InvoiceController {

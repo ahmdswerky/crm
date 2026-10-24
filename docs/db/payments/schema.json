@@ -5,7 +5,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "int4",
+          "type": "int8",
           "default": null,
           "check": null,
           "notNull": true,
@@ -21,7 +21,7 @@
         },
         "invoicable_id": {
           "name": "invoicable_id",
-          "type": "int4",
+          "type": "int8",
           "default": null,
           "check": null,
           "notNull": true,
@@ -71,20 +71,11 @@
       "comment": null,
       "indexes": {},
       "constraints": {
-        "invoices_pkey": {
+        "PK_668cef7c22a427fd822cc1be3ce": {
           "type": "PRIMARY KEY",
-          "name": "invoices_pkey",
+          "name": "PK_668cef7c22a427fd822cc1be3ce",
           "columnNames": [
             "id"
-          ]
-        },
-        "invoices_source_type_id_type_unique": {
-          "type": "UNIQUE",
-          "name": "invoices_source_type_id_type_unique",
-          "columnNames": [
-            "invoicable_type",
-            "invoicable_id",
-            "type"
           ]
         }
       }
@@ -255,16 +246,16 @@
       },
       "comment": null,
       "indexes": {
-        "payment_event_outbox_correlation_id_idx": {
-          "name": "payment_event_outbox_correlation_id_idx",
+        "IDX_33c00fe490da5cbf42e8516631": {
+          "name": "IDX_33c00fe490da5cbf42e8516631",
           "unique": false,
           "columns": [
             "correlation_id"
           ],
           "type": "btree"
         },
-        "payment_event_outbox_ready_idx": {
-          "name": "payment_event_outbox_ready_idx",
+        "IDX_c3810c87bb4ecc8ea8f3f28fde": {
+          "name": "IDX_c3810c87bb4ecc8ea8f3f28fde",
           "unique": false,
           "columns": [
             "published_at",
@@ -274,18 +265,18 @@
         }
       },
       "constraints": {
-        "payment_event_outbox_command_message_id_key": {
-          "type": "UNIQUE",
-          "name": "payment_event_outbox_command_message_id_key",
-          "columnNames": [
-            "command_message_id"
-          ]
-        },
-        "payment_event_outbox_pkey": {
+        "PK_c4f9f835b3736e231211dcba643": {
           "type": "PRIMARY KEY",
-          "name": "payment_event_outbox_pkey",
+          "name": "PK_c4f9f835b3736e231211dcba643",
           "columnNames": [
             "event_id"
+          ]
+        },
+        "UQ_648c371323054b583a1c71cda58": {
+          "type": "UNIQUE",
+          "name": "UQ_648c371323054b583a1c71cda58",
+          "columnNames": [
+            "command_message_id"
           ]
         }
       }
@@ -351,7 +342,7 @@
         },
         "failure_message": {
           "name": "failure_message",
-          "type": "text",
+          "type": "varchar",
           "default": null,
           "check": null,
           "notNull": false,
@@ -376,8 +367,8 @@
       },
       "comment": null,
       "indexes": {
-        "payment_job_receipts_correlation_id_idx": {
-          "name": "payment_job_receipts_correlation_id_idx",
+        "IDX_3fe3e1a8d63b57d144a7fb9a75": {
+          "name": "IDX_3fe3e1a8d63b57d144a7fb9a75",
           "unique": false,
           "columns": [
             "correlation_id"
@@ -386,9 +377,9 @@
         }
       },
       "constraints": {
-        "payment_job_receipts_pkey": {
+        "PK_8dbd603f499051587bdb233cdce": {
           "type": "PRIMARY KEY",
-          "name": "payment_job_receipts_pkey",
+          "name": "PK_8dbd603f499051587bdb233cdce",
           "columnNames": [
             "message_id"
           ]
