@@ -1,0 +1,19 @@
+docs/openapi/ActivityLog.openapi.json
+  s_aac12d16da1479::t_2c650a89730a11 5,14,299,382
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "97d146a8bbec255b6c98e4c34cee649490615c82",
+  "prompts": {},
+  "sessions": {
+    "s_aac12d16da1479": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a169f2-af64-7492-8d93-cc393d0af15f",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
