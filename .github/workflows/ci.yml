@@ -93,6 +93,7 @@ jobs:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
           PUSH_BEFORE: ${{ github.event.before }}
           PUSH_AFTER: ${{ github.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
           # Lint only the commits this event introduces; history already on the
@@ -105,13 +106,23 @@ jobs:
             to="$PUSH_AFTER"
           fi
           if [[ -z "$from" || "$from" =~ ^0+$ ]] || ! git cat-file -e "$from^{commit}" 2>/dev/null; then
-            policy_origin="$(git log --reverse --format=%H -- .github/workflows/ci.yml | head -n 1)"
-            if [[ -z "$policy_origin" ]]; then
-              echo 'Unable to determine the commit-policy adoption point.' >&2
-              exit 1
+            # New branch or manual run: lint only what is not already on the
+            # default branch.
+            if from="$(git merge-base "origin/$DEFAULT_BRANCH" "$to" 2>/dev/null)"; then
+              echo "No usable base commit; linting from $DEFAULT_BRANCH merge-base: $from"
+            else
+              policy_origin="$(git log --reverse --format=%H -- .github/workflows/ci.yml | head -n 1)"
+              if [[ -z "$policy_origin" ]]; then
+                echo 'Unable to determine the commit-policy adoption point.' >&2
+                exit 1
+              fi
+              echo "No usable base commit; linting from CI policy adoption: $policy_origin"
+              from="$policy_origin^"
             fi
-            echo "No usable base commit; linting from CI policy adoption: $policy_origin"
-            from="$policy_origin^"
+          fi
+          if [[ "$(git rev-parse "$from")" == "$(git rev-parse "$to")" ]]; then
+            echo 'No new commits to lint.'
+            exit 0
           fi
           npm exec -- commitlint --from "$from" --to "$to" --verbose
 
