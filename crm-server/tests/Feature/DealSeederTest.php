@@ -1,87 +1,44 @@
 <?php
 
-use App\Enums\LeadStatus;
-use App\Enums\PropertyPurpose;
+use App\Enums\DealStatus;
 use App\Enums\PropertyStatus;
-use App\Enums\PropertyType;
-use App\Models\Account;
 use App\Models\Contact;
 use App\Models\Deal;
-use App\Models\Lead;
 use App\Models\Property;
-use App\Models\User;
 use Database\Seeders\DealSeeder;
 
-test('deal seeder inserts the configured count across bulk batches', function () {
-    config(['crm.seeds.counts' => [Deal::class => 201]]);
-
-    $agent = User::factory()->create();
-    $account = Account::factory()->create();
-    $lead = Lead::factory()->create([
-        'status' => LeadStatus::PENDING,
-        'assigned_agent_id' => $agent->id,
-        'company_name' => $account->name,
-    ]);
-    $contact = Contact::query()->create([
-        'account_id' => $account->id,
-        'lead_id' => $lead->id,
-        'name' => $lead->name,
-        'email' => $lead->email,
-        'phone' => $lead->phone,
-        'assigned_agent_id' => $agent->id,
-    ]);
-    Property::query()->create([
-        'created_by' => $agent->id,
-        'title' => 'Seed property',
-        'description' => 'Seed property description',
-        'city' => 'Cairo',
-        'address' => 'Seed address',
-        'price' => 100000,
-        'purpose' => PropertyPurpose::SALE,
-        'type' => PropertyType::VILLA,
-        'status' => PropertyStatus::PENDING,
-    ]);
+test('deal seeder gives every converted contact exactly one deal', function () {
+    config(['crm.seeds.max_counts' => [Deal::class => 1000]]);
+    seedDealSources(205);
 
     $this->seed(DealSeeder::class);
+    $this->seed(DealSeeder::class);
 
-    expect(Deal::query()->count())->toBe(201)
-        ->and(Deal::query()->where('contact_id', $contact->id)->count())->toBe(201);
+    expect(Deal::query()->count())->toBe(205)
+        ->and(Contact::query()->whereDoesntHave('deals')->count())->toBe(0)
+        ->and(Deal::query()->distinct()->count('contact_id'))->toBe(205)
+        ->and(Deal::query()->distinct()->count('property_id'))->toBe(205)
+        ->and(Deal::query()->where('status', '!=', DealStatus::WON)->orWhereNull('closed_at')->count())->toBe(0)
+        ->and(Property::query()->where('status', '!=', PropertyStatus::SOLD)->count())->toBe(0)
+        ->and(Deal::query()->with('contact')->get()
+            ->every(fn (Deal $deal) => $deal->created_at->greaterThanOrEqualTo($deal->contact->created_at)
+                && $deal->agent_id === $deal->contact->assigned_agent_id))->toBeTrue();
 });
 
-test('deal seeder clamps a batch to the configured maximum total', function () {
-    config([
-        'crm.seeds.counts' => [Deal::class => 201],
-        'crm.seeds.max_counts' => [Deal::class => 100],
-    ]);
-
-    $agent = User::factory()->create();
-    $account = Account::factory()->create();
-    $lead = Lead::factory()->create([
-        'status' => LeadStatus::PENDING,
-        'assigned_agent_id' => $agent->id,
-        'company_name' => $account->name,
-    ]);
-    Contact::query()->create([
-        'account_id' => $account->id,
-        'lead_id' => $lead->id,
-        'name' => $lead->name,
-        'email' => $lead->email,
-        'phone' => $lead->phone,
-        'assigned_agent_id' => $agent->id,
-    ]);
-    Property::query()->create([
-        'created_by' => $agent->id,
-        'title' => 'Capped seed property',
-        'description' => 'Capped seed property description',
-        'city' => 'Cairo',
-        'address' => 'Capped seed address',
-        'price' => 100000,
-        'purpose' => PropertyPurpose::SALE,
-        'type' => PropertyType::VILLA,
-        'status' => PropertyStatus::PENDING,
-    ]);
+test('deal seeder clamps to the configured maximum total', function () {
+    config(['crm.seeds.max_counts' => [Deal::class => 3]]);
+    seedDealSources(5);
 
     $this->seed(DealSeeder::class);
 
-    expect(Deal::withTrashed()->count())->toBe(100);
+    expect(Deal::withTrashed()->count())->toBe(3);
+});
+
+test('deal seeder never sells a property twice when properties run short', function () {
+    seedDealSources(5, 2);
+
+    $this->seed(DealSeeder::class);
+
+    expect(Deal::query()->count())->toBe(2)
+        ->and(Deal::query()->distinct()->count('property_id'))->toBe(2);
 });

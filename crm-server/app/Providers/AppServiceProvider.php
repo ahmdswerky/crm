@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Account;
+use App\Models\Activity;
 use App\Models\ActivityLog;
 use App\Models\Contact;
 use App\Models\Deal;
@@ -16,6 +17,7 @@ use App\Observers\LeadObserver;
 use App\Observers\OverviewAnalyticsObserver;
 use App\Policies\AccountPolicy;
 use App\Policies\ActivityLogPolicy;
+use App\Policies\ActivityPolicy;
 use App\Policies\ContactPolicy;
 use App\Policies\LeadPolicy;
 use App\Policies\PropertyPolicy;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Gate::policy(ActivityLog::class, ActivityLogPolicy::class);
+        Gate::policy(Activity::class, ActivityPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Lead::class, LeadPolicy::class);
         Gate::policy(Contact::class, ContactPolicy::class);
@@ -62,7 +65,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability, $arguments) {
             $target = $arguments[0] ?? null;
 
-            if ($target === ActivityLog::class || $target instanceof ActivityLog) {
+            if ($target === ActivityLog::class || $target instanceof ActivityLog
+                || $target === Activity::class || $target instanceof Activity) {
                 return null;
             }
 

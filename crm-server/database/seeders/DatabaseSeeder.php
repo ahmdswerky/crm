@@ -21,16 +21,13 @@ class DatabaseSeeder extends Seeder
             CommissionPolicySeeder::class,
         ]);
 
-//        if (app()->isProduction()) {
-//            return;
-//        }
-
         $this->call([
             AccountSeeder::class,
             LeadSeeder::class,
             PropertySeeder::class,
             ContactSeeder::class,
             DealSeeder::class,
+            ActivitySeeder::class,
             PropertyMediaSeeder::class,
         ]);
     }
