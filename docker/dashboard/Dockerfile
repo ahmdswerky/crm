@@ -1,4 +1,4 @@
-FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS erd
+FROM docker.io/library/node:26.12.0-alpine@sha256:6f08a523443ddedf52941874c203475b0ad503e859ad70cb26ab8be9a517dbd5 AS erd
 # Committed schema snapshots → Liam ERD single-page apps served at /docs/db/<name>/.
 # Kept in step with scripts/quality/db-schema/config.mjs and dashboard/scripts/build-erd.mjs.
 COPY docs/db /docs/db
@@ -9,7 +9,7 @@ RUN set -eu; \
     done; \
     rm -rf /root/.npm
 
-FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS build
+FROM docker.io/library/node:26.12.0-alpine@sha256:6f08a523443ddedf52941874c203475b0ad503e859ad70cb26ab8be9a517dbd5 AS build
 WORKDIR /app
 COPY dashboard/package.json dashboard/package-lock.json ./
 RUN npm ci
