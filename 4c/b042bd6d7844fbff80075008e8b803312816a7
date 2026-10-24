@@ -1,0 +1,26 @@
+.github/dependabot.yml
+  s_efdc960123416a::t_7a4091b387ee3d 44-46
+  s_efdc960123416a::t_fff84a46906988 48
+.github/workflows/ci.yml
+  s_efdc960123416a::t_a3cbdc09254b61 109-112,118
+  s_efdc960123416a::t_508be9543c9cc8 113-117,119-120,122-125
+  s_efdc960123416a::t_34cd3b3eadbbf1 96
+release-please-config.json
+  s_efdc960123416a::t_fff84a46906988 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4cb042bd6d7844fbff80075008e8b803312816a7",
+  "prompts": {},
+  "sessions": {
+    "s_efdc960123416a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "31fb50d9-75f0-4f17-a89b-b174ea647a4d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
