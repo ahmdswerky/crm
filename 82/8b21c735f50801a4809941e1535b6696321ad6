@@ -1,0 +1,143 @@
+crm-server/app/Support/Activities/ImmutableActivityBuilder.php
+  s_aac12d16da1479::t_f4b32435801e1e 1-13
+crm-server/app/Http/Controllers/ActivityController.php
+  s_aac12d16da1479::t_804d10c1f6fc14 122-126
+  s_aac12d16da1479::t_a52f9aab9a775e 6,60,133,139,142,146-151
+  s_aac12d16da1479::t_51b37631bf7359 1-5,7,9-34,38-59,61-71,73-115,118-120,128-132,134-138,141,143-145,152-153
+  s_aac12d16da1479::t_f4b32435801e1e 8,35-37,72,116-117,121,127,140
+crm-server/app/Http/Requests/Activities/SaveActivityRequest.php
+  s_aac12d16da1479::t_51b37631bf7359 1-9,14-36
+  s_aac12d16da1479::t_f4b32435801e1e 10-13
+crm-server/tests/Feature/DealSeederTest.php
+  s_9c1b63b4bad704::t_078a0d11e1a714 10,12,14,17-19,23-25,28-34
+  s_9c1b63b4bad704::t_c49cee2d92967c 3,20-22,37-38,42-43
+  s_226ed1a279b64d::t_012e0386e56f70 11
+  s_226ed1a279b64d::t_dc2e5b9904a70a 35
+crm-server/database/seeders/ActivitySeeder.php
+  s_9c1b63b4bad704::t_a3af2c6e57e9a9 63-65,68,71,74,77,81-92,95,220,227-233,236,238-255,258,295,302
+  s_9c1b63b4bad704::t_facd6f47e42230 1-62,66-67,69-70,72-73,75-76,78-80,93-94,96-219,221-223,234-235,237,256-257,259-294,296-301,303-335
+  s_9c1b63b4bad704::t_a2d73ff0ff34ab 224-226
+crm-server/database/seeders/ActivityPermissionSeeder.php
+  s_aac12d16da1479::t_51b37631bf7359 1-5,7-17,26-29
+  s_aac12d16da1479::t_4485e1438c1a61 6,18-25
+crm-server/app/Listeners/Activities/QueueActivityHistory.php
+  s_aac12d16da1479::t_51b37631bf7359 1-20
+crm-server/app/Models/Activities/ActivityEvent.php
+  s_aac12d16da1479::t_51b37631bf7359 24
+  s_aac12d16da1479::t_f4b32435801e1e 6,28-32,35
+  s_aac12d16da1479::t_71d772362c8faf 1-5,7-23,25-27,33-34,36-42
+crm-server/routes/console.php
+  s_aac12d16da1479::t_51b37631bf7359 15
+  s_382c27be2f66d0::t_496d3e5fd68a73 16
+crm-server/app/Events/Activities/ActivityChanged.php
+  s_aac12d16da1479::t_51b37631bf7359 1-13
+crm-server/database/migrations/2026_10_23_000001_create_activities_tables.php
+  s_aac12d16da1479::t_71d772362c8faf 1-53,59-62,64-68
+  s_aac12d16da1479::t_51b37631bf7359 54-58,63
+crm-server/app/Support/Activities/RetainedActivityBuilder.php
+  s_aac12d16da1479::t_71d772362c8faf 1-19
+crm-server/app/Services/Activities/ActivityService.php
+  s_aac12d16da1479::t_f4b32435801e1e 34,48-50,86,88,97,99-100,102,104,106,112,114,116,118-119,121,126-128
+  s_aac12d16da1479::t_fd4996b0705a53 135
+  s_aac12d16da1479::t_51b37631bf7359 1-29,31-33,35-39,41-47,51-85,89,91-94,96,103,107,109-111,115,122-124,129-134,136-142
+  s_d8a46cebec08f1::t_74de78b2330f84 30,40,87,90,95,98,101,105,108,113,117,120,125
+crm-server/app/Jobs/Activities/RecordActivityHistory.php
+  s_aac12d16da1479::t_51b37631bf7359 1-25
+crm-server/tests/Feature/ActivitySeederTest.php
+  s_9c1b63b4bad704::t_fda80f1831b533 1-11,13-57
+  s_9c1b63b4bad704::t_438d8c1a695e00 12
+crm-server/database/seeders/PermissionSeeder.php
+  s_aac12d16da1479::t_51b37631bf7359 22-23,46
+crm-server/tests/Feature/ActivitiesApiTest.php
+  s_aac12d16da1479::t_c77215b468d0fe 3,8,16,19,45-50,52-67,220-221
+  s_aac12d16da1479::t_804d10c1f6fc14 215-219,222-228
+  s_aac12d16da1479::t_26f87fae1293c5 51
+  s_aac12d16da1479::t_556f9fb4a4759f 169,185-200
+  s_aac12d16da1479::t_4485e1438c1a61 202-214
+  s_aac12d16da1479::t_d514837a5d3c2f 1-2,4-7,9-14,17-18,20-44,68-168,170-184,201
+  s_aac12d16da1479::t_4c7320ff871274 15
+crm-server/app/Console/Commands/RecordPendingActivityHistory.php
+  s_aac12d16da1479::t_f4b32435801e1e 12
+  s_aac12d16da1479::t_51b37631bf7359 1-11,13-27
+crm-server/app/Models/Activities/ActivityLink.php
+  s_aac12d16da1479::t_f4b32435801e1e 5,21-25,28
+  s_aac12d16da1479::t_71d772362c8faf 1-4,6-20,26-27,29-30
+crm-server/app/Policies/ActivityPolicy.php
+  s_aac12d16da1479::t_71d772362c8faf 1-37
+crm-server/app/Models/Activity.php
+  s_aac12d16da1479::t_71d772362c8faf 1-52
+crm-server/app/Providers/AppServiceProvider.php
+  s_aac12d16da1479::t_51b37631bf7359 6,39,68-69
+  s_aac12d16da1479::t_f4b32435801e1e 20
+crm-server/routes/api/v1/activities.php
+  s_aac12d16da1479::t_51b37631bf7359 1-10
+crm-server/routes/api.php
+  s_aac12d16da1479::t_51b37631bf7359 24-25
+crm-server/app/Services/Activities/ActivityAccess.php
+  s_aac12d16da1479::t_f4b32435801e1e 6
+  s_aac12d16da1479::t_804d10c1f6fc14 32,42,49-50
+  s_aac12d16da1479::t_71d772362c8faf 1-5,7-31,33-41,43-48,51-70
+crm-server/tests/Pest.php
+  s_9c1b63b4bad704::t_b4de62e4736317 56-57,76-77,87-88
+  s_9c1b63b4bad704::t_c49cee2d92967c 78-86
+  s_9c1b63b4bad704::t_0d3ec29e238bba 3-11,59-75,89-90
+crm-server/config/activities.php
+  s_aac12d16da1479::t_71d772362c8faf 1-5
+crm-server/app/Support/Activities/ActivityRecords.php
+  s_d8a46cebec08f1::t_74de78b2330f84 21
+  s_aac12d16da1479::t_71d772362c8faf 1-20,22-47
+crm-server/database/seeders/DealSeeder.php
+  s_9c1b63b4bad704::t_ec3ac95f4b72c0 23-28,64-65,106,129
+  s_9c1b63b4bad704::t_633bd34bd35c5b 111
+  s_9c1b63b4bad704::t_b4de62e4736317 21,31,35,39-40,47-55,61-63,105,107-108,110,112,123,126-127
+crm-server/database/seeders/DatabaseSeeder.php
+  s_9c1b63b4bad704::t_655f03b33e33cb 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "828b21c735f50801a4809941e1535b6696321ad6",
+  "prompts": {},
+  "sessions": {
+    "s_226ed1a279b64d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01afaa83-5827-4d02-9db0-8ee1e9a564b5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_382c27be2f66d0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "832747ad-154d-4d84-8b53-32aa5b3f5e59",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_9c1b63b4bad704": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c7117cf-98f6-4d23-a557-70edac624ecc",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_aac12d16da1479": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a169f2-af64-7492-8d93-cc393d0af15f",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    },
+    "s_d8a46cebec08f1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a16b2d-817b-70b3-80ff-d3f9d64f3428",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Swerky <ahmdswerky@gmail.com>"
+    }
+  }
+}
