@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 
-import { classifyFiles } from './project-map.mjs'
+import { classifyFiles, dependabotCoverageGaps } from './project-map.mjs'
 
 const tests = [
   ['classifies only projects represented in the changed paths', () => {
@@ -32,6 +32,24 @@ const tests = [
   const result = classifyFiles(['scripts/quality/check-projects.mjs'])
   assert.deepEqual(result.projects, ['crm', 'dashboard', 'payments'])
   assert.equal(result.all, true)
+  }],
+
+  ['reports manifests that dependabot.yml does not watch', () => {
+  const config = [
+    'updates:',
+    '  - package-ecosystem: npm',
+    '    directory: /',
+    '  - package-ecosystem: docker',
+    '    directory: "/docker/dashboard"',
+  ].join('\n')
+  assert.deepEqual(dependabotCoverageGaps(config, [
+    'package.json',
+    'docker/dashboard/Dockerfile.dev',
+    'payment-server/package.json',
+    'crm-server/composer.json',
+    '.github/workflows/ci.yml',
+    '.agents/skills/archify/package.json',
+  ]), ['npm:/payment-server', 'composer:/crm-server', 'github-actions:/'])
   }],
 ]
 

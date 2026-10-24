@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Lesson 0002 — Git hooks and CI quality gates</title>
+        <link rel="stylesheet" href="../assets/lesson.css" />
+        <script defer src="../assets/highlight.js"></script>
+        <script defer src="../assets/quiz.js"></script>
+        <script defer src="../assets/line-focus.js"></script>
+    </head>
+    <body>
+        <main>
+            <p class="eyebrow">Lesson 0002 · Repository quality gates</p>
+            <h1>Every gate between your keyboard and <code>main</code></h1>
+            <p class="lede">
+                A change in this repo passes up to five gates: three
+                <strong>git hooks</strong> on your machine
+                (<em>pre-commit</em>, <em>commit-msg</em>, <em>pre-push</em>),
+                the <strong>CI workflow</strong> on GitHub, and a set of
+                <strong>scheduled bots</strong>. Click a gate to open what it
+                runs, what it checks, and the real source lines that do it.
+            </p>
+            <div class="callout">
+                <span class="badge verified">New in this change</span>
+                Pre-commit now runs
+                <code>scripts/quality/check-dependabot.mjs</code>. It fails
+                when a <code>package.json</code>, <code>composer.json</code>,
+                <code>Dockerfile</code> or workflow is not watched by
+                <code>.github/dependabot.yml</code>. It also runs the same
+                vulnerability audit as CI's <code>security</code> job for any
+                lockfile staged in that commit.
+                <a href="#dependabot-gate">Jump to it.</a>
+            </div>
+            <div class="callout bad">
+                <span class="badge gap">Found while building this</span>
+                On 2026-10-24, <code>npm audit --omit=dev --audit-level=high</code>
+                fails in <code>dashboard</code> (5 high, e.g. <code>zod</code>,
+                <code>source-map-js</code>) and <code>payment-server</code>
+                (3 high, 1 critical, e.g. <code>proxy-addr</code>, <code>qs</code>).
+                <code>composer audit</code> passes. So CI's
+                <code>security</code> job fails today. The new hook will also
+                block any commit that stages one of those two lockfiles until
+                <code>npm audit fix</code> (or a Dependabot PR) clears them.
+            </div>
+
+            <section class="card" aria-labelledby="words">
+                <h2 id="words">Six words first</h2>
+                <table>
+                    <tr><th>Word</th><th>Plain meaning</th></tr>
+                    <tr><td><strong>Git hook</strong></td><td>A script git runs on its own at a fixed moment, such as just before it records a commit. If the script exits non-zero, git stops.</td></tr>
+                    <tr><td><strong>Husky</strong></td><td>An npm package that points git at the <code>.husky/</code> folder, so the hook scripts live in the repo and everyone gets the same ones.</td></tr>
+                    <tr><td><strong>Staged files</strong></td><td>The files you <code>git add</code>-ed: what the next commit will contain.</td></tr>
+                    <tr><td><strong>lint-staged</strong></td><td>Runs a linter on only the staged files, not the whole project.</td></tr>
+                    <tr><td><strong>CI job</strong></td><td>One isolated task on a fresh GitHub machine. Jobs run in parallel unless one <code>needs</code> another.</td></tr>
+                    <tr><td><strong>Dependabot</strong></td><td>GitHub's bot. It reads <code>.github/dependabot.yml</code>, then opens PRs that bump outdated or vulnerable dependencies.</td></tr>
+                </table>
+            </section>
+
+            <section class="card" aria-labelledby="install">
+                <h2 id="install">Step 0: how the hooks get installed</h2>
+                <p>
+                    <code>npm install</code> at the repo root runs the
+                    <code>prepare</code> script. That runs
+                    <code>.husky/install.mjs</code>, which calls Husky. Husky
+                    sets <code>core.hooksPath</code> to <code>.husky/_</code>,
+                    and git then finds the hooks there. CI and production builds
+                    skip this step, because nobody commits from those machines.
+                </p>
+                <p class="file">package.json:L8-L12</p>
+<pre data-path="package.json" data-start="8" data-language="typescript">
+  "scripts": {
+    "prepare": "node .husky/install.mjs",
+    "hooks:commit": "node scripts/quality/commit-check.mjs",
+    "hooks:push": "node scripts/quality/push-check.mjs",
+    "quality:projects": "node scripts/quality/check-projects.mjs",
+</pre>
+                <p class="file">.husky/install.mjs:L1-L4</p>
+<pre data-path=".husky/install.mjs" data-start="1" data-language="typescript">
+if (process.env.CI === 'true' || process.env.NODE_ENV === 'production') process.exit(0)
+
+const { default: husky } = await import('husky')
+console.log(husky())
+</pre>
+                <p class="source">
+                    Bypass: <code>git commit --no-verify</code> skips
+                    pre-commit and commit-msg. CI re-runs most of the same
+                    checks, so skipping them locally only postpones the failure.
+                </p>
+            </section>
+
+            <section class="card" aria-labelledby="flow">
+                <h2 id="flow">The five gates</h2>
+                <p>Blue runs on your laptop. Purple runs on GitHub for every push and PR. Amber runs on a timer.</p>
+                <div class="sequence" role="group" aria-label="Quality gates from commit to main">
+                    <button class="step crm active" data-target="pre-commit" aria-pressed="true">1 · pre-commit<br /><small>before the commit exists</small></button>
+                    <span class="arrow" aria-hidden="true">→</span>
+                    <button class="step crm" data-target="commit-msg" aria-pressed="false">2 · commit-msg<br /><small>checks the message</small></button>
+                    <span class="arrow" aria-hidden="true">→</span>
+                    <button class="step crm" data-target="pre-push" aria-pressed="false">3 · pre-push<br /><small>before upload</small></button>
+                    <span class="arrow" aria-hidden="true">→</span>
+                    <button class="step broker" data-target="ci" aria-pressed="false">4 · CI<br /><small>every push &amp; PR</small></button>
+                    <span class="arrow" aria-hidden="true">→</span>
+                    <button class="step payments" data-target="scheduled" aria-pressed="false">5 · Scheduled<br /><small>CodeQL, bots, release</small></button>
+                </div>
+
+                <!-- ===================== PRE-COMMIT ===================== -->
+                <div class="step-panel active" id="pre-commit">
+                    <h3>1 · pre-commit: the heaviest local gate</h3>
+                    <p>
+                        The hook file is one line. It hands off to an npm
+                        script, which runs <code>commit-check.mjs</code>.
+                        Every <code>execFileSync</code> call in that file throws
+                        on a non-zero exit, so <strong>the first failing step
+                        aborts the commit</strong>.
+                    </p>
+                    <p class="file">.husky/pre-commit:L1-L1</p>
+<pre data-path=".husky/pre-commit" data-start="1" data-language="text">
+npm run hooks:commit
+</pre>
+                    <p class="file">scripts/quality/commit-check.mjs:L1-L34</p>
+<pre data-path="scripts/quality/commit-check.mjs" data-start="1" data-language="typescript">
+import { execFileSync } from 'node:child_process'
+
+import { stagedFiles } from './git-files.mjs'
+import { classifyFiles } from './project-map.mjs'
+
+console.log('Generating API documentation...')
+execFileSync('npm', ['run', 'api:docs'], {
+  cwd: 'dashboard',
+  stdio: 'inherit',
+})
+
+execFileSync('git', ['add', '--', 'dashboard/public/openapi.json'], {
+  stdio: 'inherit',
+})
+
+const files = stagedFiles()
+const yellow = '\u001b[33m'
+const reset = '\u001b[0m'
+
+if (files.length &gt; 20) {
+  const message = `Warning: this commit contains ${files.length} staged files. Consider splitting it into a smaller feature or fix.`
+  console.warn(`${yellow}${message}${reset}`)
+  console.warn(`::warning title=Large commit::${message}`)
+}
+
+if (classifyFiles(files).dbSchema) {
+  console.log('Regenerating database schema and ERDs...')
+  execFileSync('node', ['scripts/quality/generate-db-schema.mjs'], { stdio: 'inherit' })
+  execFileSync('git', ['add', '--', 'docs/db'], { stdio: 'inherit' })
+}
+
+execFileSync('npm', ['exec', '--', 'lint-staged', '--config', 'lint-staged.config.mjs'], { stdio: 'inherit' })
+execFileSync('node', ['scripts/quality/check-dependabot.mjs'], { stdio: 'inherit' })
+execFileSync('node', ['scripts/quality/check-projects.mjs', '--staged'], { stdio: 'inherit' })
+</pre>
+                    <table data-src="scripts/quality/commit-check.mjs">
+                        <tr><th>Lines</th><th>What it does</th><th>Blocks the commit?</th></tr>
+                        <tr><td>L6-L14</td><td>Regenerates <code>dashboard/public/openapi.json</code> from the API sources and <strong>stages it for you</strong>. This runs on every commit, even one that touches only docs.</td><td>Only if generation crashes</td></tr>
+                        <tr><td>L16-L24</td><td>Counts staged files. More than 20 prints a yellow "consider splitting" warning.</td><td>No, warning only</td></tr>
+                        <tr><td>L26-L30</td><td>If you staged a migration or schema tooling, regenerates <code>docs/db</code> (schema dumps + ERDs) and stages them.</td><td>If regeneration fails</td></tr>
+                        <tr><td>L32</td><td>lint-staged: ESLint / Pint on just the staged files (below).</td><td>Yes</td></tr>
+                        <tr><td>L33</td><td><strong>New:</strong> Dependabot coverage + lockfile audits (below).</td><td>Yes</td></tr>
+                        <tr><td>L34</td><td>Full per-project checks, including the whole test suite, for each project you touched (below).</td><td>Yes</td></tr>
+                    </table>
+
+                    <h3>L32 · lint-staged</h3>
+                    <p>
+                        Each glob maps to a command, and lint-staged appends the
+                        matching staged file names. Pint runs with
+                        <code>--test</code>, so it <em>reports</em> PHP style
+                        problems but does not rewrite your files.
+                    </p>
+                    <p class="file">lint-staged.config.mjs:L1-L9</p>
+<pre data-path="lint-staged.config.mjs" data-start="1" data-language="typescript">
+const quote = (file) =&gt; JSON.stringify(file)
+
+const command = (executable, files) =&gt; `${executable} ${files.map(quote).join(' ')}`
+
+export default {
+  'dashboard/**/*.{ts,tsx}': (files) =&gt; command('npm --prefix dashboard exec eslint --', files),
+  'payment-server/**/*.{ts,tsx}': (files) =&gt; command('npm --prefix payment-server exec -- eslint --config payment-server/eslint.config.mjs --', files),
+  'crm-server/**/*.php': (files) =&gt; command('crm-server/vendor/bin/pint --test', files),
+}
+</pre>
+
+                    <h3 id="dependabot-gate">L33 · Dependabot gate (new)</h3>
+                    <p>
+                        Dependabot only watches the folders listed in
+                        <code>.github/dependabot.yml</code>. If you add a service
+                        with its own <code>package.json</code> and forget that
+                        file, nothing tells you. The service never gets update
+                        or security PRs. This gate catches that before the
+                        commit lands.
+                    </p>
+                    <p class="file">scripts/quality/check-dependabot.mjs:L1-L24</p>
+<pre data-path="scripts/quality/check-dependabot.mjs" data-start="1" data-language="typescript">
+import { readFileSync } from 'node:fs'
+import process from 'node:process'
+
+import { gitFiles, stagedFiles } from './git-files.mjs'
+import { dependabotCoverageGaps } from './project-map.mjs'
+import { run } from './run.mjs'
+
+const gaps = dependabotCoverageGaps(readFileSync('.github/dependabot.yml', 'utf8'), gitFiles(['ls-files']))
+if (gaps.length) {
+  console.error('Dependabot does not watch these manifests. Add an entry to .github/dependabot.yml:')
+  gaps.forEach((gap) =&gt; console.error(`  ${gap}`))
+  process.exit(1)
+}
+
+// Same advisory gates as the CI security job, only for lockfiles in this commit.
+const audits = [
+  ['dashboard/package-lock.json', 'npm', ['audit', '--omit=dev', '--audit-level=high'], 'dashboard'],
+  ['payment-server/package-lock.json', 'npm', ['audit', '--omit=dev', '--audit-level=high'], 'payment-server'],
+  ['crm-server/composer.lock', 'composer', ['audit', '--locked', '--no-interaction'], 'crm-server'],
+]
+const staged = stagedFiles()
+for (const [lockfile, command, args, cwd] of audits) {
+  if (staged.includes(lockfile)) run(command, args, { cwd })
+}
+</pre>
+                    <ul data-src="scripts/quality/check-dependabot.mjs">
+                        <li><strong>L8-L13 coverage:</strong> lists every tracked file (<code>git ls-files</code>). For each manifest it builds an <code>ecosystem:/directory</code> key and fails if <code>dependabot.yml</code> has no matching entry. It runs on every commit and needs no network.</li>
+                        <li><strong>L16-L24 audits:</strong> only when that lockfile is staged. It runs the same commands as CI's <code>security</code> job: <code>npm audit --omit=dev --audit-level=high</code> (production deps, high or critical only) and <code>composer audit --locked</code>. These need the network.</li>
+                    </ul>
+                    <p>The matching logic lives next to the other path rules, so <code>npm run quality:test</code> can test it:</p>
+                    <p class="file">scripts/quality/project-map.mjs:L65-L98</p>
+<pre data-path="scripts/quality/project-map.mjs" data-start="65" data-language="typescript">
+const manifestEcosystems = [
+  [/(^|\/)package\.json$/, 'npm'],
+  [/(^|\/)composer\.json$/, 'composer'],
+  [/(^|\/)Dockerfile(\.[\w-]+)?$/, 'docker'],
+  [/^\.github\/workflows\/[^/]+\.ya?ml$/, 'github-actions'],
+]
+
+// ponytail: line-based read of dependabot.yml; switch to the yaml package if the config grows anchors or flow lists
+export function dependabotEntries(config) {
+  const entries = new Set()
+  let ecosystem
+  for (const line of config.split(/\r?\n/)) {
+    const ecosystemMatch = line.match(/^\s*-\s*package-ecosystem:\s*['"]?([\w-]+)/)
+    if (ecosystemMatch) ecosystem = ecosystemMatch[1]
+    const directoryMatch = line.match(/^\s*directory:\s*['"]?([^'"\s#]+)/)
+    if (directoryMatch &amp;&amp; ecosystem) entries.add(`${ecosystem}:${directoryMatch[1].replace(/\/$/, '') || '/'}`)
+  }
+  return entries
+}
+
+export function dependabotCoverageGaps(config, files) {
+  const covered = dependabotEntries(config)
+  const gaps = new Set()
+  for (const file of files) {
+    // ponytail: dot-directories other than .github hold vendored agent tooling, not shipped code
+    if (/^\.(?!github\/)/.test(file)) continue
+    for (const [pattern, ecosystem] of manifestEcosystems) {
+      if (!pattern.test(file)) continue
+      const directory = ecosystem === 'github-actions' ? '/' : `/${path.posix.dirname(file)}`.replace(/^\/\.$/, '/')
+      if (!covered.has(`${ecosystem}:${directory}`)) gaps.add(`${ecosystem}:${directory}`)
+    }
+  }
+  return [...gaps]
+}
+</pre>
+                    <p>
+                        <span data-src="scripts/quality/project-map.mjs">L90</span> skips dot-folders other than <code>.github</code>,
+                        such as <code>.agents/skills/archify/package.json</code>,
+                        which is vendored agent tooling. <span data-src="scripts/quality/project-map.mjs">L93</span> maps
+                        <code>package.json</code> at the root to <code>/</code>,
+                        and maps every workflow file to <code>/</code>, because
+                        that is where Dependabot looks for Actions.
+                    </p>
+                    <p>Example failure output:</p>
+                    <pre>Dependabot does not watch these manifests. Add an entry to .github/dependabot.yml:
+  npm:/new-service</pre>
+
+                    <h3>L34 · per-project checks</h3>
+                    <p>
+                        First the staged paths are sorted into projects. Then
+                        each touched project runs its full gate. Changing
+                        anything under <code>.github/</code>,
+                        <code>scripts/quality/</code> or
+                        <code>commitlint.config.cjs</code> sets
+                        <code>all</code>, which runs <em>every</em> project.
+                    </p>
+                    <p class="file">scripts/quality/project-map.mjs:L16-L59</p>
+<pre data-path="scripts/quality/project-map.mjs" data-start="16" data-language="typescript">
+export function classifyFiles(files) {
+  const normalized = files.filter(Boolean).map((file) =&gt; file.replace(/^\.\//, ''))
+  const projects = new Set()
+  let docker = false
+  let api = false
+  let all = false
+  let dbSchema = false
+
+  for (const file of normalized) {
+    if (matches(file, 'crm-server') || matches(file, 'docker/crm-server')) projects.add('crm')
+    if (matches(file, 'dashboard') || matches(file, 'docs/openapi') || matches(file, 'docker/dashboard')) projects.add('dashboard')
+    if (matches(file, 'payment-server') || matches(file, 'docker/payment-server')) projects.add('payments')
+    if (
+      rootFiles.has(file) ||
+      matches(file, 'docker/nginx') ||
+      matches(file, 'docker/postgres') ||
+      matches(file, 'docker/redis') ||
+      matches(file, 'docker')
+    ) docker = true
+    if (
+      matches(file, 'docs/openapi') ||
+      matches(file, 'dashboard/scripts') ||
+      file === 'dashboard/public/openapi.json' ||
+      matches(file, 'dashboard/src/api/generated') ||
+      matches(file, 'crm-server/routes/api') ||
+      matches(file, 'crm-server/app/Http')
+    ) api = true
+    if (file.startsWith('.github/') || file.startsWith('scripts/quality/') || file === 'commitlint.config.cjs') all = true
+    if (
+      matches(file, 'crm-server/database/migrations') ||
+      matches(file, 'payment-server/src/database/migrations') ||
+      file === 'payment-server/src/database/data-source.ts' ||
+      matches(file, 'scripts/quality/db-schema') ||
+      file === 'scripts/quality/generate-db-schema.mjs' ||
+      matches(file, 'docs/db')
+    ) dbSchema = true
+  }
+
+  if (all) {
+    projectNames.forEach((project) =&gt; projects.add(project))
+    dbSchema = true
+  }
+  return { files: normalized, projects: [...projects], docker, api, all, dbSchema }
+}
+</pre>
+                    <p class="file">scripts/quality/check-projects.mjs:L1-L33</p>
+<pre data-path="scripts/quality/check-projects.mjs" data-start="1" data-language="typescript">
+import process from 'node:process'
+
+import { classifyFiles } from './project-map.mjs'
+import { stagedFiles, rangeFiles } from './git-files.mjs'
+import { run } from './run.mjs'
+
+const mode = process.argv[2] ?? '--staged'
+const files = mode === '--range' ? rangeFiles(process.argv[3], process.argv[4]) : stagedFiles()
+const selection = classifyFiles(files)
+
+console.log(`Changed files: ${files.length}; projects: ${selection.projects.join(', ') || 'none'}`)
+
+if (selection.projects.includes('crm')) {
+  run('composer', ['validate', '--strict', '--no-check-publish'], { cwd: 'crm-server' })
+  run('./vendor/bin/pint', ['--test'], { cwd: 'crm-server' })
+  run('composer', ['quality:insights'], { cwd: 'crm-server' })
+  run('composer', ['test'], { cwd: 'crm-server' })
+}
+
+if (selection.projects.includes('dashboard')) {
+  run('npm', ['run', 'api:validate'], { cwd: 'dashboard' })
+  run('npm', ['run', 'api:check'], { cwd: 'dashboard' })
+  run('npm', ['run', 'lint'], { cwd: 'dashboard' })
+  run('npm', ['run', 'typecheck'], { cwd: 'dashboard' })
+  run('npm', ['run', 'test'], { cwd: 'dashboard' })
+}
+
+if (selection.projects.includes('payments')) {
+  run('npm', ['run', 'lint:check'], { cwd: 'payment-server' })
+  run('npm', ['run', 'test'], { cwd: 'payment-server' })
+}
+
+if (selection.docker) run('npm', ['run', 'quality:docker'])
+</pre>
+                    <table>
+                        <tr><th>Project</th><th>Commands, in order</th><th>What each proves</th></tr>
+                        <tr><td><code>crm</code> (Laravel)</td><td><code>composer validate --strict</code> · <code>pint --test</code> · <code>phpinsights</code> · <code>php artisan test</code></td><td>Manifest and lockfile are valid · code style · code-quality score thresholds · Pest/PHPUnit tests pass</td></tr>
+                        <tr><td><code>dashboard</code></td><td><code>api:validate</code> · <code>api:check</code> · <code>eslint .</code> · <code>tsc -b</code> · <code>vitest run</code></td><td>OpenAPI exports parse · generated TS API types match the specs · lint · types · unit tests</td></tr>
+                        <tr><td><code>payments</code></td><td><code>lint:check</code> · <code>jest</code></td><td>ESLint without <code>--fix</code> · unit tests</td></tr>
+                        <tr><td>docker files</td><td><code>quality:docker</code></td><td>Required Docker files exist, and <code>docker compose config -q</code> accepts the prod and dev Compose files</td></tr>
+                    </table>
+                    <p class="source">
+                        <code>run()</code> (<code>scripts/quality/run.mjs</code>)
+                        calls <code>process.exit(status)</code> on the first
+                        non-zero result, so a failed lint stops before the tests
+                        run.
+                    </p>
+                </div>
+
+                <!-- ===================== COMMIT-MSG ===================== -->
+                <div class="step-panel" id="commit-msg">
+                    <h3>2 · commit-msg: Conventional Commits</h3>
+                    <p>
+                        Git passes the path of the draft message file as
+                        <code>$1</code>. commitlint reads that file and rejects
+                        the commit if the message breaks a rule.
+                    </p>
+                    <p class="file">.husky/commit-msg:L1-L1</p>
+<pre data-path=".husky/commit-msg" data-start="1" data-language="text">
+npm exec -- commitlint --edit "$1"
+</pre>
+                    <p class="file">commitlint.config.cjs:L1-L7</p>
+<pre data-path="commitlint.config.cjs" data-start="1" data-language="typescript">
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'subject-case': [2, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+    'header-max-length': [2, 'always', 100]
+  }
+}
+</pre>
+                    <table data-src="commitlint.config.cjs">
+                        <tr><th>Rule</th><th>Source</th><th>Meaning</th></tr>
+                        <tr><td><code>type(scope): subject</code></td><td>L2 <code>config-conventional</code></td><td>A type is required: <code>feat</code>, <code>fix</code>, <code>docs</code>, <code>chore</code>, <code>refactor</code>, <code>test</code>, <code>ci</code>, <code>build</code>, <code>perf</code>, <code>style</code> or <code>revert</code>. The scope is optional.</td></tr>
+                        <tr><td><code>subject-case</code></td><td>L4</td><td>The subject must not be Sentence, Start, Pascal or UPPER case. Write it lower-case.</td></tr>
+                        <tr><td><code>header-max-length</code></td><td>L5</td><td>The first line is 100 characters or fewer.</td></tr>
+                    </table>
+                    <div class="two">
+                        <pre>feat(media): protect media uploads and add daily reset</pre>
+                        <pre>Fixed the media upload bug   # no type, sentence case</pre>
+                    </div>
+                    <p class="source">
+                        Why it matters: <code>release-please</code> (gate 5)
+                        reads these types to decide version bumps and to write
+                        <code>CHANGELOG.md</code>.
+                    </p>
+                </div>
+
+                <!-- ===================== PRE-PUSH ===================== -->
+                <div class="step-panel" id="pre-push">
+                    <h3>3 · pre-push: build what you are about to upload</h3>
+                    <p>
+                        Git feeds the hook one line per ref being pushed:
+                        <code>local_ref local_sha remote_ref remote_sha</code>.
+                        The hook passes both commit hashes to
+                        <code>push-check.mjs</code>.
+                    </p>
+                    <p class="file">.husky/pre-push:L1-L5</p>
+<pre data-path=".husky/pre-push" data-start="1" data-language="text">
+set -eu
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  npm run hooks:push -- "$remote_sha" "$local_sha"
+done
+</pre>
+                    <p class="file">scripts/quality/push-check.mjs:L1-L21</p>
+<pre data-path="scripts/quality/push-check.mjs" data-start="1" data-language="typescript">
+import process from 'node:process'
+
+import { classifyFiles } from './project-map.mjs'
+import { rangeFiles } from './git-files.mjs'
+import { run } from './run.mjs'
+
+const from = process.argv[2]
+const to = process.argv[3]
+const files = rangeFiles(from, to)
+const selection = classifyFiles(files)
+
+console.log(`Pushed files: ${files.length}; projects: ${selection.projects.join(', ') || 'none'}`)
+
+if (selection.projects.includes('dashboard')) run('npm', ['run', 'build'], { cwd: 'dashboard' })
+if (selection.projects.includes('payments')) run('npm', ['run', 'build'], { cwd: 'payment-server' })
+
+run('npm', ['run', 'quality:docker'])
+
+run('npm', ['run', 'api:docs:check'], { cwd: 'dashboard' })
+run('npm', ['run', 'api:validate'], { cwd: 'dashboard' })
+run('npm', ['run', 'api:check'], { cwd: 'dashboard' })
+</pre>
+                    <p class="file">scripts/quality/git-files.mjs:L14-L19</p>
+<pre data-path="scripts/quality/git-files.mjs" data-start="14" data-language="typescript">
+export function rangeFiles(from, to) {
+  if (!from || !to) return []
+  const emptyTree = '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
+  const base = /^0+$/.test(from) ? emptyTree : from
+  return gitFiles(['diff', '--name-only', '--diff-filter=ACMR', `${base}..${to}`])
+}
+</pre>
+                    <ul data-src="scripts/quality/push-check.mjs">
+                        <li data-src="scripts/quality/git-files.mjs"><strong>git-files L17:</strong> when you push a brand-new branch, the remote hash is all zeros. The diff then starts from git's empty tree, so <em>every</em> file in the pushed commits counts as changed.</li>
+                        <li><strong>push-check L14-L15:</strong> production builds: <code>tsc -b &amp;&amp; vite build</code> for the dashboard and <code>nest build</code> for payments, only if those projects changed. The builds catch errors that type-checking alone misses.</li>
+                        <li><strong>L17:</strong> Docker structure and Compose validation, always.</li>
+                        <li><strong>L19-L21:</strong> API contract drift, always. <code>api:docs:check</code> regenerates the OpenAPI JSON in a temp dir and diffs it against the committed one. <code>api:check</code> does the same for the generated TS types.</li>
+                    </ul>
+                </div>
+
+                <!-- ===================== CI ===================== -->
+                <div class="step-panel" id="ci">
+                    <h3>4 · CI (<code>.github/workflows/ci.yml</code>)</h3>
+                    <p>
+                        This runs on every <code>push</code>, every
+                        <code>pull_request</code> and on manual dispatch, with
+                        read-only permissions. A newer push to the same ref
+                        cancels the run in progress.
+                    </p>
+                    <p class="file">.github/workflows/ci.yml:L1-L14</p>
+<pre data-path=".github/workflows/ci.yml" data-start="1" data-language="yaml">
+name: CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+</pre>
+
+                    <details open>
+                        <summary><code>changes</code>: decide which jobs need to run</summary>
+                        <p>
+                            <code>dorny/paths-filter</code> sets five true/false
+                            outputs. The project jobs read them in their
+                            <code>if:</code>. A <code>tooling</code> change (CI,
+                            hooks, quality scripts) runs every project job. This
+                            is the CI twin of <code>classifyFiles</code>.
+                        </p>
+                        <p class="file">.github/workflows/ci.yml:L34-L64</p>
+<pre data-path=".github/workflows/ci.yml" data-start="34" data-language="yaml">
+      - name: Classify changes
+        id: filter
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3
+        with:
+          filters: |
+            crm:
+              - 'crm-server/**'
+              - 'docker/crm-server/**'
+            dashboard:
+              - 'dashboard/**'
+              - 'docs/openapi/**'
+              - 'docker/dashboard/**'
+            payments:
+              - 'payment-server/**'
+              - 'docker/payment-server/**'
+            compose:
+              - 'docker-compose.yml'
+              - 'docker-compose.dev.yml'
+              - 'docker/nginx/**'
+              - 'docker/postgres/**'
+              - 'docker/redis/**'
+              - '.dockerignore'
+              - '.env.docker.example'
+            tooling:
+              - '.github/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'commitlint.config.cjs'
+              - '.husky/**'
+              - 'lint-staged.config.mjs'
+              - 'scripts/quality/**'
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>commit-policy</code>: commitlint over the whole pushed range</summary>
+                        <p>
+                            The same rules as the commit-msg hook, applied to
+                            every commit since <code>ci.yml</code> first
+                            appeared. This catches commits made with
+                            <code>--no-verify</code> or on machines without the
+                            hooks.
+                        </p>
+                        <p class="file">.github/workflows/ci.yml:L88-L108</p>
+<pre data-path=".github/workflows/ci.yml" data-start="88" data-language="yaml">
+      - name: Validate commit messages
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == 'pull_request' ]]; then
+            to="$PR_HEAD"
+          else
+            to="$PUSH_AFTER"
+          fi
+          policy_origin="$(git log --reverse --format=%H -- .github/workflows/ci.yml | head -n 1)"
+          if [[ -z "$policy_origin" ]]; then
+            echo 'Unable to determine the commit-policy adoption point.' &gt;&amp;2
+            exit 1
+          fi
+          echo "Ignoring commits before CI policy adoption: $policy_origin"
+          from="$policy_origin^"
+          npm exec -- commitlint --from "$from" --to "$to" --verbose
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>workflow-policy</code>: supply-chain rules for workflows themselves</summary>
+                        <ul data-src=".github/workflows/ci.yml">
+                            <li><strong>L124:</strong> every <code>uses:</code> must pin a full 40-character commit SHA. A tag like <code>@v4</code> can be moved to point at malicious code, and a SHA cannot.</li>
+                            <li><strong>L128:</strong> bans the <code>pull_request_target</code> trigger, which runs fork code with repo secrets, and bans <code>write-all</code> or empty <code>{}</code> permissions.</li>
+                        </ul>
+                        <p class="file">.github/workflows/ci.yml:L120-L131</p>
+<pre data-path=".github/workflows/ci.yml" data-start="120" data-language="yaml">
+      - name: Enforce workflow security policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInP '^\s*uses:\s+[^@]+@(?![0-9a-f]{40}(\s|$))' .github/workflows; then
+            echo 'Every GitHub Action must use a full 40-character commit SHA.' &gt;&amp;2
+            exit 1
+          fi
+          if grep -RInE '^[[:space:]]*pull_request_target:|^[[:space:]]*permissions:[[:space:]]*(write-all|\{[[:space:]]*\})[[:space:]]*$' .github/workflows; then
+            echo 'Unsafe workflow trigger or permission declaration found.' &gt;&amp;2
+            exit 1
+          fi
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>security</code>: secrets + vulnerable dependencies</summary>
+                        <ul data-src=".github/workflows/ci.yml">
+                            <li><strong>L144-L148 gitleaks:</strong> scans the full git history for committed keys, tokens and passwords. <em>CI only.</em> No local hook does this.</li>
+                            <li><strong>L155-L163:</strong> <code>npm audit</code> on production deps, failing on high or critical, for the dashboard and payments.</li>
+                            <li><strong>L172-L175:</strong> <code>composer audit --locked</code> for Laravel.</li>
+                        </ul>
+                        <p>The new pre-commit gate runs these same audits locally, but only when you stage a lockfile.</p>
+                        <p class="file">.github/workflows/ci.yml:L144-L175</p>
+<pre data-path=".github/workflows/ci.yml" data-start="144" data-language="yaml">
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: ${{ env.ACT != 'true' }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      - name: Audit npm production dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          for directory in dashboard payment-server; do
+            if [[ -f "$directory/package-lock.json" ]]; then
+              (cd "$directory" &amp;&amp; npm ci &amp;&amp; npm audit --omit=dev --audit-level=high)
+            fi
+          done
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, dom, exif, gd, intl, mbstring, pcntl, pdo_sqlite, zip
+          coverage: none
+
+      - name: Audit Composer dependencies
+        working-directory: crm-server
+        if: ${{ hashFiles('crm-server/composer.lock') != '' }}
+        run: composer audit --locked --no-interaction
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>crm</code> / <code>dashboard</code> / <code>payments</code>: per-project checks</summary>
+                        <p>
+                            These mirror <code>check-projects.mjs</code> on a
+                            clean machine with <code>composer install</code> /
+                            <code>npm ci</code> from the lockfiles. That catches
+                            "works on my machine" problems. The dashboard and
+                            payments jobs also run a production build.
+                        </p>
+                        <p class="file">.github/workflows/ci.yml:L177-L220</p>
+<pre data-path=".github/workflows/ci.yml" data-start="177" data-language="yaml">
+  crm:
+    name: Laravel checks
+    needs: changes
+    if: ${{ needs.changes.outputs.crm == 'true' || needs.changes.outputs.tooling == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, dom, exif, gd, intl, mbstring, pcntl, pdo_sqlite, zip
+          coverage: none
+
+      - name: Restore Composer downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ runner.os }}-${{ hashFiles('crm-server/composer.lock') }}
+
+      - name: Install locked dependencies
+        working-directory: crm-server
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate Composer manifest
+        working-directory: crm-server
+        run: composer validate --strict --no-check-publish
+
+      - name: Check Laravel formatting
+        working-directory: crm-server
+        run: ./vendor/bin/pint --test
+
+      - name: Run PHP Insights
+        working-directory: crm-server
+        run: composer quality:insights
+
+      - name: Run Laravel tests
+        working-directory: crm-server
+        run: composer test
+</pre>
+                        <p class="file">.github/workflows/ci.yml:L245-L271</p>
+<pre data-path=".github/workflows/ci.yml" data-start="245" data-language="yaml">
+      - name: Check generated API contract
+        working-directory: dashboard
+        run: npm run api:check
+
+      - name: Check generated API documentation
+        working-directory: dashboard
+        run: npm run api:docs:check
+
+      - name: Validate OpenAPI documents
+        working-directory: dashboard
+        run: npm run api:validate
+
+      - name: Lint dashboard
+        working-directory: dashboard
+        run: npm run lint
+
+      - name: Check dashboard types
+        working-directory: dashboard
+        run: npm run typecheck
+
+      - name: Run dashboard tests
+        working-directory: dashboard
+        run: npm run test
+
+      - name: Build dashboard
+        working-directory: dashboard
+        run: npm run build
+</pre>
+                        <p class="file">.github/workflows/ci.yml:L296-L306</p>
+<pre data-path=".github/workflows/ci.yml" data-start="296" data-language="yaml">
+      - name: Lint payments API without rewriting files
+        working-directory: payment-server
+        run: npm run lint:check
+
+      - name: Run payments API tests
+        working-directory: payment-server
+        run: npm run test
+
+      - name: Build payments API
+        working-directory: payment-server
+        run: npm run build
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>db-schema</code>: migrations vs committed schema docs</summary>
+                        <p>
+                            This starts a real Postgres 17 service, runs both
+                            projects' migrations, dumps the schema and fails if
+                            it differs from <code>docs/db</code>. It is the CI
+                            check for pre-commit's L26-L30 regeneration.
+                        </p>
+                        <p class="file">.github/workflows/ci.yml:L308-L332</p>
+<pre data-path=".github/workflows/ci.yml" data-start="308" data-language="yaml">
+  db-schema:
+    name: Database schema drift
+    needs: changes
+    if: ${{ needs.changes.outputs.crm == 'true' || needs.changes.outputs.payments == 'true' || needs.changes.outputs.tooling == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: &gt;-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DB_SCHEMA_PG_HOST: localhost
+      DB_SCHEMA_PG_PORT: '5432'
+      DB_SCHEMA_PG_USER: postgres
+      DB_SCHEMA_PG_PASSWORD: postgres
+</pre>
+                        <p class="file">.github/workflows/ci.yml:L377-L378</p>
+<pre data-path=".github/workflows/ci.yml" data-start="377" data-language="yaml">
+      - name: Check for database schema drift
+        run: npm run quality:db-schema:check -- --reuse
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>compose</code>, <code>api-docs</code>, <code>docker-structure</code></summary>
+                        <ul>
+                            <li><strong>compose:</strong> runs <code>docker compose config -q</code> on the prod and dev files when Compose-related paths change.</li>
+                            <li><strong>api-docs:</strong> always runs the three OpenAPI drift checks, whatever paths changed.</li>
+                            <li><strong>docker-structure:</strong> always runs <code>quality:docker</code>, the same script the hooks use.</li>
+                        </ul>
+                        <p class="file">.github/workflows/ci.yml:L392-L396</p>
+<pre data-path=".github/workflows/ci.yml" data-start="392" data-language="yaml">
+      - name: Validate production Compose configuration
+        run: docker compose -f docker-compose.yml config -q
+
+      - name: Validate development Compose configuration
+        run: docker compose --env-file .env.docker.example -f docker-compose.dev.yml config -q
+</pre>
+                        <p class="file">.github/workflows/ci.yml:L419-L424</p>
+<pre data-path=".github/workflows/ci.yml" data-start="419" data-language="yaml">
+      - name: Validate and check generated API documentation
+        working-directory: dashboard
+        run: |
+          npm run api:docs:check
+          npm run api:validate
+          npm run api:check
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>crm-image</code> / <code>dashboard-image</code> / <code>payments-image</code>: production Docker builds</summary>
+                        <p>
+                            These build each production Dockerfile with
+                            <code>push: false</code>, which proves the image
+                            builds without publishing it. The layer cache lives
+                            in GitHub Actions. <em>CI only.</em>
+                        </p>
+                        <p class="file">.github/workflows/ci.yml:L464-L471</p>
+<pre data-path=".github/workflows/ci.yml" data-start="464" data-language="yaml">
+      - name: Build Laravel production image without publishing
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/crm-server/Dockerfile
+          push: false
+          cache-from: type=gha,scope=crm-server
+          cache-to: type=gha,mode=max,scope=crm-server
+</pre>
+                    </details>
+
+                    <details open>
+                        <summary><code>policy-gate</code>: the one check branch protection needs</summary>
+                        <p>
+                            This runs <code>always()</code>, even after a
+                            failure, and fails if any listed job ended with
+                            anything other than <code>success</code> or
+                            <code>skipped</code>. Path-filtered jobs that
+                            skip count as a pass. Branch protection then only
+                            needs to require this one job.
+                        </p>
+                        <p class="file">.github/workflows/ci.yml:L521-L569</p>
+<pre data-path=".github/workflows/ci.yml" data-start="521" data-language="yaml">
+  policy-gate:
+    name: CI policy gate
+    if: ${{ always() }}
+    needs:
+      - workflow-policy
+      - security
+      - changes
+      - commit-policy
+      - api-docs
+      - docker-structure
+      - crm
+      - dashboard
+      - payments
+      - db-schema
+      - compose
+      - crm-image
+      - dashboard-image
+      - payments-image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Enforce required checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            'workflow-policy:${{ needs.workflow-policy.result }}'
+            'security:${{ needs.security.result }}'
+            'changes:${{ needs.changes.result }}'
+            'commit-policy:${{ needs.commit-policy.result }}'
+            'api-docs:${{ needs.api-docs.result }}'
+            'docker-structure:${{ needs.docker-structure.result }}'
+            'crm:${{ needs.crm.result }}'
+            'payments:${{ needs.payments.result }}'
+            'db-schema:${{ needs.db-schema.result }}'
+            'compose:${{ needs.compose.result }}'
+            'crm-image:${{ needs.crm-image.result }}'
+            'dashboard:${{ needs.dashboard.result }}'
+            'dashboard-image:${{ needs.dashboard-image.result }}'
+            'payments-image:${{ needs.payments-image.result }}'
+          )
+          for check in "${required[@]}"; do
+            name=${check%%:*}
+            result=${check#*:}
+            if [[ "$result" != 'success' &amp;&amp; "$result" != 'skipped' ]]; then
+              echo "$name ended with $result" &gt;&amp;2
+              exit 1
+            fi
+          done
+</pre>
+                    </details>
+                </div>
+
+                <!-- ===================== SCHEDULED ===================== -->
+                <div class="step-panel" id="scheduled">
+                    <h3>5 · Scheduled and bot-driven</h3>
+
+                    <details open>
+                        <summary><code>dependabot.yml</code>: weekly update PRs (Mondays)</summary>
+                        <p>
+                            There are nine watchers: npm for root, dashboard and
+                            payments, Composer for Laravel, GitHub Actions, and
+                            Docker for root plus the three image folders. Minor
+                            and patch bumps are <code>groups</code>-ed into one
+                            PR per project. Major bumps get their own PRs. Each
+                            Dependabot PR then goes through gate 4 like any
+                            other.
+                        </p>
+                        <p class="file">.github/dependabot.yml:L1-L67</p>
+<pre data-path=".github/dependabot.yml" data-start="1" data-language="yaml">
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      repository-tooling-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /dashboard
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      dashboard-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /payment-server
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      payments-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: composer
+    directory: /crm-server
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      crm-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /docker/crm-server
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /docker/dashboard
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: docker
+    directory: /docker/payment-server
+    schedule:
+      interval: weekly
+      day: monday
+</pre>
+                        <p class="callout warn">
+                            <span class="badge inferred">Inferred</span>
+                            <span data-src=".github/dependabot.yml">L45-L49</span> watches <code>docker</code> at <code>/</code>,
+                            but no root <code>Dockerfile</code> is tracked. This
+                            entry probably finds nothing. Also,
+                            <code>crm-server/package-lock.json</code> is tracked
+                            without a <code>package.json</code>, so no ecosystem
+                            covers it. The new gate keys off manifests, so it
+                            flags neither.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary><code>codeql.yml</code>: static security analysis</summary>
+                        <p>
+                            This runs on PRs, on pushes to <code>main</code> and
+                            <code>dev</code>, and every Monday at 04:23 UTC. It
+                            scans JavaScript/TypeScript only, because CodeQL
+                            does not support PHP (see the comment on <span data-src=".github/workflows/codeql.yml">L27</span>).
+                            Findings go to the repo's Security tab.
+                        </p>
+                        <p class="file">.github/workflows/codeql.yml:L1-L44</p>
+<pre data-path=".github/workflows/codeql.yml" data-start="1" data-language="yaml">
+name: CodeQL
+
+on:
+  pull_request:
+  push:
+    branches: [main, dev]
+  schedule:
+    - cron: '23 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze ${{ matrix.language }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # GitHub recognizes PHP as a repository language, but CodeQL does not scan PHP.
+        language: [javascript-typescript]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+
+      - name: Analyze code
+        uses: github/codeql-action/analyze@f3712979fa5f215279b101dd0a2e3bdfb4353324 # v3
+        with:
+          category: /language:${{ matrix.language }}
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>dependency-freshness.yml</code>: weekly outdated report</summary>
+                        <p>
+                            This runs every Monday at 07:30 UTC. It installs
+                            everything and runs <code>npm outdated</code> /
+                            <code>composer outdated --direct</code>. It
+                            <strong>only warns</strong> and never fails. It
+                            covers all outdated versions, while Dependabot's
+                            grouped PRs are what actually apply the updates.
+                        </p>
+                        <p class="file">.github/workflows/dependency-freshness.yml:L49-L54</p>
+<pre data-path=".github/workflows/dependency-freshness.yml" data-start="49" data-language="yaml">
+      - name: Install Composer dependencies
+        working-directory: crm-server
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Report current and latest versions
+        run: npm run quality:outdated
+</pre>
+                        <p class="file">scripts/quality/check-outdated.mjs:L38-L49</p>
+<pre data-path="scripts/quality/check-outdated.mjs" data-start="38" data-language="typescript">
+  if (packages.length || result.status !== 0) {
+    const message = `Warning: outdated dependencies detected in ${directory}.`
+    console.warn(`${yellow}${message}${reset}`)
+    console.warn(`::warning title=Outdated dependencies::${message}`)
+    if (details.length) details.forEach((detail) =&gt; console.warn(`  ${detail}`))
+    if (!details.length) console.warn(output || `command exited with status ${result.status}`)
+  }
+}
+
+report('dashboard', 'npm', ['outdated', '--json'])
+report('payment-server', 'npm', ['outdated', '--json'])
+report('crm-server', 'composer', ['outdated', '--direct', '--format=json', '--no-interaction'])
+</pre>
+                    </details>
+
+                    <details>
+                        <summary><code>release-please.yml</code>: release PR from commit history</summary>
+                        <p>
+                            On every push to <code>main</code>, it reads the
+                            Conventional Commit types since the last release.
+                            It then opens or updates a release PR that bumps
+                            <code>VERSION</code> and the manifest and writes
+                            <code>CHANGELOG.md</code>. This is why gate 2
+                            exists. It is the only workflow with write
+                            permissions.
+                        </p>
+                        <p class="file">.github/workflows/release-please.yml:L1-L29</p>
+<pre data-path=".github/workflows/release-please.yml" data-start="1" data-language="yaml">
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Create or update release PR
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Run Release Please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+</pre>
+                    </details>
+                </div>
+            </section>
+
+            <section class="card" aria-labelledby="matrix">
+                <h2 id="matrix">Where each check runs</h2>
+                <table>
+                    <tr><th>Check</th><th>pre-commit</th><th>commit-msg</th><th>pre-push</th><th>CI</th><th>Scheduled</th></tr>
+                    <tr><td>ESLint / Pint on staged files</td><td>✔</td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td>Full lint, types, tests per project</td><td>✔</td><td></td><td></td><td>✔</td><td></td></tr>
+                    <tr><td>Production build (dashboard, payments)</td><td></td><td></td><td>✔</td><td>✔</td><td></td></tr>
+                    <tr><td>Conventional Commit message</td><td></td><td>✔</td><td></td><td>✔ whole range</td><td></td></tr>
+                    <tr><td>OpenAPI / generated-type drift</td><td>dashboard only</td><td></td><td>✔</td><td>✔</td><td></td></tr>
+                    <tr><td>DB schema docs drift</td><td>regenerates</td><td></td><td></td><td>✔ real Postgres</td><td></td></tr>
+                    <tr><td>Docker / Compose validation</td><td>if touched</td><td></td><td>✔</td><td>✔</td><td></td></tr>
+                    <tr><td><strong>Dependabot coverage</strong></td><td>✔ new</td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td>npm / composer vulnerability audit</td><td>✔ new, staged lockfiles</td><td></td><td></td><td>✔</td><td></td></tr>
+                    <tr><td>Secret scan (gitleaks)</td><td></td><td></td><td></td><td>✔</td><td></td></tr>
+                    <tr><td>Action SHA pinning, unsafe triggers</td><td></td><td></td><td></td><td>✔</td><td></td></tr>
+                    <tr><td>Production Docker image build</td><td></td><td></td><td></td><td>✔</td><td></td></tr>
+                    <tr><td>CodeQL</td><td></td><td></td><td></td><td>PRs + main/dev</td><td>✔ weekly</td></tr>
+                    <tr><td>Outdated report / update PRs</td><td></td><td></td><td></td><td></td><td>✔ weekly</td></tr>
+                </table>
+                <p class="callout warn">
+                    <span class="badge inferred">Observed gap</span>
+                    CI's <code>tooling</code> filter treats
+                    <code>.husky/**</code> and <code>lint-staged.config.mjs</code>
+                    as "run everything". Local <code>classifyFiles</code> (L43)
+                    does not, so editing a hook runs no project checks locally.
+                </p>
+            </section>
+
+            <section class="card quiz" aria-labelledby="check">
+                <h2 id="check">Check yourself (from memory, no scrolling)</h2>
+                <fieldset data-answer="b" data-why="L32-L34 of commit-check.mjs run in order, and each throws on failure.">
+                    <legend>You stage a dashboard file with a lint error. What happens to the tests?</legend>
+                    <label><input type="radio" name="q1" value="a" /> They run, then the commit fails.</label>
+                    <label><input type="radio" name="q1" value="b" /> They never run; commit stops.</label>
+                    <label><input type="radio" name="q1" value="c" /> They run in CI only, not here.</label>
+                </fieldset>
+                <fieldset data-answer="c" data-why="Coverage keys off manifests; the new folder has no dependabot.yml entry, so L8-L13 fail.">
+                    <legend>You add <code>worker/package.json</code> and commit. What does the new gate say?</legend>
+                    <label><input type="radio" name="q2" value="a" /> Nothing, no lockfile was staged.</label>
+                    <label><input type="radio" name="q2" value="b" /> It runs npm audit inside worker.</label>
+                    <label><input type="radio" name="q2" value="c" /> It fails, listing npm:/worker.</label>
+                </fieldset>
+                <fieldset data-answer="a" data-why="gitleaks runs only in the CI security job (L144-L148).">
+                    <legend>Which check runs <em>only</em> on GitHub?</legend>
+                    <label><input type="radio" name="q3" value="a" /> Scanning history for secrets.</label>
+                    <label><input type="radio" name="q3" value="b" /> Checking commit message format.</label>
+                    <label><input type="radio" name="q3" value="c" /> Validating the Compose files.</label>
+                </fieldset>
+                <fieldset data-answer="b" data-why="policy-gate accepts success or skipped, so path-filtered jobs never block it.">
+                    <legend>A PR touches only <code>crm-server/</code>. The <code>dashboard</code> job is skipped. Does <code>policy-gate</code> pass?</legend>
+                    <label><input type="radio" name="q4" value="a" /> No, every job must succeed.</label>
+                    <label><input type="radio" name="q4" value="b" /> Yes, skipped counts as passing.</label>
+                    <label><input type="radio" name="q4" value="c" /> Only after a manual re-run.</label>
+                </fieldset>
+            </section>
+
+            <p class="source">
+                <strong>Primary source:</strong>
+                <a href="https://git-scm.com/docs/githooks">git-scm.com: githooks</a>
+                (the <em>pre-commit</em>, <em>commit-msg</em> and
+                <em>pre-push</em> sections). Also:
+                <a href="https://typicode.github.io/husky/">Husky</a>,
+                <a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits 1.0</a>,
+                <a href="https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions">GitHub Actions workflow syntax</a>,
+                <a href="https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference">Dependabot options reference</a>.
+                Previous lesson:
+                <a href="0001-invoice-command-round-trip.html">0001 · Invoice command round trip</a>.
+            </p>
+            <p class="callout">
+                <span class="badge verified">Verification</span>
+                Every code block is copied from the repo with its real line
+                numbers (snapshot 2026-10-24). <code>npm run quality:test</code>
+                and <code>npm run quality:dependabot</code> both pass. Ask your
+                agent if any gate is unclear, or if you want a lesson on
+                running CI locally with <code>quality:act:event</code>.
+            </p>
+        </main>
+        <script>
+            const b = [...document.querySelectorAll(".step")],
+                p = [...document.querySelectorAll(".step-panel")];
+            b.forEach((x) =>
+                x.addEventListener("click", () => {
+                    b.forEach((y) => {
+                        const a = y === x;
+                        y.classList.toggle("active", a);
+                        y.setAttribute("aria-pressed", String(a));
+                    });
+                    p.forEach((y) => y.classList.toggle("active", y.id === x.dataset.target));
+                    document.getElementById(x.dataset.target).scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }),
+            );
+            // Deep links like #dependabot-gate open the panel that holds them.
+            const target = location.hash && document.querySelector(location.hash)?.closest(".step-panel");
+            if (target) document.querySelector(`[data-target="${target.id}"]`).click();
+        </script>
+    </body>
+</html>

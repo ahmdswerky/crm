@@ -30,4 +30,5 @@ if (classifyFiles(files).dbSchema) {
 }
 
 execFileSync('npm', ['exec', '--', 'lint-staged', '--config', 'lint-staged.config.mjs'], { stdio: 'inherit' })
+execFileSync('node', ['scripts/quality/check-dependabot.mjs'], { stdio: 'inherit' })
 execFileSync('node', ['scripts/quality/check-projects.mjs', '--staged'], { stdio: 'inherit' })

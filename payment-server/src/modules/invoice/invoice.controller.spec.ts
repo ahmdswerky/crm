@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getDataSourceToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
+import { Invoice } from './entities/invoice.entity';
 import { InvoiceController } from './invoice.controller';
 import { InvoiceService } from './invoice.service';
 
@@ -12,6 +13,7 @@ describe('InvoiceController', () => {
       providers: [
         InvoiceService,
         { provide: getDataSourceToken('payments'), useValue: {} },
+        { provide: getRepositoryToken(Invoice, 'payments'), useValue: {} },
       ],
     }).compile();
 

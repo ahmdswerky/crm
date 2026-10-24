@@ -51,6 +51,136 @@ CREATE SEQUENCE public.accounts_id_seq
 ALTER SEQUENCE public.accounts_id_seq OWNED BY public.accounts.id;
 
 --
+-- Name: activities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.activities (
+    id bigint NOT NULL,
+    kind character varying(24) NOT NULL,
+    subject character varying(200) NOT NULL,
+    details text,
+    status character varying(24) NOT NULL,
+    creator_id bigint NOT NULL,
+    assignee_id bigint NOT NULL,
+    due_date date,
+    starts_at timestamp(0) with time zone,
+    ends_at timestamp(0) with time zone,
+    occurred_at timestamp(0) with time zone,
+    outcome character varying(32),
+    summary text,
+    version integer DEFAULT 1 NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+--
+-- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.activities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.activities_id_seq OWNED BY public.activities.id;
+
+--
+-- Name: activity_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.activity_events (
+    id bigint NOT NULL,
+    event_id uuid NOT NULL,
+    activity_id bigint NOT NULL,
+    actor_id bigint NOT NULL,
+    actor_name character varying(255) NOT NULL,
+    action character varying(24) NOT NULL,
+    before json NOT NULL,
+    after json NOT NULL,
+    occurred_at timestamp(0) with time zone NOT NULL,
+    created_at timestamp(0) with time zone NOT NULL
+);
+
+--
+-- Name: activity_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.activity_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: activity_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.activity_events_id_seq OWNED BY public.activity_events.id;
+
+--
+-- Name: activity_history_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.activity_history_entries (
+    id bigint NOT NULL,
+    activity_event_id bigint NOT NULL,
+    recorded_at timestamp(0) with time zone NOT NULL
+);
+
+--
+-- Name: activity_history_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.activity_history_entries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: activity_history_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.activity_history_entries_id_seq OWNED BY public.activity_history_entries.id;
+
+--
+-- Name: activity_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.activity_links (
+    id bigint NOT NULL,
+    activity_id bigint NOT NULL,
+    subject_type character varying(16) NOT NULL,
+    subject_id bigint NOT NULL,
+    label character varying(255) NOT NULL
+);
+
+--
+-- Name: activity_links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.activity_links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: activity_links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.activity_links_id_seq OWNED BY public.activity_links.id;
+
+--
 -- Name: activity_log; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -351,7 +481,8 @@ CREATE TABLE public.leads (
     assigned_agent_id bigint,
     deleted_at timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    updated_at timestamp(0) without time zone,
+    country_code character varying(2)
 );
 
 --
@@ -814,6 +945,30 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 ALTER TABLE ONLY public.accounts ALTER COLUMN id SET DEFAULT nextval('public.accounts_id_seq'::regclass);
 
 --
+-- Name: activities id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activities ALTER COLUMN id SET DEFAULT nextval('public.activities_id_seq'::regclass);
+
+--
+-- Name: activity_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_events ALTER COLUMN id SET DEFAULT nextval('public.activity_events_id_seq'::regclass);
+
+--
+-- Name: activity_history_entries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_history_entries ALTER COLUMN id SET DEFAULT nextval('public.activity_history_entries_id_seq'::regclass);
+
+--
+-- Name: activity_links id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_links ALTER COLUMN id SET DEFAULT nextval('public.activity_links_id_seq'::regclass);
+
+--
 -- Name: activity_log id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -941,6 +1096,55 @@ ALTER TABLE ONLY public.accounts
 
 ALTER TABLE ONLY public.accounts
     ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
+
+--
+-- Name: activities activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activities
+    ADD CONSTRAINT activities_pkey PRIMARY KEY (id);
+
+--
+-- Name: activity_events activity_events_event_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_events
+    ADD CONSTRAINT activity_events_event_id_unique UNIQUE (event_id);
+
+--
+-- Name: activity_events activity_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_events
+    ADD CONSTRAINT activity_events_pkey PRIMARY KEY (id);
+
+--
+-- Name: activity_history_entries activity_history_entries_activity_event_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_history_entries
+    ADD CONSTRAINT activity_history_entries_activity_event_id_unique UNIQUE (activity_event_id);
+
+--
+-- Name: activity_history_entries activity_history_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_history_entries
+    ADD CONSTRAINT activity_history_entries_pkey PRIMARY KEY (id);
+
+--
+-- Name: activity_links activity_links_activity_id_subject_type_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_links
+    ADD CONSTRAINT activity_links_activity_id_subject_type_subject_id_unique UNIQUE (activity_id, subject_type, subject_id);
+
+--
+-- Name: activity_links activity_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_links
+    ADD CONSTRAINT activity_links_pkey PRIMARY KEY (id);
 
 --
 -- Name: activity_log activity_log_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -1272,6 +1476,30 @@ ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_username_unique UNIQUE (username);
 
 --
+-- Name: activities_assignee_id_status_starts_at_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX activities_assignee_id_status_starts_at_index ON public.activities USING btree (assignee_id, status, starts_at);
+
+--
+-- Name: activities_status_due_date_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX activities_status_due_date_index ON public.activities USING btree (status, due_date);
+
+--
+-- Name: activity_events_activity_id_occurred_at_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX activity_events_activity_id_occurred_at_id_index ON public.activity_events USING btree (activity_id, occurred_at, id);
+
+--
+-- Name: activity_links_subject_type_subject_id_activity_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX activity_links_subject_type_subject_id_activity_id_index ON public.activity_links USING btree (subject_type, subject_id, activity_id);
+
+--
 -- Name: activity_log_log_name_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1420,6 +1648,12 @@ CREATE INDEX leads_assigned_agent_id_status_created_at_id_index ON public.leads 
 --
 
 CREATE INDEX leads_created_at_index ON public.leads USING btree (created_at);
+
+--
+-- Name: leads_status_country_code_deleted_at_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX leads_status_country_code_deleted_at_index ON public.leads USING btree (status, country_code, deleted_at);
 
 --
 -- Name: leads_status_created_at_id_index; Type: INDEX; Schema: public; Owner: -
@@ -1582,6 +1816,48 @@ CREATE INDEX telescope_entries_type_should_display_on_index_index ON public.tele
 --
 
 CREATE INDEX users_direct_manager_id_index ON public.users USING btree (direct_manager_id);
+
+--
+-- Name: activities activities_assignee_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activities
+    ADD CONSTRAINT activities_assignee_id_foreign FOREIGN KEY (assignee_id) REFERENCES public.users(id) ON DELETE RESTRICT;
+
+--
+-- Name: activities activities_creator_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activities
+    ADD CONSTRAINT activities_creator_id_foreign FOREIGN KEY (creator_id) REFERENCES public.users(id) ON DELETE RESTRICT;
+
+--
+-- Name: activity_events activity_events_activity_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_events
+    ADD CONSTRAINT activity_events_activity_id_foreign FOREIGN KEY (activity_id) REFERENCES public.activities(id) ON DELETE RESTRICT;
+
+--
+-- Name: activity_events activity_events_actor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_events
+    ADD CONSTRAINT activity_events_actor_id_foreign FOREIGN KEY (actor_id) REFERENCES public.users(id) ON DELETE RESTRICT;
+
+--
+-- Name: activity_history_entries activity_history_entries_activity_event_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_history_entries
+    ADD CONSTRAINT activity_history_entries_activity_event_id_foreign FOREIGN KEY (activity_event_id) REFERENCES public.activity_events(id) ON DELETE RESTRICT;
+
+--
+-- Name: activity_links activity_links_activity_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_links
+    ADD CONSTRAINT activity_links_activity_id_foreign FOREIGN KEY (activity_id) REFERENCES public.activities(id) ON DELETE RESTRICT;
 
 --
 -- Name: commission_allocations commission_allocations_deal_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -

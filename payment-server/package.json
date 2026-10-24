@@ -93,6 +93,9 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
+  "overrides": {
+    "multer": "^2.5.0"
+  },
   "allowScripts": {
     "unrs-resolver@1.12.2": true,
     "@swc/core@1.16.0": true

@@ -23,9 +23,9 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.invoices (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     invoicable_type character varying(120) NOT NULL,
-    invoicable_id integer NOT NULL,
+    invoicable_id bigint NOT NULL,
     type character varying(80) NOT NULL,
     value numeric(12,2) NOT NULL,
     status character varying(20) DEFAULT 'completed'::character varying NOT NULL,
@@ -38,7 +38,6 @@ CREATE TABLE public.invoices (
 --
 
 CREATE SEQUENCE public.invoices_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -113,7 +112,7 @@ CREATE TABLE public.payment_job_receipts (
     payload jsonb NOT NULL,
     result jsonb,
     failure_code character varying(120),
-    failure_message text,
+    failure_message character varying,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     updated_at timestamp without time zone DEFAULT now() NOT NULL
 );
@@ -131,6 +130,13 @@ ALTER TABLE ONLY public.invoices ALTER COLUMN id SET DEFAULT nextval('public.inv
 ALTER TABLE ONLY public.migrations ALTER COLUMN id SET DEFAULT nextval('public.migrations_id_seq'::regclass);
 
 --
+-- Name: invoices PK_668cef7c22a427fd822cc1be3ce; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.invoices
+    ADD CONSTRAINT "PK_668cef7c22a427fd822cc1be3ce" PRIMARY KEY (id);
+
+--
 -- Name: migrations PK_8c82d7f526340ab734260ea46be; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -138,57 +144,43 @@ ALTER TABLE ONLY public.migrations
     ADD CONSTRAINT "PK_8c82d7f526340ab734260ea46be" PRIMARY KEY (id);
 
 --
--- Name: invoices invoices_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.invoices
-    ADD CONSTRAINT invoices_pkey PRIMARY KEY (id);
-
---
--- Name: invoices invoices_source_type_id_type_unique; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.invoices
-    ADD CONSTRAINT invoices_source_type_id_type_unique UNIQUE (invoicable_type, invoicable_id, type);
-
---
--- Name: payment_event_outbox payment_event_outbox_command_message_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.payment_event_outbox
-    ADD CONSTRAINT payment_event_outbox_command_message_id_key UNIQUE (command_message_id);
-
---
--- Name: payment_event_outbox payment_event_outbox_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.payment_event_outbox
-    ADD CONSTRAINT payment_event_outbox_pkey PRIMARY KEY (event_id);
-
---
--- Name: payment_job_receipts payment_job_receipts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: payment_job_receipts PK_8dbd603f499051587bdb233cdce; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.payment_job_receipts
-    ADD CONSTRAINT payment_job_receipts_pkey PRIMARY KEY (message_id);
+    ADD CONSTRAINT "PK_8dbd603f499051587bdb233cdce" PRIMARY KEY (message_id);
 
 --
--- Name: payment_event_outbox_correlation_id_idx; Type: INDEX; Schema: public; Owner: -
+-- Name: payment_event_outbox PK_c4f9f835b3736e231211dcba643; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-CREATE INDEX payment_event_outbox_correlation_id_idx ON public.payment_event_outbox USING btree (correlation_id);
+ALTER TABLE ONLY public.payment_event_outbox
+    ADD CONSTRAINT "PK_c4f9f835b3736e231211dcba643" PRIMARY KEY (event_id);
 
 --
--- Name: payment_event_outbox_ready_idx; Type: INDEX; Schema: public; Owner: -
+-- Name: payment_event_outbox UQ_648c371323054b583a1c71cda58; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-CREATE INDEX payment_event_outbox_ready_idx ON public.payment_event_outbox USING btree (published_at, claimed_at);
+ALTER TABLE ONLY public.payment_event_outbox
+    ADD CONSTRAINT "UQ_648c371323054b583a1c71cda58" UNIQUE (command_message_id);
 
 --
--- Name: payment_job_receipts_correlation_id_idx; Type: INDEX; Schema: public; Owner: -
+-- Name: IDX_33c00fe490da5cbf42e8516631; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX payment_job_receipts_correlation_id_idx ON public.payment_job_receipts USING btree (correlation_id);
+CREATE INDEX "IDX_33c00fe490da5cbf42e8516631" ON public.payment_event_outbox USING btree (correlation_id);
+
+--
+-- Name: IDX_3fe3e1a8d63b57d144a7fb9a75; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IDX_3fe3e1a8d63b57d144a7fb9a75" ON public.payment_job_receipts USING btree (correlation_id);
+
+--
+-- Name: IDX_c3810c87bb4ecc8ea8f3f28fde; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IDX_c3810c87bb4ecc8ea8f3f28fde" ON public.payment_event_outbox USING btree (published_at, claimed_at);
 
 --
 -- PostgreSQL database dump complete
