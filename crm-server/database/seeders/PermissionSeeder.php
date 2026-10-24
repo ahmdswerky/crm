@@ -19,7 +19,8 @@ class PermissionSeeder extends Seeder
         $actions = ['view', 'create', 'edit', 'delete', 'restore'];
         $guard = Guard::getDefaultName(User::class);
         $names = collect(scandir(app_path('Models')))
-            ->reject(fn ($name) => in_array($name, ['.', '..', 'ActivityLog.php', 'Permission.php', 'ReportRun.php']))
+            ->filter(fn ($name) => str_ends_with($name, '.php'))
+            ->reject(fn ($name) => in_array($name, ['Activity.php', 'ActivityLog.php', 'Permission.php', 'ReportRun.php']))
             ->map(function (string $name) use ($actions) {
                 $namespace = Str::of($name)
                     ->chopEnd('.php')
@@ -42,6 +43,7 @@ class PermissionSeeder extends Seeder
         DB::table(config('permission.table_names.permissions'))
             ->insertOrIgnore($names);
 
+        $this->call(ActivityPermissionSeeder::class);
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

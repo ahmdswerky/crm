@@ -1,5 +1,14 @@
 <?php
 
+use App\Enums\LeadStatus;
+use App\Enums\PropertyPurpose;
+use App\Enums\PropertyStatus;
+use App\Enums\PropertyType;
+use App\Models\Account;
+use App\Models\Contact;
+use App\Models\Lead;
+use App\Models\Property;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +53,39 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/** Converted leads (contacts) for one agent plus pending properties, the inputs DealSeeder needs. */
+function seedDealSources(int $contacts, ?int $properties = null): User
 {
-    // ..
+    $agent = User::factory()->create();
+    $account = Account::factory()->create();
+    foreach (range(1, $contacts) as $i) {
+        $lead = Lead::factory()->create([
+            'status' => LeadStatus::QUALIFIED,
+            'assigned_agent_id' => $agent->id,
+            'company_name' => $account->name,
+        ]);
+        Contact::query()->create([
+            'account_id' => $account->id,
+            'lead_id' => $lead->id,
+            'name' => $lead->name,
+            'email' => $lead->email,
+            'phone' => $lead->phone,
+            'assigned_agent_id' => $agent->id,
+        ]);
+    }
+    foreach (range(1, $properties ?? $contacts) as $i) {
+        Property::query()->create([
+            'created_by' => $agent->id,
+            'title' => "Seed property {$i}",
+            'description' => 'Seed property description',
+            'city' => 'Cairo',
+            'address' => 'Seed address',
+            'price' => 100000,
+            'purpose' => PropertyPurpose::SALE,
+            'type' => PropertyType::VILLA,
+            'status' => PropertyStatus::PENDING,
+        ]);
+    }
+
+    return $agent;
 }

@@ -12,5 +12,7 @@ Schedule::command('payments:publish')->everyMinute()->withoutOverlapping();
 // prune outdated telescope records (1 week)
 Schedule::command('telescope:prune --hours=168')->daily();
 
+Schedule::command('activities:record-pending')->everyMinute()->withoutOverlapping();
+
 // public demo: wipe uploads and reseed nightly
 Schedule::command('demo:reset')->dailyAt('03:00')->timezone('UTC')->withoutOverlapping()->when(fn () => config('crm.demo'));
