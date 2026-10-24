@@ -19,9 +19,9 @@ class AccountSeeder extends Seeder
             'Uber' => 'uber.svg',
         ];
 
-	if (Account::count() === count($companies)) {
-		return;
-	}
+        if (Account::count() === count($companies)) {
+            return;
+        }
 
         collect($companies)
             ->each(function (string $image, string $company): void {

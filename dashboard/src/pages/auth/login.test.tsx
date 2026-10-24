@@ -30,7 +30,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup()
     render(<TooltipProvider><MemoryRouter><LoginPage /></MemoryRouter></TooltipProvider>)
 
-    expect(screen.getByRole("img", { name: /real-estate buildings/i })).toBeInTheDocument()
+    expect(screen.getByRole("img", { name: "CRM" })).toBeInTheDocument()
     const account = await screen.findByRole("button", { name: /owner,\s*super admin/i })
     expect(screen.getByText("supervisor")).toBeInTheDocument()
     await user.click(account)

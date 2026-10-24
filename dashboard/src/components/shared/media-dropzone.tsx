@@ -31,9 +31,9 @@ type MediaDropzoneProps = {
   onFilesChange?: (files: File[]) => void
 }
 
-const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"])
+const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp"])
 const maxFileSize = 10 * 1024 * 1024
-const accept = "image/jpeg,image/png,image/webp,image/avif"
+const accept = "image/jpeg,image/png,image/webp"
 
 function fileSize(bytes: number) {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`

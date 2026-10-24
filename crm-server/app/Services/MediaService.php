@@ -8,8 +8,10 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Spatie\Image\Image;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Throwable;
 
 class MediaService
 {
@@ -39,11 +41,14 @@ class MediaService
             ]);
         }
 
+        // Re-encode every file before storing any, so one bad file rejects the whole batch.
+        $sanitized = $this->sanitize($images);
+
         $seedPlaceholders->each->delete();
 
-        return collect($images)->map(function (UploadedFile $image) use ($collection, $model, $uploadedBy): Media {
+        return collect($images)->map(function (UploadedFile $image, int $index) use ($collection, $model, $sanitized, $uploadedBy): Media {
             $media = $model
-                ->addMedia($image)
+                ->addMedia($sanitized[$index])
                 ->usingName($this->displayName($image))
                 ->usingFileName($this->fileName($image))
                 ->withCustomProperties([
@@ -94,6 +99,38 @@ class MediaService
         }
     }
 
+    /**
+     * Decode each upload and re-encode it as webp. Rejects corrupt files and drops
+     * EXIF metadata and any bytes smuggled after the image data.
+     *
+     * @param  array<int, UploadedFile>  $images
+     * @return array<int, string>
+     */
+    private function sanitize(array $images): array
+    {
+        $paths = [];
+
+        foreach ($images as $index => $image) {
+            $path = tempnam(sys_get_temp_dir(), 'media');
+
+            try {
+                Image::useImageDriver(config('media-library.image_driver'))
+                    ->loadFile($image->getRealPath())
+                    ->format('webp')
+                    ->save($path);
+                $paths[$index] = $path;
+            } catch (Throwable) {
+                array_map(unlink(...), [...$paths, $path]);
+
+                throw ValidationException::withMessages([
+                    "files.{$index}" => ['The file is corrupted or not a valid image.'],
+                ]);
+            }
+        }
+
+        return $paths;
+    }
+
     private function displayName(UploadedFile $image): string
     {
         return Str::of(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME))
@@ -105,8 +142,7 @@ class MediaService
     private function fileName(UploadedFile $image): string
     {
         $baseName = Str::slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME));
-        $extension = strtolower($image->getClientOriginalExtension());
 
-        return sprintf('%s.%s', $baseName ?: 'image', $extension);
+        return sprintf('%s.webp', $baseName ?: 'image');
     }
 }

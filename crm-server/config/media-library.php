@@ -74,7 +74,8 @@ return [
      */
     'allowed_extensions' => ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg'],
 
-    'image_mime_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/svg+xml'],
+    // svg only for trusted seeded logos; user uploads are re-encoded to webp in MediaService
+    'image_mime_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
 
     'collection_limits' => [
         'gallery' => 20,

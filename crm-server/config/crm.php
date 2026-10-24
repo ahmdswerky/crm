@@ -12,6 +12,9 @@ return [
         'company' => 2.5,
     ],
 
+    // public demo: enables the nightly demo:reset wipe
+    'demo' => env('CRM_DEMO', true),
+
     'dashboard_cache_store' => env('DASHBOARD_CACHE_STORE', env('CACHE_STORE', 'database')),
 
     'seeds' => [
@@ -22,10 +25,9 @@ return [
             'end' => null, // default is today
         ],
         'counts' => [
-            Property::class => 15000,
-            Lead::class => 25000,
-            Deal::class => 10000,
-            'property_media' => 15000,
+            Property::class => 150,
+            Lead::class => 250,
+            'property_media' => 150,
         ],
         'max_counts' => [
             Property::class => (int) env('PROPERTIES_SEED_MAX_TOTAL', 100000),

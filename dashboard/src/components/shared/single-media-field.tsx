@@ -22,8 +22,8 @@ type StagedSingleMediaFieldProps = BaseSingleMediaFieldProps & {
   onFilesChange: (files: File[]) => void
 }
 
-const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"])
-const accept = "image/jpeg,image/png,image/webp,image/avif"
+const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp"])
+const accept = "image/jpeg,image/png,image/webp"
 const maxFileSize = 10 * 1024 * 1024
 
 export function SingleMediaField(props: ManagedSingleMediaFieldProps | StagedSingleMediaFieldProps) {
