@@ -3,6 +3,7 @@ import { worldMapData } from "@/components/shadcnmaps/map-data/world"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { OverviewCountryDistribution } from "@/api/contracts"
 import { OverviewRefreshButton } from "./overview-refresh-button"
+import { locale, t } from "@/lib/i18n"
 
 const countryMapMetadata = [
   { code: "US", flag: "🇺🇸", mapPosition: { x: 180, y: 300 } },
@@ -20,7 +21,7 @@ type WorldMapCardProps = {
 }
 
 export function WorldMapCard({ countries, isLoading, onRefresh }: WorldMapCardProps) {
-  const countryDistribution = countries.map((country) => ({ ...country, flag: countryFlag(country.code) }))
+  const countryDistribution = countries.map((country) => ({ ...country, country: countryName(country.code, country.country), flag: countryFlag(country.code) }))
   const mapCountries = countryDistribution.flatMap((country) => {
     const metadata = countryMapMetadata.find(({ code }) => code === mapCountryCode(country.code))
     return metadata ? [{ ...country, ...metadata }] : []
@@ -47,17 +48,17 @@ export function WorldMapCard({ countries, isLoading, onRefresh }: WorldMapCardPr
 
   return <section data-testid="world-map-card" aria-busy={isLoading} className="min-w-0 overflow-hidden rounded-3xl bg-card p-5 sm:p-6">
     <header className="flex items-center justify-between gap-3">
-      <h2 className="text-lg font-semibold tracking-tight">Customer growth</h2>
-      <OverviewRefreshButton label="Refresh customer growth data" isLoading={isLoading} onRefresh={onRefresh} />
+      <h2 className="text-lg font-semibold tracking-tight">{t("Customer growth")}</h2>
+      <OverviewRefreshButton label={t("Refresh customer growth data")} isLoading={isLoading} onRefresh={onRefresh} />
     </header>
     <div className="mt-5 grid gap-5 lg:grid-cols-4 lg:items-stretch">
       <div className="min-w-0 lg:col-span-1 lg:pe-5">
-        <ul aria-label="Customer distribution" aria-busy={isLoading}>
+        <ul aria-label={t("Customer distribution")} aria-busy={isLoading}>
           {isLoading ? <CountryListSkeleton /> : countryDistribution.map(({ code, country, flag, percentage }) => <li key={code} className="py-3">
             <div className="flex items-center gap-3">
               <span className="text-lg leading-none" aria-hidden="true">{flag}</span>
               <span className="min-w-0 flex-1 truncate text-sm font-medium">{country}</span>
-              <span className="font-mono text-xs font-semibold tabular-nums text-muted-foreground">{percentage}%</span>
+              <span className="font-mono text-xs font-semibold tabular-nums text-muted-foreground" dir="ltr">{percentage}%</span>
             </div>
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
               <span className="block h-full rounded-full bg-primary motion-safe:animate-[country-share-bar-grow_700ms_ease-out_both]" style={{ "--country-share": `${percentage}%` } as React.CSSProperties} />
@@ -67,11 +68,11 @@ export function WorldMapCard({ countries, isLoading, onRefresh }: WorldMapCardPr
       </div>
       <div className="min-w-0 lg:col-span-3">
         <div className="flex h-[320px] items-center justify-center overflow-hidden rounded-2xl bg-muted/45 p-2 sm:h-[360px] sm:p-4">
-          <WorldMap aria-label="World map" regions={mapRegions} showLabels markers={mapCountries.map(({ code, country, percentage, mapPosition }) => ({
+          <WorldMap aria-label={t("World map")} regions={mapRegions} showLabels markers={mapCountries.map(({ code, country, percentage, mapPosition }) => ({
             id: code,
             x: mapPosition.x,
             y: mapPosition.y,
-            label: `${country} customer share`,
+            label: t("{country} customer share", { country }),
             tooltipContent: `${country}: ${percentage}%`,
             content: <CountryMarker />,
           }))} className="h-[300px] w-full" />
@@ -97,6 +98,14 @@ function countryFlag(code: string) {
   if (!/^[A-Z]{2}$/.test(normalizedCode)) return "🌐"
 
   return String.fromCodePoint(...normalizedCode.split("").map((letter) => 127397 + letter.charCodeAt(0)))
+}
+
+function countryName(code: string, fallback: string) {
+  try {
+    return new Intl.DisplayNames(locale, { type: "region" }).of(mapCountryCode(code)) ?? fallback
+  } catch {
+    return fallback
+  }
 }
 
 function mapCountryCode(code: string) {

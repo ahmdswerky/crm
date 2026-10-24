@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { apiJson, apiFetch, API_BASE_URL } from "@/api/client"
 import type { User } from "@/api/contracts"
 import { tokenStore } from "@/api/token-store"
+import { t } from "@/lib/i18n"
 
 type AuthContextValue = {
   user: User | null
@@ -45,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         tokenStore.clear()
         setUser(null)
       } else {
-        setError(caught instanceof Error ? caught.message : "Unable to verify the session.")
+        setError(caught instanceof Error ? caught.message : t("Unable to verify the session."))
       }
       return null
     } finally {
@@ -85,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     refresh,
     can(permission) {
-      if (user?.is_super === true) return true
+      if (user?.is_super === true && !permission.startsWith("activity-log.")) return true
       return Boolean(user?.permissions?.some((item) => item.name === permission))
     },
   }), [error, loading, refresh, user])

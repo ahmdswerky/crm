@@ -8,6 +8,7 @@ const outputPath = path.resolve(process.env.OPENAPI_OUTPUT_PATH ?? path.resolve(
 const productionServer = "https://api-crm.swerky.dev/api"
 
 const sources = [
+  { slug: "activities", title: "Sales Activities", file: "Activity.openapi.json", prefix: "/v1" },
   { slug: "activity-logs", title: "Activity Logs", file: "ActivityLog.openapi.json", prefix: "/v1/activity-logs" },
   { slug: "analytics", title: "Analytics", file: "Analytics.openapi.json", prefix: "/v1/analytics" },
   { slug: "auth", title: "Authentication", file: "Auth.openapi.json", prefix: "" },

@@ -10,11 +10,12 @@ import { version } from "../../../package.json"
 import { useAuth } from "@/auth/auth-provider"
 import { apiJson, API_BASE_URL } from "@/api/client"
 import type { LoginUser } from "@/api/contracts"
+import { language, setLanguage, t } from "@/lib/i18n"
 
 function roleLabel(account: LoginUser) {
-  if (account.is_super) return "Super admin"
-  if (!account.role) return "Standard"
-  return account.role.replace(/\b\w/g, (letter) => letter.toUpperCase())
+  if (account.is_super) return t("Super admin")
+  if (!account.role) return t("Standard")
+  return t(account.role.replace(/\b\w/g, (letter) => letter.toUpperCase()))
 }
 
 function RoleIcon({ account }: { account: LoginUser }) {
@@ -40,7 +41,7 @@ export function LoginPage() {
     void apiJson<LoginUser[]>(`${API_BASE_URL}/v1/login-users`, { signal: controller.signal })
       .then(setLoginUsers)
       .catch((caught) => {
-        if (!(caught instanceof DOMException && caught.name === "AbortError")) setLoginUsersError("Unable to load pre-configured accounts.")
+        if (!(caught instanceof DOMException && caught.name === "AbortError")) setLoginUsersError(t("Unable to load pre-configured accounts."))
       })
       .finally(() => setLoginUsersLoading(false))
     return () => controller.abort()
@@ -55,7 +56,7 @@ export function LoginPage() {
       await login(nextUsername, nextPassword)
       navigate((location.state as { from?: string } | null)?.from ?? "/", { replace: true })
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to sign in.")
+      setError(caught instanceof Error ? caught.message : t("Unable to sign in."))
     } finally {
       setBusy(false)
     }
@@ -74,7 +75,10 @@ export function LoginPage() {
 
   return (
     <main className="relative grid min-h-svh grid-rows-[minmax(4.5rem,1fr)_auto_minmax(4.5rem,1fr)] justify-items-center bg-muted px-6 md:px-10">
-      <DocLinks className="absolute end-6 top-6" />
+      <div className="absolute end-6 top-6 flex items-center gap-1">
+        <Button type="button" variant="ghost" size="sm" lang={language === "ar" ? "en" : "ar"} onClick={() => setLanguage(language === "ar" ? "en" : "ar")}>{language === "ar" ? "English" : "العربية"}</Button>
+        <DocLinks />
+      </div>
       <div className="relative row-start-2 w-full max-w-sm">
         <img
           src="/logo.png"
@@ -85,35 +89,35 @@ export function LoginPage() {
           <section className="px-6 pb-6 pt-12 md:px-8 md:pb-8">
             <form onSubmit={submit} className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">{t("Welcome back")}</h1>
               </div>
             <div className="grid gap-5">
               <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
-                <Input id="username" autoComplete="username" placeholder="Your username" value={username} onChange={(event) => setUsername(event.target.value)} required />
+                <Label htmlFor="username">{t("Username")}</Label>
+                <Input id="username" autoComplete="username" placeholder={t("Your username")} value={username} onChange={(event) => setUsername(event.target.value)} required />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("Password")}</Label>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <button type="button" aria-label="Forgot your password?" className="ms-auto text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full">
+                      <button type="button" aria-label={t("Forgot your password?")} className="ms-auto text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full">
                         <Info className="size-4" aria-hidden="true" />
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="top" className="max-w-56 text-center">
-                      Forgot your password? A manager or super admin can set a new one for your account.
+                      {t("Forgot your password? A manager or super admin can set a new one for your account.")}
                     </TooltipContent>
                   </Tooltip>
                 </div>
                 <Input id="password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
               </div>
               {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
-              <Button className="w-full" disabled={busy}>{busy ? "Logging in…" : "Login"}</Button>
+              <Button className="w-full" disabled={busy}>{t(busy ? "Logging in…" : "Login")}</Button>
             </div>
-            <section className="space-y-2" aria-label="Pre-configured accounts">
+            <section className="space-y-2" aria-label={t("Pre-configured accounts")}>
               {loginUsersLoading ? (
-                <div className="flex flex-wrap gap-2" aria-label="Loading accounts">
+                <div className="flex flex-wrap gap-2" aria-label={t("Loading accounts")}>
                   <div className="h-7 w-20 animate-pulse rounded-full bg-muted-foreground/15" />
                   <div className="h-7 w-24 animate-pulse rounded-full bg-muted-foreground/15" />
                 </div>
@@ -140,7 +144,7 @@ export function LoginPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No pre-configured accounts available.</p>
+                <p className="text-sm text-muted-foreground">{t("No pre-configured accounts available.")}</p>
               )}
             </section>
           </form>

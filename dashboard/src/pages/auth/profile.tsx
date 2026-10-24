@@ -23,6 +23,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item"
+import { t } from "@/lib/i18n"
 
 type ProfileFormValues = {
   name: string
@@ -36,10 +37,10 @@ type SecureTokenEnvelope = AuthPaths["/secure-token"]["get"]["responses"][200]["
 type SecureTokenLinks = Pick<SecureTokenEnvelope, "horizon" | "telescope">
 
 const profileSchema = z.object({
-  name: z.string().trim().min(4, "Use at least 4 characters."),
-  username: z.string().trim().min(4, "Use at least 4 characters."),
-  email: z.string().trim().email("Enter a valid email address."),
-  phone: z.string().trim().min(1, "Enter a phone number."),
+  name: z.string().trim().min(4, t("Use at least 4 characters.")),
+  username: z.string().trim().min(4, t("Use at least 4 characters.")),
+  email: z.string().trim().email(t("Enter a valid email address.")),
+  phone: z.string().trim().min(1, t("Enter a phone number.")),
 })
 
 function valuesFromUser(user: User): ProfileFormValues {
@@ -79,7 +80,7 @@ export function ProfilePage() {
       form.reset(valuesFromUser(body.user))
     } catch (caught) {
       if (!(caught instanceof DOMException && caught.name === "AbortError")) {
-        setError(caught instanceof Error ? caught.message : "Unable to load your profile.")
+        setError(caught instanceof Error ? caught.message : t("Unable to load your profile."))
       }
     } finally {
       if (!signal?.aborted) setLoading(false)
@@ -116,7 +117,7 @@ export function ProfilePage() {
           form.setError(field as keyof ProfileFormValues, { message: messages[0] })
         })
       }
-      setError(caught instanceof Error ? caught.message : "Unable to save your profile.")
+      setError(caught instanceof Error ? caught.message : t("Unable to save your profile."))
     } finally {
       setSaving(false)
     }
@@ -135,7 +136,7 @@ export function ProfilePage() {
       setTokenLinks(body)
       setRevealed(true)
     } catch (caught) {
-      setSecureTokenError(caught instanceof Error ? caught.message : "Unable to generate a secure token.")
+      setSecureTokenError(caught instanceof Error ? caught.message : t("Unable to generate a secure token."))
     } finally {
       setGeneratingToken(false)
     }
@@ -147,15 +148,15 @@ export function ProfilePage() {
     try {
       await navigator.clipboard.writeText(secureToken)
       setCopiedToken(true)
-      toast.success("Secure token copied to clipboard.")
+      toast.success(t("Secure token copied to clipboard."))
     } catch {
-      setSecureTokenError("Unable to copy the secure token.")
+      setSecureTokenError(t("Unable to copy the secure token."))
     }
   }
 
   if (loading) return <ProfileSkeleton />
-  if (error && !profile) return <ErrorState kind="unauthorized" title="Unable to load your profile" description={error} actionLabel="Retry" onAction={() => void loadProfile()} />
-  if (!profile) return <ErrorState kind="not-found" title="Profile unavailable" description="Your account details could not be found." actionLabel="Return to overview" actionTo="/" />
+  if (error && !profile) return <ErrorState kind="unauthorized" title={t("Unable to load your profile")} description={error} actionLabel={t("Retry")} onAction={() => void loadProfile()} />
+  if (!profile) return <ErrorState kind="not-found" title={t("Profile unavailable")} description={t("Your account details could not be found.")} actionLabel={t("Return to overview")} actionTo="/" />
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 p-6 lg:p-8">
@@ -163,41 +164,41 @@ export function ProfilePage() {
         <div className="flex items-center gap-3">
           <PersonAvatar name={profile.name} size="lg" />
           <div>
-            <p className="text-xs font-medium text-muted-foreground">Account</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight">Profile</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Update the details used to identify and contact you.</p>
+            <p className="text-xs font-medium text-muted-foreground">{t("Account")}</p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t("Profile")}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{t("Update the details used to identify and contact you.")}</p>
           </div>
         </div>
       </header>
 
       {error && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>}
-      {saved && <p role="status" className="border border-primary/20 bg-primary/5 p-3 text-sm text-primary">Profile saved.</p>}
+      {saved && <p role="status" className="border border-primary/20 bg-primary/5 p-3 text-sm text-primary">{t("Profile saved.")}</p>}
 
       <form onSubmit={submit} className="border border-border bg-card">
         <div className="border-b border-border px-5 py-4">
-          <h2 className="font-semibold">Identity and contact</h2>
-          <p className="mt-1 text-sm text-muted-foreground">These details are visible to people working with you in the CRM.</p>
+          <h2 className="font-semibold">{t("Identity and contact")}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("These details are visible to people working with you in the CRM.")}</p>
         </div>
-        {profile.id !== undefined && <div className="border-b border-border px-5 py-4"><SingleMediaField ownerType="user" ownerId={profile.id} collection="main" label="Profile image" description="Upload or replace the image used for this staff record." disabled={!can("user.edit")} /></div>}
+        {profile.id !== undefined && <div className="border-b border-border px-5 py-4"><SingleMediaField ownerType="user" ownerId={profile.id} collection="main" label={t("Profile image")} description={t("Upload or replace the image used for this staff record.")} disabled={!can("user.edit")} /></div>}
         <FieldGroup className="grid gap-4 p-5 sm:grid-cols-2">
-          <ProfileField label="Name" error={errors.name?.message} className="sm:col-span-2">
+          <ProfileField label={t("Name")} error={errors.name?.message} className="sm:col-span-2">
             <InputGroup><InputGroupAddon><UserRound aria-hidden="true" /></InputGroupAddon><InputGroupInput autoComplete="name" {...register("name")} /></InputGroup>
           </ProfileField>
-          <ProfileField label="Username" error={errors.username?.message}>
+          <ProfileField label={t("Username")} error={errors.username?.message}>
             <InputGroup><InputGroupAddon><AtSign aria-hidden="true" /></InputGroupAddon><InputGroupInput autoComplete="username" {...register("username")} /></InputGroup>
           </ProfileField>
-          <ProfileField label="Phone" error={errors.phone?.message}>
-            <PhoneField aria-label="Phone" aria-invalid={Boolean(errors.phone)} autoComplete="tel" value={watch("phone")} onValueChange={(value) => setValue("phone", value, { shouldDirty: true, shouldValidate: true })} />
+          <ProfileField label={t("Phone")} error={errors.phone?.message}>
+            <PhoneField aria-label={t("Phone")} aria-invalid={Boolean(errors.phone)} autoComplete="tel" value={watch("phone")} onValueChange={(value) => setValue("phone", value, { shouldDirty: true, shouldValidate: true })} />
           </ProfileField>
-          <ProfileField label="Email" error={errors.email?.message} className="sm:col-span-2">
+          <ProfileField label={t("Email")} error={errors.email?.message} className="sm:col-span-2">
             <InputGroup><InputGroupAddon><Mail aria-hidden="true" /></InputGroupAddon><InputGroupInput type="email" autoComplete="email" {...register("email")} /></InputGroup>
           </ProfileField>
         </FieldGroup>
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4">
-          <p className="text-xs text-muted-foreground">Password changes are managed separately.</p>
+          <p className="text-xs text-muted-foreground">{t("Password changes are managed separately.")}</p>
           <div className="flex gap-2">
-            <Button type="button" variant="outline" disabled={saving || !isDirty} onClick={() => form.reset(valuesFromUser(profile))}>Reset</Button>
-            <Button type="submit" disabled={saving || !isDirty}>{saving ? "Saving…" : <><Save className="me-2 size-3.5" />Save profile</>}</Button>
+            <Button type="button" variant="outline" disabled={saving || !isDirty} onClick={() => form.reset(valuesFromUser(profile))}>{t("Reset")}</Button>
+            <Button type="submit" disabled={saving || !isDirty}>{saving ? t("Saving…") : <><Save className="me-2 size-3.5" />{t("Save profile")}</>}</Button>
           </div>
         </div>
       </form>
@@ -205,7 +206,7 @@ export function ProfilePage() {
       {isSuper && profile.can_generate_secure_token === true && (
         <section className="border border-border bg-card">
           <div className="border-b border-border px-5 py-4">
-            <h2 className="flex items-center gap-2 font-semibold"><KeyRound className="size-4 text-muted-foreground" aria-hidden="true" />Generate Secure Token</h2>
+            <h2 className="flex items-center gap-2 font-semibold"><KeyRound className="size-4 text-muted-foreground" aria-hidden="true" />{t("Generate Secure Token")}</h2>
           </div>
           <div className="relative">
             <div
@@ -213,7 +214,7 @@ export function ProfilePage() {
               className={`p-5 transition-[filter] duration-500 ease-out motion-reduce:transition-none${revealed ? "" : " blur-[1.5px]"}`}
               role={!secureToken ? "button" : undefined}
               tabIndex={!secureToken ? 0 : undefined}
-              aria-label={!secureToken ? "Generate secure token" : undefined}
+              aria-label={!secureToken ? t("Generate secure token") : undefined}
               aria-busy={generatingToken}
               onClick={() => {
                 if (!secureToken && !generatingToken) void generateSecureToken()
@@ -225,13 +226,14 @@ export function ProfilePage() {
                 }
               }}
             >
-              <ProfileField inputId="secure-token" label="Secure token" hideLabel error={secureTokenError}>
+              <ProfileField inputId="secure-token" label={t("Secure token")} hideLabel error={secureTokenError}>
                 <InputGroup>
                   <InputGroupInput
                     id="secure-token"
                     type="text"
                     autoComplete="off"
-                    aria-label="Secure token"
+                    aria-label={t("Secure token")}
+                    dir="ltr"
                     onClick={() => {
                       if (secureToken && revealed) void copySecureToken()
                     }}
@@ -240,13 +242,13 @@ export function ProfilePage() {
                     value={secureToken}
                   />
                   {secureToken && !generatingToken && (
-                    <InputGroupButton type="button" variant="ghost" size="icon-sm" aria-label={copiedToken ? "Secure token copied" : "Copy secure token"} onClick={() => void copySecureToken()}>
+                    <InputGroupButton type="button" variant="ghost" size="icon-sm" aria-label={t(copiedToken ? "Secure token copied" : "Copy secure token")} onClick={() => void copySecureToken()}>
                       {copiedToken ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
                     </InputGroupButton>
                   )}
                 </InputGroup>
               </ProfileField>
-              <p role="status" className="sr-only">{secureToken ? "Secure token generated." : ""}</p>
+              <p role="status" className="sr-only">{secureToken ? t("Secure token generated.") : ""}</p>
               {secureToken && tokenLinks && (
                 <div className="grid w-full gap-3 mt-5 sm:grid-cols-2">
                   <SecureToolLink href={tokenLinks.horizon} label="Horizon" />
@@ -263,7 +265,7 @@ export function ProfilePage() {
                   disabled={generatingToken}
                   onClick={() => void generateSecureToken()}
                 >
-                  {generatingToken ? <><LoaderCircle className="me-2 size-3.5 animate-spin" aria-hidden="true" />Loading…</> : <><Eye className="me-2 size-3.5" aria-hidden="true" />Reveal</>}
+                  {generatingToken ? <><LoaderCircle className="me-2 size-3.5 animate-spin" aria-hidden="true" />{t("Loading…")}</> : <><Eye className="me-2 size-3.5" aria-hidden="true" />{t("Reveal")}</>}
                 </Button>
               </div>
             )}

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { useCallback } from 'react'
 
 import { useMapContext } from './map-context'
+import { t } from "@/lib/i18n";
 
 export interface MapControlsProps {
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
@@ -209,34 +210,34 @@ export function MapControls({
         className
       )}
     >
-      <ControlButton onClick={zoomIn} disabled={atMaxZoom} aria-label='Zoom in'>
+      <ControlButton onClick={zoomIn} disabled={atMaxZoom} aria-label={t("Zoom in")}>
         <PlusIcon />
       </ControlButton>
       <ControlButton
         onClick={zoomOut}
         disabled={atMinZoom}
-        aria-label='Zoom out'
+        aria-label={t("Zoom out")}
       >
         <MinusIcon />
       </ControlButton>
-      <ControlButton onClick={resetZoom} aria-label='Reset zoom'>
+      <ControlButton onClick={resetZoom} aria-label={t("Reset zoom")}>
         <HomeIcon />
       </ControlButton>
       {showPanButtons ? (
         <>
           <div className='my-0.5 h-px w-6 bg-border' />
-          <ControlButton onClick={panUp} aria-label='Pan up'>
+          <ControlButton onClick={panUp} aria-label={t("Pan up")}>
             <ChevronUp />
           </ControlButton>
           <div className='flex gap-1'>
-            <ControlButton onClick={panLeft} aria-label='Pan left'>
+            <ControlButton onClick={panLeft} aria-label={t("Pan left")}>
               <ChevronLeft />
             </ControlButton>
-            <ControlButton onClick={panRight} aria-label='Pan right'>
+            <ControlButton onClick={panRight} aria-label={t("Pan right")}>
               <ChevronRight />
             </ControlButton>
           </div>
-          <ControlButton onClick={panDown} aria-label='Pan down'>
+          <ControlButton onClick={panDown} aria-label={t("Pan down")}>
             <ChevronDown />
           </ControlButton>
         </>

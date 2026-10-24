@@ -44,10 +44,7 @@ import { PersonAvatar } from "@/components/shared/person-avatar"
 import { DocLinks } from "@/components/shared/doc-links"
 import { version } from "../../../package.json"
 import { useTheme } from "@/components/theme-provider"
-
-type DashboardLanguage = "en" | "ar"
-
-const languageStorageKey = "crm-dashboard-language"
+import { language, setLanguage, t } from "@/lib/i18n"
 
 type NavigationItem = {
   label: string
@@ -58,6 +55,7 @@ type NavigationItem = {
 }
 
 const workspaceNavigation: NavigationItem[] = [
+  { label: "Activities", to: "/activities", icon: FileText, permission: "activity.view" },
   { label: "Overview", to: "/", icon: LayoutDashboard },
   { label: "Reports", to: "/reports", icon: FileChartColumn, permission: "report.view" },
   { label: "Agents", to: "/agents", icon: UsersRound, permission: "user.view" },
@@ -101,8 +99,8 @@ export function AppShell() {
   }, [])
 
   const pageLabel = location.pathname === "/profile"
-    ? "Profile"
-    : visibleNavigation.find((item) => item.to === location.pathname)?.label ?? "Operations workspace"
+    ? t("Profile")
+    : t(visibleNavigation.find((item) => item.to === location.pathname)?.label ?? "Operations workspace")
 
   return (
     <SidebarProvider>
@@ -115,15 +113,15 @@ export function AppShell() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("Workspace")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {visibleNavigation.filter((item) => workspaceNavigation.includes(item)).map(({ label, to, icon: Icon }) => (
                   <SidebarMenuItem key={to}>
-                    <SidebarMenuButton asChild tooltip={label} isActive={location.pathname === to}>
+                    <SidebarMenuButton asChild tooltip={t(label)} isActive={location.pathname === to}>
                       <NavLink to={to} end={to === "/"}>
                         <Icon />
-                        <span>{label}</span>
+                        <span>{t(label)}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -132,19 +130,19 @@ export function AppShell() {
             </SidebarGroupContent>
           </SidebarGroup>
           <SidebarGroup>
-            <SidebarGroupLabel>Payments</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("Payments")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     type="button"
-                    tooltip="Payments"
+                    tooltip={t("Payments")}
                     aria-expanded={paymentsOpen}
                     onClick={() => setPaymentsOpen((open) => !open)}
                   >
                     <CreditCard />
-                    <span>Payments</span>
-                    <ChevronRight className={`ms-auto size-4 transition-transform ${paymentsOpen ? "rotate-90" : ""}`} />
+                    <span>{t("Payments")}</span>
+                    <ChevronRight className={`ms-auto size-4 transition-transform ${paymentsOpen ? "rotate-90" : "rtl:-scale-x-100"}`} />
                   </SidebarMenuButton>
                   {paymentsOpen && (
                     <SidebarMenuSub>
@@ -153,7 +151,7 @@ export function AppShell() {
                           <SidebarMenuSubButton asChild isActive={location.pathname === to}>
                             <NavLink to={to}>
                               <Icon />
-                              <span>{label}</span>
+                              <span>{t(label)}</span>
                             </NavLink>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -165,19 +163,19 @@ export function AppShell() {
             </SidebarGroupContent>
           </SidebarGroup>
           <SidebarGroup>
-            <SidebarGroupLabel>Real estate</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("Real estate")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     type="button"
-                    tooltip="Real estate"
+                    tooltip={t("Real estate")}
                     aria-expanded={realEstateOpen}
                     onClick={() => setRealEstateOpen((open) => !open)}
                   >
                     <Building2 />
-                    <span>Real estate</span>
-                    <ChevronRight className={`ms-auto size-4 transition-transform ${realEstateOpen ? "rotate-90" : ""}`} />
+                    <span>{t("Real estate")}</span>
+                    <ChevronRight className={`ms-auto size-4 transition-transform ${realEstateOpen ? "rotate-90" : "rtl:-scale-x-100"}`} />
                   </SidebarMenuButton>
                   {realEstateOpen && (
                     <SidebarMenuSub>
@@ -186,7 +184,7 @@ export function AppShell() {
                           <SidebarMenuSubButton asChild isActive={location.pathname === to}>
                             <NavLink to={to}>
                               <Icon />
-                              <span>{label}</span>
+                              <span>{t(label)}</span>
                             </NavLink>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -199,19 +197,19 @@ export function AppShell() {
           </SidebarGroup>
           {isSuper && (
             <SidebarGroup>
-              <SidebarGroupLabel>Settings</SidebarGroupLabel>
+              <SidebarGroupLabel>{t("Settings")}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       type="button"
-                      tooltip="Settings"
+                      tooltip={t("Settings")}
                       aria-expanded={settingsOpen}
                       onClick={() => setSettingsOpen((open) => !open)}
                     >
                       <Settings2 />
-                      <span>Settings</span>
-                      <ChevronRight className={`ms-auto size-4 transition-transform ${settingsOpen ? "rotate-90" : ""}`} />
+                      <span>{t("Settings")}</span>
+                      <ChevronRight className={`ms-auto size-4 transition-transform ${settingsOpen ? "rotate-90" : "rtl:-scale-x-100"}`} />
                     </SidebarMenuButton>
                     {settingsOpen && (
                       <SidebarMenuSub>
@@ -219,7 +217,7 @@ export function AppShell() {
                           <SidebarMenuSubButton asChild isActive={location.pathname.startsWith("/settings/roles")}>
                             <NavLink to="/settings/roles">
                               <Settings2 />
-                              <span>Access</span>
+                              <span>{t("Access")}</span>
                             </NavLink>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -246,12 +244,12 @@ export function AppShell() {
         <main className="min-w-0 flex-1"><Outlet /></main>
       </SidebarInset>
       <CommandDialog open={paletteOpen} onOpenChange={setPaletteOpen}>
-        <CommandInput placeholder="Jump to a workspace…" />
+        <CommandInput placeholder={t("Jump to a workspace…")} />
         <CommandList>
-          <CommandEmpty>No permitted workspace.</CommandEmpty>
+          <CommandEmpty>{t("No permitted workspace.")}</CommandEmpty>
           {visibleNavigation.map(({ label, to, icon: Icon }) => (
-            <CommandItem key={to} value={label} onSelect={() => { navigate(to); setPaletteOpen(false) }}>
-              <Icon /><span>{label}</span>
+            <CommandItem key={to} value={t(label)} onSelect={() => { navigate(to); setPaletteOpen(false) }}>
+              <Icon /><span>{t(label)}</span>
             </CommandItem>
           ))}
         </CommandList>
@@ -286,61 +284,50 @@ function AccountMenu() {
   const { user, logout } = useAuth()
   const { mode, setMode } = useTheme()
   const { state } = useSidebar()
-  const [language, setLanguage] = useState<DashboardLanguage>(() => window.localStorage.getItem(languageStorageKey) === "ar" ? "ar" : "en")
   const collapsed = state === "collapsed"
-
-  useEffect(() => {
-    document.documentElement.lang = language
-    document.documentElement.dir = language === "ar" ? "rtl" : "ltr"
-  }, [language])
-
-  const changeLanguage = (nextLanguage: DashboardLanguage) => {
-    window.localStorage.setItem(languageStorageKey, nextLanguage)
-    setLanguage(nextLanguage)
-  }
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton tooltip="Account">
-              <PersonAvatar name={user?.name ?? "Account"} avatar={user?.avatar} size="sm" className="size-5 [&>span]:text-[9px]" />
-              <span className="truncate">{user?.name ?? "Account"}</span>
+            <SidebarMenuButton tooltip={t("Account")}>
+              <PersonAvatar name={user?.name ?? t("Account")} avatar={user?.avatar} size="sm" className="size-5 [&>span]:text-[9px]" />
+              <span className="truncate">{user?.name ?? t("Account")}</span>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side={collapsed ? "right" : "top"} align="end" sideOffset={8} className={collapsed ? "w-56 rounded-md p-2" : "w-[var(--radix-dropdown-menu-trigger-width)] min-w-0 rounded-md p-2"}>
-            <DropdownMenuLabel className="px-2 py-1.5 text-sm font-medium text-foreground">Account</DropdownMenuLabel>
+          <DropdownMenuContent side={collapsed ? (language === "ar" ? "left" : "right") : "top"} align="end" sideOffset={8} className={collapsed ? "w-56 rounded-md p-2" : "w-[var(--radix-dropdown-menu-trigger-width)] min-w-0 rounded-md p-2"}>
+            <DropdownMenuLabel className="px-2 py-1.5 text-sm font-medium text-foreground">{t("Account")}</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <NavLink to="/profile">
                 <UserRound />
-                Profile
+                {t("Profile")}
               </NavLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <div className="space-y-2 px-1 py-1.5">
-              <div className="grid grid-cols-2 gap-1" role="group" aria-label="Color mode">
+              <div className="grid grid-cols-2 gap-1" role="group" aria-label={t("Color mode")}>
                 <button type="button" aria-pressed={mode === "light"} onClick={() => setMode("light")} className="flex h-7 items-center justify-center gap-1.5 rounded-md border border-border text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:border-primary/30 data-[active=true]:bg-primary/10 data-[active=true]:text-primary" data-active={mode === "light"}>
                   <Sun className="size-3.5" aria-hidden="true" />
-                  Light
+                  {t("Light")}
                 </button>
                 <button type="button" aria-pressed={mode === "dark"} onClick={() => setMode("dark")} className="flex h-7 items-center justify-center gap-1.5 rounded-md border border-border text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:border-primary/30 data-[active=true]:bg-primary/10 data-[active=true]:text-primary" data-active={mode === "dark"}>
                   <Moon className="size-3.5" aria-hidden="true" />
-                  Dark
+                  {t("Dark")}
                 </button>
               </div>
             </div>
             <DropdownMenuSeparator />
             <div className="space-y-2 px-1 py-1.5">
-              <div className="grid grid-cols-2 gap-1" role="group" aria-label="Language">
-                <button type="button" aria-pressed={language === "en"} onClick={() => changeLanguage("en")} className="h-7 rounded-md border border-border text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:border-primary/30 data-[active=true]:bg-primary/10 data-[active=true]:text-primary" data-active={language === "en"}>EN</button>
-                <button type="button" aria-pressed={language === "ar"} onClick={() => changeLanguage("ar")} className="h-7 rounded-md border border-border text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:border-primary/30 data-[active=true]:bg-primary/10 data-[active=true]:text-primary" data-active={language === "ar"}>AR</button>
+              <div className="grid grid-cols-2 gap-1" role="group" aria-label={t("Language")}>
+                <button type="button" aria-pressed={language === "en"} onClick={() => setLanguage("en")} className="h-7 rounded-md border border-border text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:border-primary/30 data-[active=true]:bg-primary/10 data-[active=true]:text-primary" data-active={language === "en"}>EN</button>
+                <button type="button" aria-pressed={language === "ar"} onClick={() => setLanguage("ar")} className="h-7 rounded-md border border-border text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:border-primary/30 data-[active=true]:bg-primary/10 data-[active=true]:text-primary" data-active={language === "ar"}>AR</button>
               </div>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => void logout()}>
-              <LogOut />
-              Sign out
+              <LogOut className="rtl:-scale-x-100" />
+              {t("Sign out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

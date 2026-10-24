@@ -13,7 +13,7 @@ export interface paths {
         };
         /**
          * activity-logs (list)
-         * @description Returns CRM activity logs ordered newest first. The endpoint supports filtering by subjects, event, causer, and creation date.
+         * @description Returns CRM activity logs ordered newest first. The endpoint supports filtering by subjects, event, causer, and creation date. Developer-only: requires the configured developer account and the relevant explicit activity-log permission.
          */
         get: {
             parameters: {
@@ -160,7 +160,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** activity-logs (show) */
+        /**
+         * activity-logs (show)
+         * @description Developer-only: requires the configured developer account and the relevant explicit activity-log permission.
+         */
         get: {
             parameters: {
                 query?: never;
@@ -240,7 +243,7 @@ export interface paths {
         put?: never;
         /**
          * activity-logs (revert)
-         * @description Reverts the latest CRM update or soft deletion for the activity's subject.
+         * @description Reverts the latest CRM update or soft deletion for the activity's subject. Developer-only: requires the configured developer account and the relevant explicit activity-log permission.
          */
         post: {
             parameters: {

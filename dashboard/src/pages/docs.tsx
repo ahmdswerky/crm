@@ -1,4 +1,5 @@
 import { ArrowUpRight, Database, Network, ScrollText } from "lucide-react"
+import { t } from "@/lib/i18n"
 
 type Group = {
   title: string
@@ -10,35 +11,35 @@ type Group = {
 
 const groups: Group[] = [
   {
-    title: "Architecture",
-    description: "Interactive system diagrams",
+    title: t("Architecture"),
+    description: t("Interactive system diagrams"),
     href: "/docs/architecture/",
     icon: Network,
     children: [
-      { title: "System architecture", href: "/docs/architecture/#prod/architecture" },
-      { title: "Lead → deal → commission workflow", href: "/docs/architecture/#prod/workflow" },
-      { title: "Payment round-trip sequence", href: "/docs/architecture/#prod/sequence" },
+      { title: t("System architecture"), href: "/docs/architecture/#prod/architecture" },
+      { title: t("Lead → deal → commission workflow"), href: "/docs/architecture/#prod/workflow" },
+      { title: t("Payment round-trip sequence"), href: "/docs/architecture/#prod/sequence" },
     ],
   },
   {
-    title: "Database",
-    description: "Entity-relationship diagrams",
+    title: t("Database"),
+    description: t("Entity-relationship diagrams"),
     href: "/docs/db/crm/",
     icon: Database,
     children: [
       { title: "CRM", href: "/docs/db/crm/" },
-      { title: "Payments", href: "/docs/db/payments/" },
+      { title: t("Payments"), href: "/docs/db/payments/" },
     ],
   },
 ]
 
-const single = { title: "API reference", description: "OpenAPI explorer", href: "/api-docs", icon: ScrollText }
+const single = { title: t("API reference"), description: t("OpenAPI explorer"), href: "/api-docs", icon: ScrollText }
 
 export function DocsPage() {
   return (
     <main className="grid min-h-svh place-items-center bg-background px-6 py-16">
       <div className="w-full max-w-md space-y-3">
-        <h1 className="text-lg font-semibold tracking-tight">CRM documentation</h1>
+        <h1 className="text-lg font-semibold tracking-tight">{t("CRM documentation")}</h1>
         {groups.map(({ title, description, href, icon: Icon, children }) => (
           <section key={title} className="rounded-xl border border-border bg-card">
             <a
@@ -50,7 +51,7 @@ export function DocsPage() {
                 <span className="block text-sm font-medium">{title}</span>
                 <span className="block truncate text-xs text-muted-foreground">{description}</span>
               </span>
-              <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+              <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform rtl:-scale-x-100 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
             </a>
             <ul className="border-t border-border py-1">
               {children.map((child) => (
@@ -76,7 +77,7 @@ export function DocsPage() {
             <span className="block text-sm font-medium">{single.title}</span>
             <span className="block truncate text-xs text-muted-foreground">{single.description}</span>
           </span>
-          <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+          <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform rtl:-scale-x-100 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
         </a>
       </div>
     </main>

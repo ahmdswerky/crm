@@ -7,6 +7,7 @@ import { ResourcePagination } from "@/components/shared/resource-pagination"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { t } from "@/lib/i18n"
 
 type Row = Record<string, unknown>
 type ResourcePageProps = { title: string; eyebrow: string; description: string; endpoint: string; columns: { key: string; label: string }[] }
@@ -47,7 +48,7 @@ export function ResourcePage({ title, eyebrow, description, endpoint, columns }:
     setError("")
     try {
       const response = await apiFetch(`${API_BASE_URL}${endpoint}?page=${requestedPage}`, { signal })
-      if (!response.ok) throw new Error(`Request failed (${response.status})`)
+      if (!response.ok) throw new Error(t("Request failed ({name})", { name: response.status }))
       const body = await response.json() as { data?: unknown; meta?: { current_page?: number; last_page?: number } }
       setRows(Array.isArray(body.data) ? body.data as Row[] : body.data ? [body.data as Row] : [])
       setLastPage(body.meta?.last_page ?? 1)
@@ -56,7 +57,7 @@ export function ResourcePage({ title, eyebrow, description, endpoint, columns }:
       }
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return
-      setError(caught instanceof Error ? caught.message : `Unable to load ${title.toLowerCase()}.`)
+      setError(caught instanceof Error ? caught.message : t("Unable to load {name}.", { name: title.toLowerCase() }))
     } finally {
       if (!signal?.aborted) setLoading(false)
     }
@@ -75,8 +76,8 @@ export function ResourcePage({ title, eyebrow, description, endpoint, columns }:
   })
 
   return <div className="space-y-6 p-6 lg:p-8">
-    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6"><div><p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{eyebrow}</p><h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1><p className="mt-1 text-sm text-muted-foreground">{description}</p></div><Button variant="outline" size="sm" onClick={() => void load(undefined, page)} disabled={loading}><RefreshCw className="me-2 size-3.5" />Refresh</Button></div>
-    <div className="border border-border bg-card">{error ? <div className="p-8 text-sm text-destructive">{error}</div> : <><Table><TableHeader><TableRow>{columns.map((column) => <TableHead key={column.key}>{column.label}</TableHead>)}</TableRow></TableHeader><TableBody>{loading ? Array.from({ length: 4 }, (_, index) => <TableRow key={index}>{columns.map((column) => <TableCell key={column.key}><Skeleton className="h-4 w-3/4" /></TableCell>)}</TableRow>) : rows.length ? rows.map((row, index) => <TableRow key={String(row.id ?? index)}>{columns.map((column) => <TableCell key={column.key} className={column.key === "name" || column.key === "title" ? "font-medium" : ""}>{display(row[column.key])}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">No {title.toLowerCase()} found.</TableCell></TableRow>}</TableBody></Table><ResourcePagination page={page} lastPage={lastPage} disabled={loading} onPageChange={goToPage} /></>}</div>
+    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6"><div><p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{eyebrow}</p><h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1><p className="mt-1 text-sm text-muted-foreground">{description}</p></div><Button variant="outline" size="sm" onClick={() => void load(undefined, page)} disabled={loading}><RefreshCw className="me-2 size-3.5" />{t("Refresh")}</Button></div>
+    <div className="border border-border bg-card">{error ? <div className="p-8 text-sm text-destructive">{error}</div> : <><Table><TableHeader><TableRow>{columns.map((column) => <TableHead key={column.key}>{column.label}</TableHead>)}</TableRow></TableHeader><TableBody>{loading ? Array.from({ length: 4 }, (_, index) => <TableRow key={index}>{columns.map((column) => <TableCell key={column.key}><Skeleton className="h-4 w-3/4" /></TableCell>)}</TableRow>) : rows.length ? rows.map((row, index) => <TableRow key={String(row.id ?? index)}>{columns.map((column) => <TableCell key={column.key} className={column.key === "name" || column.key === "title" ? "font-medium" : ""}>{display(row[column.key])}</TableCell>)}</TableRow>) : <TableRow><TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">{t("No {name} found.", { name: title.toLowerCase() })}</TableCell></TableRow>}</TableBody></Table><ResourcePagination page={page} lastPage={lastPage} disabled={loading} onPageChange={goToPage} /></>}</div>
   </div>
 }
 
@@ -94,13 +95,13 @@ export function ResourceDetailsPage({ title, eyebrow, description, endpoint, env
     setError("")
     void apiFetch(`${API_BASE_URL}${endpoint}/${resourceId}`, { signal: controller.signal })
       .then(async (response) => {
-        if (!response.ok) throw new Error(`Request failed (${response.status})`)
+        if (!response.ok) throw new Error(t("Request failed ({name})", { name: response.status }))
         const body = await response.json() as Row
         const value = body[envelopeKey] ?? body.data ?? body
         setRecord(value && typeof value === "object" ? value as Row : null)
       })
       .catch((caught) => {
-        if (!(caught instanceof DOMException && caught.name === "AbortError")) setError(caught instanceof Error ? caught.message : `Unable to load ${title.toLowerCase()}.`)
+        if (!(caught instanceof DOMException && caught.name === "AbortError")) setError(caught instanceof Error ? caught.message : t("Unable to load {name}.", { name: title.toLowerCase() }))
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false)
@@ -109,8 +110,8 @@ export function ResourceDetailsPage({ title, eyebrow, description, endpoint, env
   }, [endpoint, envelopeKey, resourceId, title])
 
   return <div className="space-y-6 p-6 lg:p-8">
-    <div className="border-b border-border pb-6"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={backPath}><ArrowLeft className="me-2 size-3.5" />Back to list</Link></Button><p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{eyebrow}</p><div className="mt-2 flex items-center gap-3">{person && typeof record?.name === "string" && <PersonAvatar name={record.name} size="lg" />}<h1 className="text-2xl font-semibold tracking-tight">{title}</h1></div><p className="mt-1 text-sm text-muted-foreground">{description}</p></div>
-    <section className="border border-border bg-card p-5">{loading ? <div className="grid gap-5 sm:grid-cols-2">{fields.map((field) => <div key={field.key}><Skeleton className="h-4 w-20" /><Skeleton className="mt-2 h-6 w-2/3" /></div>)}</div> : error ? <div className="text-sm text-destructive">{error}</div> : record ? <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">{fields.map((field) => <div key={field.key}><dt className="text-xs font-medium text-muted-foreground">{field.label}</dt><dd className="mt-1 text-sm">{relationValue(record[field.key], field.relation)}</dd></div>)}</dl> : <div className="text-sm text-muted-foreground">This record could not be found.</div>}</section>
-    <Button variant="outline" onClick={() => navigate(backPath)}>Return to list</Button>
+    <div className="border-b border-border pb-6"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={backPath}><ArrowLeft className="me-2 size-3.5 rtl:rotate-180" />{t("Back to list")}</Link></Button><p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{eyebrow}</p><div className="mt-2 flex items-center gap-3">{person && typeof record?.name === "string" && <PersonAvatar name={record.name} size="lg" />}<h1 className="text-2xl font-semibold tracking-tight">{title}</h1></div><p className="mt-1 text-sm text-muted-foreground">{description}</p></div>
+    <section className="border border-border bg-card p-5">{loading ? <div className="grid gap-5 sm:grid-cols-2">{fields.map((field) => <div key={field.key}><Skeleton className="h-4 w-20" /><Skeleton className="mt-2 h-6 w-2/3" /></div>)}</div> : error ? <div className="text-sm text-destructive">{error}</div> : record ? <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">{fields.map((field) => <div key={field.key}><dt className="text-xs font-medium text-muted-foreground">{field.label}</dt><dd className="mt-1 text-sm">{relationValue(record[field.key], field.relation)}</dd></div>)}</dl> : <div className="text-sm text-muted-foreground">{t("This record could not be found.")}</div>}</section>
+    <Button variant="outline" onClick={() => navigate(backPath)}>{t("Return to list")}</Button>
   </div>
 }

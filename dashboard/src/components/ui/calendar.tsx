@@ -1,10 +1,16 @@
 import * as React from "react"
 import { DayPicker } from "react-day-picker"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ar } from "date-fns/locale/ar"
+import { direction, language } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
+
+export const dateLocale = language === "ar" ? ar : undefined
 
 function Calendar({ className, classNames, ...props }: React.ComponentProps<typeof DayPicker>) {
   return <DayPicker
+    dir={direction}
+    locale={dateLocale}
     className={cn("p-3", className)}
     classNames={{
       months: "flex flex-col sm:flex-row gap-2",

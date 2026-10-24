@@ -1,4 +1,5 @@
 import { EChartsBarChart, type ChartConfig } from "@/components/evilcharts/charts/echarts-bar-chart"
+import { t } from "@/lib/i18n"
 
 export type AgentPerformanceColorMode = "by-agent" | "highlight-best"
 
@@ -24,22 +25,22 @@ export function AgentPerformanceCard({ rows, colorMode = "by-agent", maxAgents =
   const chartHeight = Math.max(248, Math.min(320, chartRows.length * 42 + 42))
 
   return <section className={`min-w-0 overflow-hidden rounded-3xl bg-card p-5 sm:p-6 ${className}`}>
-    <header className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs text-muted-foreground">Agent performance</p><p className="mt-1 flex items-baseline gap-2"><span className="font-mono text-2xl font-semibold tracking-tight tabular-nums">{formatCurrency(totalWonValue)}</span><span className="text-sm text-muted-foreground">total won value across agents</span></p></div></header>
+    <header className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs text-muted-foreground">{t("Agent performance")}</p><p className="mt-1 flex items-baseline gap-2"><span className="font-mono text-2xl font-semibold tracking-tight tabular-nums">{formatCurrency(totalWonValue)}</span><span className="text-sm text-muted-foreground">{t("total won value across agents")}</span></p></div></header>
 
-    {chartRows.length ? <div className="mt-3" style={{ height: chartHeight }} aria-label="Agent performance by won value" role="img">
+    {chartRows.length ? <div className="mt-3" style={{ height: chartHeight }} aria-label={t("Agent performance by won value")} role="img">
       <EChartsBarChart data={chartData} config={chartConfig} xDataKey="name" className="size-full" stackType={activeSeriesKeys.length > 1 ? "stacked" : "default"} barRadius={6} barCategoryGap={18} barGap={4} animation animationType="center-out" enableMaxValueHighlight={colorMode === "highlight-best"}>
         <EChartsBarChart.XAxis dataKey="name" tickFormatter={formatAgentName} hideDots />
         {activeSeriesKeys.map((key) => <EChartsBarChart.Bar key={key} dataKey={key} enableHoverHighlight />)}
         <EChartsBarChart.Tooltip variant="frosted-glass" />
         <EChartsBarChart.Legend variant="rounded-square" align="right" verticalAlign="top" />
       </EChartsBarChart>
-    </div> : <p className="py-12 text-center text-sm text-muted-foreground">No agent activity was captured for this period.</p>}
+    </div> : <p className="py-12 text-center text-sm text-muted-foreground">{t("No agent activity was captured for this period.")}</p>}
   </section>
 }
 
 function buildChartConfig(keys: string[]): ChartConfig {
   return Object.fromEntries(keys.map((key) => [key, {
-    label: key === "wonValue" ? "Won value" : formatSeriesLabel(key),
+    label: t(key === "wonValue" ? "Won value" : formatSeriesLabel(key)),
     colors: {
       light: [key === "wonValue" ? wonValueColor : openedValueColor],
       dark: [key === "wonValue" ? wonValueColor : openedValueColor],

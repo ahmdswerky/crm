@@ -13,6 +13,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { locale, t } from "@/lib/i18n"
 
 type ActivityLog = ActivityLogComponents["schemas"]["ActivityLog"]
 type ActivityModel = NonNullable<ActivityLogComponents["schemas"]["ActivitySubject"]["type"]>
@@ -47,15 +48,16 @@ function formatActivityTime(value: string) {
   if (Number.isNaN(date.getTime())) return value
 
   const elapsedSeconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1_000))
-  if (elapsedSeconds < 60) return "just now"
-  if (elapsedSeconds < 3_600) return `${Math.floor(elapsedSeconds / 60)} minute${elapsedSeconds >= 120 ? "s" : ""} ago`
-  if (elapsedSeconds < 86_400) return `${Math.floor(elapsedSeconds / 3_600)} hour${elapsedSeconds >= 7_200 ? "s" : ""} ago`
-  if (elapsedSeconds < 2_592_000) return `${Math.floor(elapsedSeconds / 86_400)} day${elapsedSeconds >= 172_800 ? "s" : ""} ago`
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(date)
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto" })
+  if (elapsedSeconds < 60) return t("just now")
+  if (elapsedSeconds < 3_600) return relative.format(-Math.floor(elapsedSeconds / 60), "minute")
+  if (elapsedSeconds < 86_400) return relative.format(-Math.floor(elapsedSeconds / 3_600), "hour")
+  if (elapsedSeconds < 2_592_000) return relative.format(-Math.floor(elapsedSeconds / 86_400), "day")
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(date)
 }
 
 function initials(name: string | null) {
-  return (name ?? "System").split(/\s+/).filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "S"
+  return (name ?? t("System")).split(/\s+/).filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "S"
 }
 
 function EventIcon({ event }: { event: ActivityLog["event"] }) {
@@ -75,7 +77,7 @@ function displayValue(value: unknown) {
   if (value === null || value === undefined || value === "") return "—"
   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value)
   if (Array.isArray(value)) return value.join(", ") || "—"
-  return "Updated"
+  return t("Updated")
 }
 
 function changedFields(activity: ActivityLog) {
@@ -85,13 +87,13 @@ function changedFields(activity: ActivityLog) {
   return Array.from(new Set([...Object.keys(before), ...Object.keys(after)]))
     .slice(0, 4)
     .map((field) => ({
-      field: titleFor(field),
+      field: t(titleFor(field)),
       before: displayValue(before[field]),
       after: displayValue(after[field]),
     }))
 }
 
-export function ActivityLogList({ model, id, title = "Activity", perPage = 5, className, onReverted }: ActivityLogListProps) {
+export function ActivityLogList({ model, id, title = t("Activity"), perPage = 5, className, onReverted }: ActivityLogListProps) {
   const { can } = useAuth()
   const canView = can("activity-log.view")
   const canRevert = can("activity-log.revert")
@@ -123,7 +125,7 @@ export function ActivityLogList({ model, id, title = "Activity", perPage = 5, cl
       setMeta(response.meta)
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return
-      setError(caught instanceof Error ? caught.message : "Unable to load activity.")
+      setError(caught instanceof Error ? caught.message : t("Unable to load activity."))
     } finally {
       if (!signal?.aborted) setLoading(false)
     }
@@ -169,7 +171,7 @@ export function ActivityLogList({ model, id, title = "Activity", perPage = 5, cl
 
     const reason = revertReason.trim()
     if (reason.length < 3) {
-      setRevertError("Enter a reason of at least 3 characters.")
+      setRevertError(t("Enter a reason of at least 3 characters."))
       return
     }
 
@@ -190,7 +192,7 @@ export function ActivityLogList({ model, id, title = "Activity", perPage = 5, cl
         ? caught.fields.reason?.[0] ?? caught.message
         : caught instanceof Error
           ? caught.message
-          : "Unable to revert this activity."
+          : t("Unable to revert this activity.")
       setRevertError(message)
     } finally {
       setReverting(false)
@@ -207,7 +209,7 @@ export function ActivityLogList({ model, id, title = "Activity", perPage = 5, cl
       {loading && logs.length === 0 && <ActivityLoading />}
       {!loading && !error && logs.length === 0 && <ActivityEmpty model={model} />}
       {logs.length > 0 && <ActivityStream logs={logs} canRevert={canRevert} reverting={reverting} onRevert={openRevert} />}
-      {!error && meta && page < meta.last_page && <div className="mt-5 flex justify-center"><Button type="button" variant="outline" size="sm" onClick={loadMore} disabled={loading}>{loading ? "Loading…" : "Load more activity"}</Button></div>}
+      {!error && meta && page < meta.last_page && <div className="mt-5 flex justify-center"><Button type="button" variant="outline" size="sm" onClick={loadMore} disabled={loading}>{t(loading ? "Loading…" : "Load more activity")}</Button></div>}
     </div>
 
     <ActivityRevertDialog
@@ -226,11 +228,11 @@ function ActivityHeader({ id, title, model, loading, onRefresh }: { id: string; 
   return <header className="flex flex-wrap items-start justify-between gap-3">
     <div>
       <h2 id={id} className="text-lg font-semibold tracking-tight">{title}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Recorded changes to this {model}.</p>
+      <p className="mt-1 text-sm text-muted-foreground">{t("Recorded changes to this {model}.", { model: t(model) })}</p>
     </div>
     <Button type="button" variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
       <RefreshCw className="me-2 size-3.5" />
-      Refresh
+      {t("Refresh")}
     </Button>
   </header>
 }
@@ -238,12 +240,12 @@ function ActivityHeader({ id, title, model, loading, onRefresh }: { id: string; 
 function ActivityError({ message, loading, onRetry }: { message: string; loading: boolean; onRetry: () => void }) {
   return <div role="alert" className="flex flex-wrap items-center justify-between gap-3 border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
     <span>{message}</span>
-    <Button type="button" variant="outline" size="sm" onClick={onRetry} disabled={loading}>Try again</Button>
+    <Button type="button" variant="outline" size="sm" onClick={onRetry} disabled={loading}>{t("Try again")}</Button>
   </div>
 }
 
 function ActivityLoading() {
-  return <div className="space-y-4" aria-label="Loading activity">
+  return <div className="space-y-4" aria-label={t("Loading activity")}>
     <ActivitySkeleton />
     <ActivitySkeleton />
     <ActivitySkeleton />
@@ -253,8 +255,8 @@ function ActivityLoading() {
 function ActivityEmpty({ model }: { model: ActivityModel }) {
   return <div className="border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
     <History className="mx-auto size-5 text-muted-foreground" aria-hidden="true" />
-    <p className="mt-2 text-sm font-medium">No activity recorded</p>
-    <p className="mt-1 text-sm text-muted-foreground">Changes to this {model} will appear here.</p>
+    <p className="mt-2 text-sm font-medium">{t("No activity recorded")}</p>
+    <p className="mt-1 text-sm text-muted-foreground">{t("Changes to this {model} will appear here.", { model: t(model) })}</p>
   </div>
 }
 
@@ -270,12 +272,12 @@ function ActivityEntry({ activity, step, canRevert, reverting, onRevert }: { act
 
   return <TimelineItem step={step} className="ms-10 pb-10 last:pb-0">
     <TimelineHeader>
-      <TimelineSeparator className="-left-7 h-[calc(100%-1.75rem)] translate-y-7" />
+      <TimelineSeparator className="-start-7 h-[calc(100%-1.75rem)] translate-y-7" />
       <div className="flex flex-wrap items-center gap-2 pe-8">
         <TimelineTitle className="text-sm font-semibold">{activity.description}</TimelineTitle>
-        <Badge variant={eventTone[activity.event]} size="sm">{titleFor(activity.event)}</Badge>
+        <Badge variant={eventTone[activity.event]} size="sm">{t(titleFor(activity.event))}</Badge>
       </div>
-      <TimelineIndicator className="-left-7 size-6 border-none bg-muted text-muted-foreground">
+      <TimelineIndicator className="-start-7 size-6 border-none bg-muted text-muted-foreground">
         <EventIcon event={activity.event} />
       </TimelineIndicator>
     </TimelineHeader>
@@ -283,17 +285,17 @@ function ActivityEntry({ activity, step, canRevert, reverting, onRevert }: { act
       <Frame stacked dense spacing="sm">
         <Collapsible defaultOpen className="group/collapsible">
           <div className="flex items-center justify-between gap-2">
-            <CollapsibleTrigger className="flex min-w-0 grow items-center gap-2 px-3 py-1.5 text-left">
+            <CollapsibleTrigger className="flex min-w-0 grow items-center gap-2 px-3 py-1.5 text-start">
               <Avatar size="sm">
                 <AvatarFallback>{initials(activity.causer.name)}</AvatarFallback>
               </Avatar>
-              <span className="truncate text-xs font-medium text-muted-foreground">{activity.causer.name ?? "System"}</span>
+              <span className="truncate text-xs font-medium text-muted-foreground">{activity.causer.name ?? t("System")}</span>
               <time dateTime={activity.created_at} className="text-xs text-muted-foreground">{formatActivityTime(activity.created_at)}</time>
-              <ChevronRight className="ms-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+              <ChevronRight className="ms-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 rtl:-scale-x-100 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:scale-x-100" />
             </CollapsibleTrigger>
             {canRevert && activity.revert.allowed && <Button type="button" variant="ghost" size="sm" className="me-1 shrink-0" onClick={() => onRevert(activity)} disabled={reverting}>
               <RotateCcw className="me-1.5 size-3.5" />
-              Revert
+              {t("Revert")}
             </Button>}
           </div>
           <CollapsibleContent>
@@ -312,10 +314,10 @@ function ActivityDetails({ changes, reason }: { changes: ReturnType<typeof chang
     {changes.length > 0 && <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
       {changes.map((change) => <div key={change.field} className="min-w-0">
         <dt className="text-xs text-muted-foreground">{change.field}</dt>
-        <dd className="mt-1 break-words"><span className="text-muted-foreground">{change.before}</span><span className="mx-2 text-muted-foreground">→</span><span>{change.after}</span></dd>
+        <dd className="mt-1 break-words"><span className="text-muted-foreground">{change.before}</span><span className="mx-2 inline-block text-muted-foreground rtl:-scale-x-100">→</span><span>{change.after}</span></dd>
       </div>)}
     </dl>}
-    {reason && <p className={cn("text-sm leading-6 text-muted-foreground", changes.length > 0 && "mt-3")}>Reason: {reason}</p>}
+    {reason && <p className={cn("text-sm leading-6 text-muted-foreground", changes.length > 0 && "mt-3")}>{t("Reason: {reason}", { reason })}</p>}
   </>
 }
 
@@ -332,14 +334,14 @@ function ActivityRevertDialog({ activity, reason, error, reverting, onOpenChange
     <AlertDialogContent size="sm">
       <AlertDialogHeader>
         <AlertDialogMedia><RotateCcw /></AlertDialogMedia>
-        <AlertDialogTitle>Revert this activity?</AlertDialogTitle>
-        <AlertDialogDescription>This restores the affected record to the state before this change. Add a reason so the reversal is auditable.</AlertDialogDescription>
+        <AlertDialogTitle>{t("Revert this activity?")}</AlertDialogTitle>
+        <AlertDialogDescription>{t("This restores the affected record to the state before this change. Add a reason so the reversal is auditable.")}</AlertDialogDescription>
       </AlertDialogHeader>
-      <Textarea value={reason} onChange={(event) => onReasonChange(event.target.value)} aria-label="Reason for reverting activity" placeholder="Why should this change be reverted?" maxLength={500} disabled={reverting} aria-invalid={Boolean(error)} />
+      <Textarea value={reason} onChange={(event) => onReasonChange(event.target.value)} aria-label={t("Reason for reverting activity")} placeholder={t("Why should this change be reverted?")} maxLength={500} disabled={reverting} aria-invalid={Boolean(error)} />
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
       <AlertDialogFooter>
-        <AlertDialogCancel disabled={reverting}>Cancel</AlertDialogCancel>
-        <AlertDialogAction disabled={reverting} onClick={(event) => { event.preventDefault(); onConfirm() }}>{reverting ? "Reverting…" : "Revert activity"}</AlertDialogAction>
+        <AlertDialogCancel disabled={reverting}>{t("Cancel")}</AlertDialogCancel>
+        <AlertDialogAction disabled={reverting} onClick={(event) => { event.preventDefault(); onConfirm() }}>{t(reverting ? "Reverting…" : "Revert activity")}</AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>

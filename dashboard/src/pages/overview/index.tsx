@@ -7,6 +7,7 @@ import { RevenuePerformance } from "./components/revenue-performance"
 import { SalesLeaderboard } from "./components/sales-leaderboard"
 import { WorldMapCard } from "./components/world-map-card"
 import type { Customer, LeaderboardEntry, Metric, OverviewAccount, OverviewDeal, OverviewProperty, OverviewRange, TrendPoint } from "./data"
+import { t } from "@/lib/i18n"
 
 const overviewUrl = `${API_BASE_URL}/v1/analytics`
 
@@ -181,10 +182,10 @@ export function OverviewPage() {
   }, [revenueRange])
 
   return <main className="space-y-5 p-5 sm:p-6 lg:p-8">
-    <section aria-label="Key metrics" className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-4">{metricDefinitions.map(({ key, label }) => <MetricTrendCard key={key} label={label} metric={metrics[label]} isLoading={kpiLoading} />)}</section>
-    <section aria-label="Performance charts" className="grid gap-5 xl:grid-cols-3"><RevenuePerformance range={revenueRange} current={revenue.current} previous={revenue.previous} isLoading={revenueLoading} onRangeChange={selectRevenueRange} onRefresh={refreshRevenue} /><SalesLeaderboard range={leaderboardRange} data={leaderboard} isLoading={leaderboardLoading} onRangeChange={selectLeaderboardRange} onRefresh={refreshLeaderboard} /></section>
+    <section aria-label={t("Key metrics")} className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-4">{metricDefinitions.map(({ key, label }) => <MetricTrendCard key={key} label={label} metric={metrics[label]} isLoading={kpiLoading} />)}</section>
+    <section aria-label={t("Performance charts")} className="grid gap-5 xl:grid-cols-3"><RevenuePerformance range={revenueRange} current={revenue.current} previous={revenue.previous} isLoading={revenueLoading} onRangeChange={selectRevenueRange} onRefresh={refreshRevenue} /><SalesLeaderboard range={leaderboardRange} data={leaderboard} isLoading={leaderboardLoading} onRangeChange={selectLeaderboardRange} onRefresh={refreshLeaderboard} /></section>
     <WorldMapCard countries={countries} isLoading={countriesLoading} onRefresh={refreshCountries} />
-    <section aria-label="Record summaries" className="grid gap-5 xl:grid-cols-2"><CustomerCard data={customers} isLoading={customersLoading} onRefresh={refreshCustomers} /><DealCard data={deals} isLoading={dealsLoading} onRefresh={refreshDeals} /><AccountCard data={accounts} isLoading={accountsLoading} onRefresh={refreshAccounts} /><PropertyCard data={properties} isLoading={propertiesLoading} onRefresh={refreshProperties} /></section>
+    <section aria-label={t("Record summaries")} className="grid gap-5 xl:grid-cols-2"><CustomerCard data={customers} isLoading={customersLoading} onRefresh={refreshCustomers} /><DealCard data={deals} isLoading={dealsLoading} onRefresh={refreshDeals} /><AccountCard data={accounts} isLoading={accountsLoading} onRefresh={refreshAccounts} /><PropertyCard data={properties} isLoading={propertiesLoading} onRefresh={refreshProperties} /></section>
   </main>
 }
 
