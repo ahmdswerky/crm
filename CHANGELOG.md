@@ -1,5 +1,108 @@
 # Changelog
 
+## [0.2.0](https://github.com/ahmdswerky/crm/compare/v0.1.0...v0.2.0) (2026-10-24)
+
+
+### Features
+
+* **accounts:** add accounts endpoint ([f6e55df](https://github.com/ahmdswerky/crm/commit/f6e55dfa0989c9f88af7c1576d53745505d48642))
+* **activity:** add full activity logging implementation ([78e71b8](https://github.com/ahmdswerky/crm/commit/78e71b8470077d69e4674a8d3079ef6bf8a5b149))
+* **ai:** add claude delegate skills ([07e51ef](https://github.com/ahmdswerky/crm/commit/07e51ef4e8ecd9d6fdc78a1752a7e4fbf880ea1a))
+* **analytics:** implement country-based analytical data ([8e12ad2](https://github.com/ahmdswerky/crm/commit/8e12ad29326f603dad236af8a96c7c71634b9194))
+* **analytics:** implement country-based analytical data ([cfda3a2](https://github.com/ahmdswerky/crm/commit/cfda3a239206ba0f5beab5a989f56346111b811a))
+* **architecture:** enhance message broker communication and failures ([fae9003](https://github.com/ahmdswerky/crm/commit/fae90032163f3bfa867c80f1b942a299c73c3d14))
+* **auth:** add authentication and user management ([76756fe](https://github.com/ahmdswerky/crm/commit/76756fe8b793712fa6e724c6b9d71e971286de4d))
+* **auth:** implement user profile update, and user deletion protection for super and logged in ([8e1a997](https://github.com/ahmdswerky/crm/commit/8e1a997eeaaf10b3d1b5d805a16e0b25c7bfd255))
+* **ci:** implement CI & dockerize the services ([058bad3](https://github.com/ahmdswerky/crm/commit/058bad3fdf78d08c51cac1e2de9ffc098b63e928))
+* **ci:** implement CI & dockerize the services ([abbcd56](https://github.com/ahmdswerky/crm/commit/abbcd567df712bd721515a882185ae9330d3c463))
+* **ci:** implement CI & dockerize the services ([67c1a88](https://github.com/ahmdswerky/crm/commit/67c1a88fc313b321e97984a7ee0b9fcaefbb14bc))
+* **commission:** implement commission allocation for deals and ([26c09a6](https://github.com/ahmdswerky/crm/commit/26c09a692a5d97f3d6fe7f5105a87de6738f7f9d))
+* **commission:** implement commission allocation for deals and ([ce7e4a3](https://github.com/ahmdswerky/crm/commit/ce7e4a3b145e07822fae39121cd76934ab568337))
+* **commission:** implement commission allocation for deals and ([e783dc3](https://github.com/ahmdswerky/crm/commit/e783dc330e4749f40954e2140989986c6798f35c))
+* **commission:** implement commission feature with deals & agents ([e634048](https://github.com/ahmdswerky/crm/commit/e634048f9c0e413863a5fccbba39cabbf65724f7))
+* **contacts:** add contacts endpoint ([b08eb41](https://github.com/ahmdswerky/crm/commit/b08eb41e66fc3daecd634f4e0d48cbaace0de64d))
+* **dashboard:** implement dashboard UI ([d167119](https://github.com/ahmdswerky/crm/commit/d167119eefb72ff9c584c7251a102d1523bc53f9))
+* **deal:** add activity history to deals ([24b4ec7](https://github.com/ahmdswerky/crm/commit/24b4ec77d8e78400d1f54017d3ba3e179fb8da61))
+* **deal:** add activity history to deals ([828b21c](https://github.com/ahmdswerky/crm/commit/828b21c735f50801a4809941e1535b6696321ad6))
+* **deals, leads, properties, users, accounts, contacts:** implement listing filters ([ec15aff](https://github.com/ahmdswerky/crm/commit/ec15aff707d2e11c4eef9144102b70946653a9f7))
+* **deals:** add agent_id to deals ([fea9dbb](https://github.com/ahmdswerky/crm/commit/fea9dbb5d307a39d94780dc097e45000b627899d))
+* **insights:** implement laravel telescope & horizon ([07c28c5](https://github.com/ahmdswerky/crm/commit/07c28c580bd704433b59a3b943e34321fc712c5e))
+* **invoice:** implement invoice feature for payment service ([202e03a](https://github.com/ahmdswerky/crm/commit/202e03a893dc2a5fb8da3bbd487c19429c0a47e6))
+* **lead:** add countries to leads with analytical data ([cf739b2](https://github.com/ahmdswerky/crm/commit/cf739b2374f9536c1ac796260c7ac8f3529141db))
+* **leads:** add leads endpoint ([19fb24f](https://github.com/ahmdswerky/crm/commit/19fb24f30b312b71386e3ecfc5560352ea5a85e5))
+* **leads:** add leads endpoint ([3e0e801](https://github.com/ahmdswerky/crm/commit/3e0e8016df985d410fbf6ada0aff9a728163402b))
+* **media:** implement polymorphic media ([9f082b4](https://github.com/ahmdswerky/crm/commit/9f082b4bca3c3455a38279874cc14365cb8449a0))
+* **media:** protect media uploads and add daily reset ([f6de85f](https://github.com/ahmdswerky/crm/commit/f6de85f515c44559b6fc9f569c2d4d2d051b5cba))
+* **media:** protect media uploads and add daily reset ([7f37af3](https://github.com/ahmdswerky/crm/commit/7f37af3bcd1d31ad30064fd223acab6d6598dd13))
+* **misc:** implement status conversions for leads, deals, and contacts. implement filters adjustments. ([2cc8961](https://github.com/ahmdswerky/crm/commit/2cc89614cfba1a027be1630c5e563940c1285e72))
+* **payment:** init payment service 🎉 ([2c91c8e](https://github.com/ahmdswerky/crm/commit/2c91c8eb3b1a2b22ba2f7843170cac93f2267b03))
+* **payment:** init payment service 🎉 ([70c7c9c](https://github.com/ahmdswerky/crm/commit/70c7c9cd7173ab0ddb924875c8b6f558f8fd8e42))
+* **payment:** init payment service 🎉 ([bdf3f92](https://github.com/ahmdswerky/crm/commit/bdf3f92bb932d36165a70b1223c0a768829b8def))
+* **properties:** add properties endpoint ([ec22d91](https://github.com/ahmdswerky/crm/commit/ec22d91d50ac59265234af32bbf1456a29e1a264))
+* **properties:** add properties endpoint ([7e884c7](https://github.com/ahmdswerky/crm/commit/7e884c7027b55e72832375bc0b7db6ef311d518b))
+* **reports:** implement reports & analytics features ([61b4cbc](https://github.com/ahmdswerky/crm/commit/61b4cbcbec069c86f714a39dd992ddec28daef5c))
+* **roles:** add roles and permissions endpoints ([85867c6](https://github.com/ahmdswerky/crm/commit/85867c69a71c30d6485a6c826ac89a4747a63f9a))
+* **seeds:** implement configurable large seeders ([01d0f05](https://github.com/ahmdswerky/crm/commit/01d0f05cee570517ea101cec50c43ef65de98422))
+* **ui:** add activity and history for deals and other UI adjustments ([2aa8714](https://github.com/ahmdswerky/crm/commit/2aa87140c27b78063202094c9d2ca5610dbe1c3e))
+* **ui:** add activity and history for deals and other UI adjustments ([ef4cbc2](https://github.com/ahmdswerky/crm/commit/ef4cbc255988dd6a0464e2782918a16ea16b2392))
+* **ui:** complete dashboard redesign ([da9a337](https://github.com/ahmdswerky/crm/commit/da9a33741fd576ea5eed18477318962e09bcf099))
+* **ui:** misc UI added ([cceb38d](https://github.com/ahmdswerky/crm/commit/cceb38d16a7936acc7591fb5c0a7218cd4906666))
+* **ui:** misc UI added ([af845e4](https://github.com/ahmdswerky/crm/commit/af845e453b51326d132dd662de618ebd5dce7a08))
+* **ui:** misc UI added ([b28b684](https://github.com/ahmdswerky/crm/commit/b28b68466b959997732d619fe8179e447f94ee43))
+
+
+### Bug Fixes
+
+* **auth,leads,property:** implement missing soft delete capability ([03d9169](https://github.com/ahmdswerky/crm/commit/03d91698a2ef6656e2f556360a09e55b816aa52b))
+* **auth:** add missing login route name ([6e68f7f](https://github.com/ahmdswerky/crm/commit/6e68f7fdf7217ac26287437d8a2e989036fc91c1))
+* **auth:** adjust user resource relation load ([1bb1cd4](https://github.com/ahmdswerky/crm/commit/1bb1cd40e76fd52d0a55547e8a1b9e6899e94794))
+* **ci:** exclude larastan from CI & git hooks ([85c3cdb](https://github.com/ahmdswerky/crm/commit/85c3cdb1db4132867341d0169d08a80b07142d1c))
+* **ci:** exclude larastan from CI & git hooks ([e3381f0](https://github.com/ahmdswerky/crm/commit/e3381f05b59d5dce568bab8f665f64024edb32c5))
+* **ci:** exclude larastan from CI & git hooks ([ae17533](https://github.com/ahmdswerky/crm/commit/ae1753309e9acf2714c73d682973576b860998ba))
+* **ci:** fix ci runs errors ([6570c9e](https://github.com/ahmdswerky/crm/commit/6570c9edb64bdae6294e7f4081153f9eef905bf5))
+* **ci:** fix ci runs errors ([754ebbe](https://github.com/ahmdswerky/crm/commit/754ebbe9bbb22d0d9344dab3deabf87a3ba133e6))
+* **ci:** fix ci runs errors ([531cf5b](https://github.com/ahmdswerky/crm/commit/531cf5beb963c764cf693536dd93839a990cff3a))
+* **config:** resolve conflict ([e21785f](https://github.com/ahmdswerky/crm/commit/e21785fa5f869f613775dd3d16e28f3b2a179888))
+* **dashboard:** resolve listing and build issues ([186dc12](https://github.com/ahmdswerky/crm/commit/186dc124f03a017261b69773d9cb4d609747ff3a))
+* **dashboard:** resolve listing and build issues ([3a3547b](https://github.com/ahmdswerky/crm/commit/3a3547bfb496ebfd56d7181df00925b7bd768629))
+* **dashboard:** resolve listing and build issues ([dfec867](https://github.com/ahmdswerky/crm/commit/dfec867ef58fb6006f9e0da1c35f1a52ae83dd7e))
+* **database:** add missing database indexes ([9fe9f7b](https://github.com/ahmdswerky/crm/commit/9fe9f7b6949c8777ccb4bac7c6411a8ad11d7cef))
+* **database:** add missing database indexes ([8769d7e](https://github.com/ahmdswerky/crm/commit/8769d7e5921c689559ffb738cf0c8b1b9047be8a))
+* **database:** add missing database indexes ([ec847b6](https://github.com/ahmdswerky/crm/commit/ec847b69ba1294f5f48eacb06d68a6c6c42369a2))
+* **deals:** fix closed at date validation ([09a61c1](https://github.com/ahmdswerky/crm/commit/09a61c196f4fc2c8d94d3a9e5a816608a9d4c86f))
+* **invoice:** add missing dto invoice list ([97a3739](https://github.com/ahmdswerky/crm/commit/97a373922af6472f9fd9f5cf4705374d4f2ff284))
+* **leads:** add assigned agent into leads ([0bea1ac](https://github.com/ahmdswerky/crm/commit/0bea1acf3688be779cfd27a31385adc585c7306c))
+* **leads:** rename misnamed property ([10b1d58](https://github.com/ahmdswerky/crm/commit/10b1d5805a6cfcbd16273175f4d5b9b67121fc9d))
+* **media:** remove the restrictions for media ([a453ac7](https://github.com/ahmdswerky/crm/commit/a453ac70f761ab8025bc282dbd926d38f9fcee4e))
+* **media:** remove the restrictions for media ([2818fcb](https://github.com/ahmdswerky/crm/commit/2818fcb54a3fc19ee851280ac9c01109ac3af116))
+* **media:** remove the restrictions for media ([c9c1730](https://github.com/ahmdswerky/crm/commit/c9c1730d8407a96dd09d4d1837c27802d514099b))
+* **openapi:** replace the old api url ([164a310](https://github.com/ahmdswerky/crm/commit/164a3103a7cf1f6f7e1b6623da45fd153c820d28))
+* **openapi:** replace the old api url ([f3f0281](https://github.com/ahmdswerky/crm/commit/f3f02813491fe1890d78ca6eed7975255a285862))
+* **prod:** skip sanctum stateful middleware for production ([df512c9](https://github.com/ahmdswerky/crm/commit/df512c9397b160d9dc3cef4a5231b68ed15b1311))
+* **property:** rename owner_id to created_by ([4d99e1a](https://github.com/ahmdswerky/crm/commit/4d99e1a0334a9f640b205a85cb8af92f7b8cd4f5))
+* **rabbitmq:** seed the bootstrap user via generated definitions on tmpfs ([5589c97](https://github.com/ahmdswerky/crm/commit/5589c97322ccbc471918f8dc3402d57529e2cbbf))
+* **security:** fix vulnerabilities in laravel and composer ([e9941de](https://github.com/ahmdswerky/crm/commit/e9941debc5e7c0338bdaf0414fab0b64d788ba00))
+* **security:** fix vulnerabilities in laravel and composer ([defeb65](https://github.com/ahmdswerky/crm/commit/defeb656e05fa2d88d27e1064bbf4df7e4e2efa3))
+* **seed:** resolve conflicts ([996852c](https://github.com/ahmdswerky/crm/commit/996852c3ddb113a75dd03452384581c4feea352a))
+* update openapi base api url ([b320544](https://github.com/ahmdswerky/crm/commit/b320544518dae0e7b795f7b8543441d782cce3be))
+
+
+### Performance Improvements
+
+* **docker:** build each production image once and bound memory and logs ([bd8ea69](https://github.com/ahmdswerky/crm/commit/bd8ea692e690fe4f14132da295b611270117becf))
+* **leads:** optimize kanban queries ([2f79d7f](https://github.com/ahmdswerky/crm/commit/2f79d7fff218e8f292c5598e2eedf84cfa665ec1))
+* **leads:** optimize kanban queries ([ee4c543](https://github.com/ahmdswerky/crm/commit/ee4c543e2b369b727bf7210796c2bd5ed0feda2a))
+* **leads:** optimize kanban queries ([f729367](https://github.com/ahmdswerky/crm/commit/f7293677e1959aa1ccaa063334c9e4ce6bca1b88))
+* **media:** enahance media seeding ([3f34af0](https://github.com/ahmdswerky/crm/commit/3f34af0696a165d76d4383f197fe0fe6620eff6e))
+* **media:** enahance media seeding ([1bbf2c6](https://github.com/ahmdswerky/crm/commit/1bbf2c6ad7f184696aae2d906011765869fb67dd))
+* **media:** enahance media seeding ([f7d38e2](https://github.com/ahmdswerky/crm/commit/f7d38e2e39b33184554f8bf87f048019c0255f30))
+* **rabbitmq:** cap memory watermark below the container limit ([8cc16f8](https://github.com/ahmdswerky/crm/commit/8cc16f8c752807404b1d03c8b470f6d036f65e4d))
+* reduce seeding time with large data ([ec49ea1](https://github.com/ahmdswerky/crm/commit/ec49ea1971088941eb05b870562ad65b261bed60))
+* reduce seeding time with large data ([dedb4c2](https://github.com/ahmdswerky/crm/commit/dedb4c2acaca6e6a246aeeba613449742a3c2aa1))
+* reduce seeding time with large data ([073a851](https://github.com/ahmdswerky/crm/commit/073a851e12aa38e65649374da1e6cde531dcfea8))
+
+## Changelog
+
 All notable changes to the CRM are documented in this file.
 
 Release notes are generated from merged pull requests by Release Please.
