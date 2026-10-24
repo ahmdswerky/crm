@@ -399,7 +399,7 @@ jobs:
   compose:
     name: Docker Compose validation
     needs: changes
-    if: ${{ needs.changes.outputs.compose == 'true' }}
+    if: ${{ needs.changes.outputs.compose == 'true' || needs.changes.outputs.tooling == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:
@@ -468,7 +468,7 @@ jobs:
   crm-image:
     name: Laravel production image
     needs: changes
-    if: ${{ needs.changes.outputs.crm == 'true' || needs.changes.outputs.compose == 'true' }}
+    if: ${{ needs.changes.outputs.crm == 'true' || needs.changes.outputs.compose == 'true' || needs.changes.outputs.tooling == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -492,7 +492,7 @@ jobs:
   dashboard-image:
     name: Dashboard production image
     needs: changes
-    if: ${{ needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.compose == 'true' }}
+    if: ${{ needs.changes.outputs.dashboard == 'true' || needs.changes.outputs.compose == 'true' || needs.changes.outputs.tooling == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -516,7 +516,7 @@ jobs:
   payments-image:
     name: Payments production image
     needs: changes
-    if: ${{ needs.changes.outputs.payments == 'true' || needs.changes.outputs.compose == 'true' }}
+    if: ${{ needs.changes.outputs.payments == 'true' || needs.changes.outputs.compose == 'true' || needs.changes.outputs.tooling == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
