@@ -5,7 +5,7 @@ const dashboardRoot = path.resolve(import.meta.dirname, "..")
 const repositoryRoot = path.resolve(dashboardRoot, "..")
 const sourceRoot = path.resolve(repositoryRoot, "docs/openapi")
 const outputPath = path.resolve(process.env.OPENAPI_OUTPUT_PATH ?? path.resolve(dashboardRoot, "public/openapi.json"))
-const productionServer = "https://api-crm.swerky.dev/api"
+const productionServer = "https://crm.swerky.dev/api"
 
 const sources = [
   { slug: "activities", title: "Sales Activities", file: "Activity.openapi.json", prefix: "/v1" },

@@ -104,13 +104,13 @@ export interface paths {
                          *         "last_page": 1,
                          *         "links": [
                          *           {
-                         *             "url": "https://api-crm.swerky.dev/api/example",
+                         *             "url": "https://crm.swerky.dev/api/example",
                          *             "label": "Mon",
                          *             "page": 1,
                          *             "active": true
                          *           }
                          *         ],
-                         *         "path": "https://api-crm.swerky.dev/api/example",
+                         *         "path": "https://crm.swerky.dev/api/example",
                          *         "per_page": 1,
                          *         "to": 1,
                          *         "total": 1

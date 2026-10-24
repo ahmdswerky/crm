@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://api-crm.swerky.dev/api",
+      "url": "https://crm.swerky.dev/api",
       "description": "Production"
     }
   ],
@@ -768,13 +768,13 @@
                     "last_page": 1,
                     "links": [
                       {
-                        "url": "https://api-crm.swerky.dev/api/example",
+                        "url": "https://crm.swerky.dev/api/example",
                         "label": "Mon",
                         "page": 1,
                         "active": true
                       }
                     ],
-                    "path": "https://api-crm.swerky.dev/api/example",
+                    "path": "https://crm.swerky.dev/api/example",
                     "per_page": 1,
                     "to": 1,
                     "total": 1
@@ -1331,7 +1331,7 @@
                       "id": 1,
                       "name": "Example record",
                       "company": "Northstar Development",
-                      "account_logo": "https://api-crm.swerky.dev/storage/example.webp",
+                      "account_logo": "https://crm.swerky.dev/storage/example.webp",
                       "position": "example"
                     }
                   ]
@@ -1436,7 +1436,7 @@
                     {
                       "id": 1,
                       "name": "Example record",
-                      "logo": "https://api-crm.swerky.dev/storage/example.webp",
+                      "logo": "https://crm.swerky.dev/storage/example.webp",
                       "industry": "example",
                       "leads_count": 3
                     }
@@ -1878,8 +1878,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -1960,8 +1960,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -2070,8 +2070,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -2145,8 +2145,8 @@
                 },
                 "example": {
                   "token": "{{token}}",
-                  "horizon": "https://api-crm.swerky.dev/api/secure-login?secure_token={{token}}&user=1&destination=horizon",
-                  "telescope": "https://api-crm.swerky.dev/api/secure-login?secure_token={{token}}&user=1&destination=telescope"
+                  "horizon": "https://crm.swerky.dev/api/secure-login?secure_token={{token}}&user=1&destination=horizon",
+                  "telescope": "https://crm.swerky.dev/api/secure-login?secure_token={{token}}&user=1&destination=telescope"
                 }
               }
             },
@@ -2552,8 +2552,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -2587,7 +2587,7 @@
                     "links": [
                       {}
                     ],
-                    "path": "https://api-crm.swerky.dev/api/example",
+                    "path": "https://crm.swerky.dev/api/example",
                     "per_page": 1,
                     "to": 1,
                     "total": 1
@@ -2711,8 +2711,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -2802,8 +2802,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -2943,8 +2943,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -3084,7 +3084,7 @@
                     "links": [
                       {}
                     ],
-                    "path": "https://api-crm.swerky.dev/api/example",
+                    "path": "https://crm.swerky.dev/api/example",
                     "per_page": 1,
                     "to": 1,
                     "total": 1
@@ -3511,8 +3511,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -3520,10 +3520,10 @@
                     }
                   ],
                   "links": {
-                    "first": "https://api-crm.swerky.dev/storage/example.webp",
-                    "last": "https://api-crm.swerky.dev/storage/example.webp",
-                    "prev": "https://api-crm.swerky.dev/storage/example.webp",
-                    "next": "https://api-crm.swerky.dev/storage/example.webp"
+                    "first": "https://crm.swerky.dev/storage/example.webp",
+                    "last": "https://crm.swerky.dev/storage/example.webp",
+                    "prev": "https://crm.swerky.dev/storage/example.webp",
+                    "next": "https://crm.swerky.dev/storage/example.webp"
                   },
                   "meta": {
                     "current_page": 1,
@@ -3623,8 +3623,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -3697,8 +3697,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -3808,8 +3808,8 @@
                       "name": "Example record",
                       "mime_type": "image/webp",
                       "size": 24576,
-                      "url": "https://api-crm.swerky.dev/storage/example.webp",
-                      "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                      "url": "https://crm.swerky.dev/storage/example.webp",
+                      "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                       "order": 1,
                       "created_at": "2026-08-20T12:00:00.000000Z"
                     },
@@ -3962,8 +3962,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         },
@@ -3984,10 +3984,10 @@
                     }
                   ],
                   "links": {
-                    "first": "https://api-crm.swerky.dev/storage/example.webp",
-                    "last": "https://api-crm.swerky.dev/storage/example.webp",
-                    "prev": "https://api-crm.swerky.dev/storage/example.webp",
-                    "next": "https://api-crm.swerky.dev/storage/example.webp"
+                    "first": "https://crm.swerky.dev/storage/example.webp",
+                    "last": "https://crm.swerky.dev/storage/example.webp",
+                    "prev": "https://crm.swerky.dev/storage/example.webp",
+                    "next": "https://crm.swerky.dev/storage/example.webp"
                   },
                   "meta": {
                     "current_page": 1,
@@ -4069,8 +4069,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -4218,8 +4218,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -4580,13 +4580,13 @@
                     "last_page": 1,
                     "links": [
                       {
-                        "url": "https://api-crm.swerky.dev/api/example",
+                        "url": "https://crm.swerky.dev/api/example",
                         "label": "Mon",
                         "page": 1,
                         "active": true
                       }
                     ],
-                    "path": "https://api-crm.swerky.dev/api/example",
+                    "path": "https://crm.swerky.dev/api/example",
                     "per_page": 1,
                     "to": 1,
                     "total": 1
@@ -4717,8 +4717,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       }
@@ -4805,8 +4805,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       }
@@ -4967,8 +4967,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       }
@@ -5216,8 +5216,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         }
@@ -5243,13 +5243,13 @@
                     "last_page": 1,
                     "links": [
                       {
-                        "url": "https://api-crm.swerky.dev/api/example",
+                        "url": "https://crm.swerky.dev/api/example",
                         "label": "Mon",
                         "page": 1,
                         "active": true
                       }
                     ],
-                    "path": "https://api-crm.swerky.dev/api/example",
+                    "path": "https://crm.swerky.dev/api/example",
                     "per_page": 1,
                     "to": 1,
                     "total": 1
@@ -5390,8 +5390,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       }
@@ -5505,8 +5505,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             }
@@ -5548,8 +5548,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             }
@@ -5591,8 +5591,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             }
@@ -5634,8 +5634,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             }
@@ -5769,8 +5769,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         }
@@ -5863,8 +5863,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       }
@@ -6030,8 +6030,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       }
@@ -6638,8 +6638,8 @@
                             "name": "Example record",
                             "mime_type": "image/webp",
                             "size": 24576,
-                            "url": "https://api-crm.swerky.dev/storage/example.webp",
-                            "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                            "url": "https://crm.swerky.dev/storage/example.webp",
+                            "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                             "order": 1,
                             "created_at": "2026-08-20T12:00:00.000000Z"
                           }
@@ -6674,8 +6674,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         },
@@ -6708,8 +6708,8 @@
                                 "name": "Example record",
                                 "mime_type": "image/webp",
                                 "size": 24576,
-                                "url": "https://api-crm.swerky.dev/storage/example.webp",
-                                "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                                "url": "https://crm.swerky.dev/storage/example.webp",
+                                "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                                 "order": 1,
                                 "created_at": "2026-08-20T12:00:00.000000Z"
                               },
@@ -6739,13 +6739,13 @@
                     "last_page": 1,
                     "links": [
                       {
-                        "url": "https://api-crm.swerky.dev/api/example",
+                        "url": "https://crm.swerky.dev/api/example",
                         "label": "Mon",
                         "page": 1,
                         "active": true
                       }
                     ],
-                    "path": "https://api-crm.swerky.dev/api/example",
+                    "path": "https://crm.swerky.dev/api/example",
                     "per_page": 1,
                     "to": 1,
                     "total": 1
@@ -6896,8 +6896,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         }
@@ -6932,8 +6932,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -6966,8 +6966,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             },
@@ -7071,8 +7071,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         }
@@ -7107,8 +7107,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -7141,8 +7141,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             },
@@ -7308,8 +7308,8 @@
                           "name": "Example record",
                           "mime_type": "image/webp",
                           "size": 24576,
-                          "url": "https://api-crm.swerky.dev/storage/example.webp",
-                          "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                          "url": "https://crm.swerky.dev/storage/example.webp",
+                          "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                           "order": 1,
                           "created_at": "2026-08-20T12:00:00.000000Z"
                         }
@@ -7344,8 +7344,8 @@
                         "name": "Example record",
                         "mime_type": "image/webp",
                         "size": 24576,
-                        "url": "https://api-crm.swerky.dev/storage/example.webp",
-                        "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                        "url": "https://crm.swerky.dev/storage/example.webp",
+                        "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                         "order": 1,
                         "created_at": "2026-08-20T12:00:00.000000Z"
                       },
@@ -7378,8 +7378,8 @@
                               "name": "Example record",
                               "mime_type": "image/webp",
                               "size": 24576,
-                              "url": "https://api-crm.swerky.dev/storage/example.webp",
-                              "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                              "url": "https://crm.swerky.dev/storage/example.webp",
+                              "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                               "order": 1,
                               "created_at": "2026-08-20T12:00:00.000000Z"
                             },
@@ -9656,8 +9656,8 @@
                   "name": "Example record",
                   "mime_type": "image/webp",
                   "size": 24576,
-                  "url": "https://api-crm.swerky.dev/storage/example.webp",
-                  "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                  "url": "https://crm.swerky.dev/storage/example.webp",
+                  "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                   "order": 1,
                   "created_at": "2026-08-20T12:00:00.000000Z"
                 }
