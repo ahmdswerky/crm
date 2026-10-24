@@ -333,7 +333,7 @@ export interface paths {
                          *           "id": 1,
                          *           "name": "Example record",
                          *           "company": "Northstar Development",
-                         *           "account_logo": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "account_logo": "https://crm.swerky.dev/storage/example.webp",
                          *           "position": "example"
                          *         }
                          *       ]
@@ -438,7 +438,7 @@ export interface paths {
                          *         {
                          *           "id": 1,
                          *           "name": "Example record",
-                         *           "logo": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "logo": "https://crm.swerky.dev/storage/example.webp",
                          *           "industry": "example",
                          *           "leads_count": 3
                          *         }

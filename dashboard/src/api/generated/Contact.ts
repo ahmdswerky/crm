@@ -44,8 +44,8 @@ export interface paths {
                          *             "name": "Example record",
                          *             "mime_type": "image/webp",
                          *             "size": 24576,
-                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "url": "https://crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *             "order": 1,
                          *             "created_at": "2026-08-20T12:00:00.000000Z"
                          *           },
@@ -53,10 +53,10 @@ export interface paths {
                          *         }
                          *       ],
                          *       "links": {
-                         *         "first": "https://api-crm.swerky.dev/storage/example.webp",
-                         *         "last": "https://api-crm.swerky.dev/storage/example.webp",
-                         *         "prev": "https://api-crm.swerky.dev/storage/example.webp",
-                         *         "next": "https://api-crm.swerky.dev/storage/example.webp"
+                         *         "first": "https://crm.swerky.dev/storage/example.webp",
+                         *         "last": "https://crm.swerky.dev/storage/example.webp",
+                         *         "prev": "https://crm.swerky.dev/storage/example.webp",
+                         *         "next": "https://crm.swerky.dev/storage/example.webp"
                          *       },
                          *       "meta": {
                          *         "current_page": 1,
@@ -140,8 +140,8 @@ export interface paths {
                          *           "name": "Example record",
                          *           "mime_type": "image/webp",
                          *           "size": 24576,
-                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "url": "https://crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *           "order": 1,
                          *           "created_at": "2026-08-20T12:00:00.000000Z"
                          *         },
@@ -204,8 +204,8 @@ export interface paths {
                          *           "name": "Example record",
                          *           "mime_type": "image/webp",
                          *           "size": 24576,
-                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "url": "https://crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *           "order": 1,
                          *           "created_at": "2026-08-20T12:00:00.000000Z"
                          *         },
@@ -275,8 +275,8 @@ export interface paths {
                          *           "name": "Example record",
                          *           "mime_type": "image/webp",
                          *           "size": 24576,
-                         *           "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *           "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *           "url": "https://crm.swerky.dev/storage/example.webp",
+                         *           "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *           "order": 1,
                          *           "created_at": "2026-08-20T12:00:00.000000Z"
                          *         },
@@ -367,8 +367,8 @@ export interface paths {
                          *               "name": "Example record",
                          *               "mime_type": "image/webp",
                          *               "size": 24576,
-                         *               "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *               "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *               "url": "https://crm.swerky.dev/storage/example.webp",
+                         *               "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *               "order": 1,
                          *               "created_at": "2026-08-20T12:00:00.000000Z"
                          *             },
@@ -389,10 +389,10 @@ export interface paths {
                          *         }
                          *       ],
                          *       "links": {
-                         *         "first": "https://api-crm.swerky.dev/storage/example.webp",
-                         *         "last": "https://api-crm.swerky.dev/storage/example.webp",
-                         *         "prev": "https://api-crm.swerky.dev/storage/example.webp",
-                         *         "next": "https://api-crm.swerky.dev/storage/example.webp"
+                         *         "first": "https://crm.swerky.dev/storage/example.webp",
+                         *         "last": "https://crm.swerky.dev/storage/example.webp",
+                         *         "prev": "https://crm.swerky.dev/storage/example.webp",
+                         *         "next": "https://crm.swerky.dev/storage/example.webp"
                          *       },
                          *       "meta": {
                          *         "current_page": 1,
@@ -482,8 +482,8 @@ export interface paths {
                          *             "name": "Example record",
                          *             "mime_type": "image/webp",
                          *             "size": 24576,
-                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "url": "https://crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *             "order": 1,
                          *             "created_at": "2026-08-20T12:00:00.000000Z"
                          *           },
@@ -579,8 +579,8 @@ export interface paths {
                          *             "name": "Example record",
                          *             "mime_type": "image/webp",
                          *             "size": 24576,
-                         *             "url": "https://api-crm.swerky.dev/storage/example.webp",
-                         *             "thumbnail_url": "https://api-crm.swerky.dev/storage/example.webp",
+                         *             "url": "https://crm.swerky.dev/storage/example.webp",
+                         *             "thumbnail_url": "https://crm.swerky.dev/storage/example.webp",
                          *             "order": 1,
                          *             "created_at": "2026-08-20T12:00:00.000000Z"
                          *           },
