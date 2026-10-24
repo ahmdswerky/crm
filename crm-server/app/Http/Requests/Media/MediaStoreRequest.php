@@ -15,7 +15,7 @@ class MediaStoreRequest extends FormRequest
             'owner_id' => ['required', 'integer', 'min:1'],
             'collection' => ['required', 'string', 'max:100'],
             'files' => ['required', 'array', 'min:1', 'max:10'],
-            'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:10240'],
+            'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240', 'dimensions:max_width=8000,max_height=8000'],
         ];
     }
 }

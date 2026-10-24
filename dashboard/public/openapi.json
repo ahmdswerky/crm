@@ -13,6 +13,10 @@
   ],
   "tags": [
     {
+      "name": "activities",
+      "description": "Sales Activities"
+    },
+    {
       "name": "activity-logs",
       "description": "Activity Logs"
     },
@@ -50,11 +54,458 @@
     }
   ],
   "paths": {
+    "/v1/activities": {
+      "get": {
+        "operationId": "listSalesActivities",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden: activity or linked record permission required"
+          },
+          "404": {
+            "description": "Record missing"
+          },
+          "409": {
+            "description": "Version conflict; reload before retrying"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^(lead|contact|deal|property):[1-9][0-9]*$"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "call",
+                "email",
+                "message",
+                "meeting",
+                "viewing",
+                "note",
+                "task"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "scheduled",
+                "completed",
+                "cancelled",
+                "voided"
+              ]
+            }
+          },
+          {
+            "name": "assignee_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "bucket",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "overdue",
+                "today",
+                "upcoming"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "tags": [
+          "activities"
+        ]
+      },
+      "post": {
+        "operationId": "createSalesActivity",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden: activity or linked record permission required"
+          },
+          "404": {
+            "description": "Record missing"
+          },
+          "409": {
+            "description": "Version conflict; reload before retrying"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActivity"
+              }
+            }
+          }
+        },
+        "tags": [
+          "activities"
+        ]
+      }
+    },
+    "/v1/activities/options": {
+      "get": {
+        "operationId": "salesActivityOptions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityOptions"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden: activity or linked record permission required"
+          },
+          "404": {
+            "description": "Record missing"
+          },
+          "409": {
+            "description": "Version conflict; reload before retrying"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "lead",
+                "contact",
+                "deal",
+                "property"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "description": "Returns active responsible agents, authorized linked-record suggestions, and record choices. Search leads and contacts by name, properties by title, and deals by their exact numeric ID.",
+        "tags": [
+          "activities"
+        ]
+      }
+    },
+    "/v1/activities/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getSalesActivity",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden: activity or linked record permission required"
+          },
+          "404": {
+            "description": "Record missing"
+          },
+          "409": {
+            "description": "Version conflict; reload before retrying"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "activities"
+        ]
+      },
+      "post": {
+        "operationId": "updateSalesActivity",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden: activity or linked record permission required"
+          },
+          "404": {
+            "description": "Record missing"
+          },
+          "409": {
+            "description": "Version conflict; reload before retrying"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActivity"
+              }
+            }
+          }
+        },
+        "tags": [
+          "activities"
+        ]
+      }
+    },
+    "/v1/activity-history": {
+      "get": {
+        "operationId": "listInteractionHistory",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionHistoryPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden: activity or linked record permission required"
+          },
+          "404": {
+            "description": "Record missing"
+          },
+          "409": {
+            "description": "Version conflict; reload before retrying"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "subject",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^(lead|contact|deal|property):[1-9][0-9]*$"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "call",
+                "email",
+                "message",
+                "meeting",
+                "viewing",
+                "note",
+                "task"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "scheduled",
+                "completed",
+                "cancelled",
+                "voided"
+              ]
+            }
+          },
+          {
+            "name": "assignee_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "bucket",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "overdue",
+                "today",
+                "upcoming"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "tags": [
+          "activities"
+        ]
+      }
+    },
     "/v1/activity-logs": {
       "get": {
         "summary": "activity-logs (list)",
         "deprecated": false,
-        "description": "Returns CRM activity logs ordered newest first. The endpoint supports filtering by subjects, event, causer, and creation date.",
+        "description": "Returns CRM activity logs ordered newest first. The endpoint supports filtering by subjects, event, causer, and creation date. Developer-only: requires the configured developer account and the relevant explicit activity-log permission.",
         "tags": [
           "activity-logs"
         ],
@@ -341,7 +792,7 @@
       "get": {
         "summary": "activity-logs (show)",
         "deprecated": false,
-        "description": "",
+        "description": "Developer-only: requires the configured developer account and the relevant explicit activity-log permission.",
         "tags": [
           "activity-logs"
         ],
@@ -426,7 +877,7 @@
       "post": {
         "summary": "activity-logs (revert)",
         "deprecated": false,
-        "description": "Reverts the latest CRM update or soft deletion for the activity's subject.",
+        "description": "Reverts the latest CRM update or soft deletion for the activity's subject. Developer-only: requires the configured developer account and the relevant explicit activity-log permission.",
         "tags": [
           "activity-logs"
         ],
@@ -1040,6 +1491,58 @@
                       "name": "Example record",
                       "status": "pending",
                       "price": 240000
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/analytics_Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/analytics_Forbidden"
+          }
+        },
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/v1/analytics/countries": {
+      "get": {
+        "summary": "Customer distribution by country",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Qualified customer distribution for every country represented by leads with contacts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "countries"
+                  ],
+                  "properties": {
+                    "countries": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/OverviewCountryDistribution"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "countries": [
+                    {
+                      "code": "US",
+                      "country": "United States",
+                      "customer_count": 28,
+                      "percentage": 28
                     }
                   ]
                 }
@@ -6942,6 +7445,526 @@
   },
   "components": {
     "schemas": {
+      "ActivityLink": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "pattern": "^(lead|contact|deal|property):[1-9][0-9]*$"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "label"
+        ]
+      },
+      "ActivityPerson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/Media",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "ActivitySnapshot": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "call",
+              "email",
+              "message",
+              "meeting",
+              "viewing",
+              "note",
+              "task"
+            ]
+          },
+          "subject": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "completed",
+              "cancelled",
+              "voided"
+            ]
+          },
+          "creator_id": {
+            "type": "integer"
+          },
+          "assignee_id": {
+            "type": "integer"
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "integer"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityLink"
+            }
+          },
+          "assignee_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "subject",
+          "details",
+          "status",
+          "creator_id",
+          "assignee_id",
+          "outcome",
+          "summary",
+          "version",
+          "due_date",
+          "starts_at",
+          "ends_at",
+          "occurred_at",
+          "links",
+          "assignee_name"
+        ]
+      },
+      "Activity": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ActivitySnapshot"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "creator": {
+                "$ref": "#/components/schemas/ActivityPerson"
+              },
+              "assignee": {
+                "$ref": "#/components/schemas/ActivityPerson"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "can_edit": {
+                "type": "boolean"
+              },
+              "can_reassign": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "creator",
+              "assignee",
+              "created_at",
+              "updated_at",
+              "can_edit",
+              "can_reassign"
+            ]
+          }
+        ]
+      },
+      "InteractionHistoryEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activity_id": {
+            "type": "integer"
+          },
+          "actor_id": {
+            "type": "integer"
+          },
+          "actor_name": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "created",
+              "completed",
+              "cancelled",
+              "voided",
+              "reassigned",
+              "corrected",
+              "scheduled"
+            ]
+          },
+          "before": {
+            "description": "Empty array on creation; otherwise original immutable snapshot.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ActivitySnapshot"
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "after": {
+            "$ref": "#/components/schemas/ActivitySnapshot"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "event_id",
+          "activity_id",
+          "actor_id",
+          "actor_name",
+          "action",
+          "before",
+          "after",
+          "occurred_at",
+          "created_at"
+        ]
+      },
+      "ActivityOptions": {
+        "type": "object",
+        "properties": {
+          "agents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityPerson"
+            }
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityLink"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityLink"
+            }
+          },
+          "timezone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agents",
+          "suggestions",
+          "records",
+          "timezone"
+        ]
+      },
+      "CreateActivity": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "call",
+              "email",
+              "message",
+              "meeting",
+              "viewing",
+              "note",
+              "task"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^(lead|contact|deal|property):[1-9][0-9]*$"
+            }
+          },
+          "subject": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "details": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "completed",
+              "cancelled",
+              "voided"
+            ]
+          },
+          "assignee_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "kind",
+          "links",
+          "subject",
+          "status"
+        ]
+      },
+      "UpdateActivity": {
+        "type": "object",
+        "properties": {
+          "_method": {
+            "type": "string",
+            "enum": [
+              "PUT"
+            ]
+          },
+          "version": {
+            "type": "integer"
+          },
+          "subject": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "details": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "completed",
+              "cancelled",
+              "voided"
+            ]
+          },
+          "assignee_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "_method",
+          "version"
+        ]
+      },
+      "ActivityPage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Activity"
+            }
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "last_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "next_page_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "prev_page_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data",
+          "current_page",
+          "last_page",
+          "per_page",
+          "total",
+          "next_page_url",
+          "prev_page_url"
+        ]
+      },
+      "InteractionHistoryPage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InteractionHistoryEvent"
+            }
+          },
+          "current_page": {
+            "type": "integer"
+          },
+          "last_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "next_page_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "prev_page_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data",
+          "current_page",
+          "last_page",
+          "per_page",
+          "total",
+          "next_page_url",
+          "prev_page_url"
+        ]
+      },
+      "ActivityEnvelope": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Activity"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
       "ActivityLog": {
         "type": "object",
         "properties": {
@@ -7368,6 +8391,34 @@
           },
           "price": {
             "type": "number"
+          }
+        }
+      },
+      "OverviewCountryDistribution": {
+        "type": "object",
+        "required": [
+          "code",
+          "country",
+          "customer_count",
+          "percentage"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "country": {
+            "type": "string"
+          },
+          "customer_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "percentage": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
           }
         }
       },
@@ -8559,6 +9610,16 @@
         ]
       }
     },
+    "securitySchemes": {
+      "activities_bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "analytics_bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
     "responses": {
       "analytics_Unauthorized": {
         "description": "Unauthenticated"
@@ -8661,12 +9722,6 @@
             }
           }
         }
-      }
-    },
-    "securitySchemes": {
-      "analytics_bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
       }
     },
     "parameters": {

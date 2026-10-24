@@ -5,7 +5,10 @@ use App\Models\User;
 use Database\Seeders\PropertySeeder;
 
 test('property seeder inserts the configured count across bulk batches with unique titles', function () {
-    config(['crm.seeds.counts' => [Property::class => 201]]);
+    config([
+        'crm.seeds.counts' => [Property::class => 201],
+        'crm.seeds.max_counts' => [Property::class => 1000],
+    ]);
 
     User::factory()->count(4)->create();
 
