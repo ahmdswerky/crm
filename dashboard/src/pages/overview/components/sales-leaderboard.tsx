@@ -3,17 +3,18 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { LeaderboardEntry, OverviewRange } from "../data"
 import { RangeTabs } from "./range-tabs"
 import { OverviewRefreshButton } from "./overview-refresh-button"
+import { t } from "@/lib/i18n"
 
 const leaderboardChartConfig = {
-  value: { label: "Sales", colors: { light: ["#1677a8"], dark: ["#78bce0"] } },
+  value: { label: t("Sales"), colors: { light: ["#1677a8"], dark: ["#78bce0"] } },
 } satisfies ChartConfig
 
 export function SalesLeaderboard({ range, data = [], isLoading, onRangeChange, onRefresh }: { range: OverviewRange; data?: LeaderboardEntry[]; isLoading: boolean; onRangeChange: (range: OverviewRange) => void; onRefresh: () => void }) {
   const chartHeight = Math.max(288, data.length * 48 + 32)
 
   return <section className="min-w-0 overflow-hidden rounded-3xl bg-card p-5 sm:p-6">
-    {isLoading ? <header className="flex items-center justify-between gap-4"><ChartHeaderSkeleton /><OverviewRefreshButton label="Refresh sales leaderboard" isLoading={isLoading} onRefresh={onRefresh} /></header> : <header className="flex flex-wrap items-center justify-between gap-4"><h2 className="text-lg font-semibold tracking-tight">Sales leaderboard</h2><div className="flex items-center gap-2"><RangeTabs label="Sales leaderboard range" value={range} onChange={onRangeChange} /><OverviewRefreshButton label="Refresh sales leaderboard" isLoading={isLoading} onRefresh={onRefresh} /></div></header>}
-    <div className="-mx-5 mt-6 sm:-mx-6" style={{ height: chartHeight }} aria-label={`Sales leaderboard by ${range}`} aria-busy={isLoading} role="img"><EChartsBarChart data={data} config={leaderboardChartConfig} isLoading={isLoading} xDataKey="name" className="size-full" layout="horizontal" barRadius={5} barCategoryGap={14} enableMaxValueHighlight chartOptions={{ grid: { left: 104, right: 0, top: 4, bottom: 0 } }}><EChartsBarChart.XAxis tickFormatter={formatCompactCurrency} hideDots /><EChartsBarChart.YAxis dataKey="name" hideDots /><EChartsBarChart.Tooltip variant="frosted-glass" /><EChartsBarChart.Bar dataKey="value" variant="default" /></EChartsBarChart></div>
+    {isLoading ? <header className="flex items-center justify-between gap-4"><ChartHeaderSkeleton /><OverviewRefreshButton label={t("Refresh sales leaderboard")} isLoading={isLoading} onRefresh={onRefresh} /></header> : <header className="flex flex-wrap items-center justify-between gap-4"><h2 className="text-lg font-semibold tracking-tight">{t("Sales leaderboard")}</h2><div className="flex items-center gap-2"><RangeTabs label={t("Sales leaderboard range")} value={range} onChange={onRangeChange} /><OverviewRefreshButton label={t("Refresh sales leaderboard")} isLoading={isLoading} onRefresh={onRefresh} /></div></header>}
+    <div className="-mx-5 mt-6 sm:-mx-6" style={{ height: chartHeight }} aria-label={t(`Sales leaderboard by ${range}`)} aria-busy={isLoading} role="img"><EChartsBarChart data={data} config={leaderboardChartConfig} isLoading={isLoading} xDataKey="name" className="size-full" layout="horizontal" barRadius={5} barCategoryGap={14} enableMaxValueHighlight chartOptions={{ grid: { left: 104, right: 0, top: 4, bottom: 0 } }}><EChartsBarChart.XAxis tickFormatter={formatCompactCurrency} hideDots /><EChartsBarChart.YAxis dataKey="name" hideDots /><EChartsBarChart.Tooltip variant="frosted-glass" /><EChartsBarChart.Bar dataKey="value" variant="default" /></EChartsBarChart></div>
   </section>
 }
 

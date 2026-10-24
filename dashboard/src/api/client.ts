@@ -1,5 +1,6 @@
 import createClient from "openapi-fetch"
 import { tokenStore } from "./token-store"
+import { language, t } from "@/lib/i18n"
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api"
 
@@ -8,6 +9,7 @@ export async function apiFetch(input: RequestInfo | URL, init: RequestInit = {})
   const token = tokenStore.get()
   if (token) headers.set("Authorization", `Bearer ${token}`)
   headers.set("Accept", "application/json")
+  headers.set("Accept-Language", language)
   if (init.body && !(init.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json")
   }
@@ -42,13 +44,13 @@ export async function readApiError(response: Response): Promise<ApiError> {
       ]))
       : {}
     return new ApiError(
-      typeof record.message === "string" ? record.message : `Request failed (${response.status})`,
+      typeof record.message === "string" ? record.message : t("Request failed ({status})", { status: response.status }),
       response.status,
       fields,
     )
   }
 
-  return new ApiError(`Request failed (${response.status})`, response.status)
+  return new ApiError(t("Request failed ({status})", { status: response.status }), response.status)
 }
 
 export async function apiJson<T>(input: RequestInfo | URL, init: RequestInit = {}): Promise<T> {

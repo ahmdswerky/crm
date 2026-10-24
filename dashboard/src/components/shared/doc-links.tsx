@@ -1,4 +1,5 @@
 import { BookOpen } from "lucide-react"
+import { t } from "@/lib/i18n"
 
 const linkClass =
   "grid size-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -14,15 +15,15 @@ function GithubMark({ className }: { className?: string }) {
 export function DocLinks({ className }: { className?: string }) {
   return (
     <nav className={`flex items-center gap-1 ${className ?? ""}`}>
-      <a href="/docs" target="_blank" rel="noreferrer" aria-label="Documentation" title="Documentation" className={linkClass}>
+      <a href="/docs" target="_blank" rel="noreferrer" aria-label={t("Documentation")} title={t("Documentation")} className={linkClass}>
         <BookOpen className="size-4" aria-hidden="true" />
       </a>
       <a
         href="https://github.com/ahmdswerky/crm"
         target="_blank"
         rel="noreferrer"
-        aria-label="GitHub repository"
-        title="GitHub repository"
+        aria-label={t("GitHub repository")}
+        title={t("GitHub repository")}
         className={linkClass}
       >
         <GithubMark className="size-4" />

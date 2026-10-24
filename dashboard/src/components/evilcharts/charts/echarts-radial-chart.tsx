@@ -1,6 +1,7 @@
 "use client";
 
 import { PieChart, type PieSeriesOption } from "echarts/charts";
+import { t } from "@/lib/i18n";
 import { TooltipComponent, type TooltipComponentOption } from "echarts/components";
 import type { ComposeOption } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -142,7 +143,7 @@ export function EChartsRadialChart({
   }
 
   if (!data.length) {
-    return <div className={`grid min-h-64 place-items-center text-sm text-muted-foreground ${className ?? ""}`}>No pipeline activity was captured.</div>;
+    return <div className={`grid min-h-64 place-items-center text-sm text-muted-foreground ${className ?? ""}`}>{t("No pipeline activity was captured.")}</div>;
   }
 
   return <div className={`w-full ${className ?? ""}`} data-chart={chartId}>

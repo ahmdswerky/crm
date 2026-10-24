@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 import { createApiReference } from "@scalar/api-reference"
+import { t } from "@/lib/i18n"
 import "@scalar/api-reference/style.css"
 
 export function ApiDocsPage() {
@@ -10,7 +11,7 @@ export function ApiDocsPage() {
 
     const reference = createApiReference(mountRef.current, {
       url: "/openapi.json",
-      title: "CRM API Documentation",
+      title: t("CRM API Documentation"),
       layout: "modern",
       theme: "default",
       persistAuth: true,

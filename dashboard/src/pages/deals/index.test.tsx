@@ -105,6 +105,12 @@ describe("DealDetailsPage", () => {
     const heading = await screen.findByRole("heading", { name: /Layla Nasser.*Palm Hills Villa/i })
     expect(within(heading).queryByRole("link")).not.toBeInTheDocument()
     expect(document.querySelector('[aria-label="Layla Nasser avatar"]')).toBeInTheDocument()
+    const ownerCard = screen.getByRole("article", { name: "Property owner" })
+    expect(within(ownerCard).getByRole("link", { name: "Mona Hassan" })).toHaveAttribute("href", "/agents/12")
+    expect(within(ownerCard).getByLabelText("Mona Hassan avatar")).toBeInTheDocument()
+    const sidebar = ownerCard.closest("aside")!
+    expect(within(sidebar).getAllByRole("article").at(-2)).toHaveAccessibleName("Assigned agent")
+    expect(within(sidebar).getAllByRole("article").at(-1)).toBe(ownerCard)
     expect(screen.getByText("Property address")).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "+201001234567" })).toHaveAttribute("href", "tel:+201001234567")
     expect(screen.getByRole("link", { name: "layla@example.com" })).toHaveAttribute("href", "mailto:layla@example.com")
@@ -118,6 +124,15 @@ describe("DealDetailsPage", () => {
     expect(JSON.parse(String((update?.[1] as RequestInit).body))).toEqual({ status: "viewing", _method: "PUT" })
   })
 
+  it.each([undefined, null])("hides the owner card when the property has no owner (%s)", async (owner) => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ deal: { ...deal, property: { ...deal.property, owner } } }), { status: 200, headers: { "Content-Type": "application/json" } })))
+    renderPage()
+
+    await screen.findByRole("heading", { name: /Layla Nasser.*Palm Hills Villa/i })
+    expect(screen.queryByRole("article", { name: "Property owner" })).not.toBeInTheDocument()
+    expect(screen.queryByText("Owner Unassigned")).not.toBeInTheDocument()
+  })
+
   it("withholds related routes and mutation controls without their permissions", async () => {
     permissions = new Set(["deal.view"])
     currentUser.id = 99
@@ -127,6 +142,9 @@ describe("DealDetailsPage", () => {
     expect(screen.getAllByText("Layla Nasser").every((node) => node.closest("a") === null)).toBe(true)
     expect(screen.getAllByText("Palm Hills Villa").every((node) => node.closest("a") === null)).toBe(true)
     expect(screen.queryByRole("link", { name: "Open property" })).not.toBeInTheDocument()
+    expect(within(screen.getByRole("article", { name: "Property owner" })).getByText("Mona Hassan")).toBeInTheDocument()
+    expect(screen.queryByRole("link", { name: "Mona Hassan" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("link", { name: "Open owner in new tab" })).not.toBeInTheDocument()
     expect(screen.queryByRole("link", { name: "Edit" })).not.toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Back to deals" })).toHaveAttribute("href", "/deals?page=2")
   })

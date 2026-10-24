@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-r
 import { Button } from "@/components/ui/button"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem } from "@/components/ui/pagination"
 import { cn } from "@/lib/utils"
+import { t } from "@/lib/i18n"
 
 type PageItem = number | "start-ellipsis" | "end-ellipsis"
 
@@ -46,19 +47,19 @@ export function ResourcePagination({ page, lastPage, onPageChange, disabled = fa
   return <Pagination className={cn("border-t border-border p-3", className)}>
     <PaginationContent className="gap-0.5">
       <PaginationItem>
-        <NavigationButton label="Go to first page" disabled={disabled || currentPage === 1} onClick={() => goTo(1)}><ChevronsLeft className="size-4" /></NavigationButton>
+        <NavigationButton label={t("Go to first page")} disabled={disabled || currentPage === 1} onClick={() => goTo(1)}><ChevronsLeft className="size-4 rtl:rotate-180" /></NavigationButton>
       </PaginationItem>
       <PaginationItem>
-        <NavigationButton label="Go to previous page" disabled={disabled || currentPage === 1} onClick={() => goTo(currentPage - 1)}><ChevronLeft className="size-4 rtl:rotate-180" /></NavigationButton>
+        <NavigationButton label={t("Go to previous page")} disabled={disabled || currentPage === 1} onClick={() => goTo(currentPage - 1)}><ChevronLeft className="size-4 rtl:rotate-180" /></NavigationButton>
       </PaginationItem>
       <PaginationItem className="flex items-center gap-0.5">
-        {pageItems(currentPage, lastPage).map((item) => typeof item === "number" ? <Button key={item} type="button" variant={item === currentPage ? "outline" : "ghost"} size="icon" aria-label={`Go to page ${item}`} aria-current={item === currentPage ? "page" : undefined} disabled={disabled} onClick={() => goTo(item)}>{item}</Button> : <PaginationEllipsis key={item} />)}
+        {pageItems(currentPage, lastPage).map((item) => typeof item === "number" ? <Button key={item} type="button" variant={item === currentPage ? "outline" : "ghost"} size="icon" aria-label={t("Go to page {page}", { page: item })} aria-current={item === currentPage ? "page" : undefined} disabled={disabled} onClick={() => goTo(item)}>{item}</Button> : <PaginationEllipsis key={item} />)}
       </PaginationItem>
       <PaginationItem>
-        <NavigationButton label="Go to next page" disabled={disabled || currentPage === lastPage} onClick={() => goTo(currentPage + 1)}><ChevronRight className="size-4 rtl:rotate-180" /></NavigationButton>
+        <NavigationButton label={t("Go to next page")} disabled={disabled || currentPage === lastPage} onClick={() => goTo(currentPage + 1)}><ChevronRight className="size-4 rtl:rotate-180" /></NavigationButton>
       </PaginationItem>
       <PaginationItem>
-        <NavigationButton label="Go to last page" disabled={disabled || currentPage === lastPage} onClick={() => goTo(lastPage)}><ChevronsRight className="size-4" /></NavigationButton>
+        <NavigationButton label={t("Go to last page")} disabled={disabled || currentPage === lastPage} onClick={() => goTo(lastPage)}><ChevronsRight className="size-4 rtl:rotate-180" /></NavigationButton>
       </PaginationItem>
     </PaginationContent>
   </Pagination>

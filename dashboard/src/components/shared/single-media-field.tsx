@@ -4,6 +4,7 @@ import type { ManagedMedia, MediaOwnerType } from "@/components/shared/media-col
 import { useMediaCollection } from "@/components/shared/media-collection"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
+import { t } from "@/lib/i18n"
 
 type BaseSingleMediaFieldProps = {
   label: string
@@ -52,7 +53,7 @@ function StagedSingleMediaField({ label, disabled = false, onFilesChange }: Stag
     setFile(nextFile)
     onFilesChange([nextFile])
   }
-  return <CompactImagePicker label={label} disabled={disabled} image={file ? { src: previewUrl, alt: `${label} preview` } : undefined} onFile={setStagedFile} />
+  return <CompactImagePicker label={label} disabled={disabled} image={file ? { src: previewUrl, alt: t("{label} preview", { label }) } : undefined} onFile={setStagedFile} />
 }
 
 function CompactImagePicker({ label, disabled, loading = false, image, error, onFile }: { label: string; disabled: boolean; loading?: boolean; image?: { src: string; alt: string }; error?: string; onFile: (file: File) => void }) {
@@ -62,7 +63,7 @@ function CompactImagePicker({ label, disabled, loading = false, image, error, on
   function choose(file?: File) {
     if (!file || disabled) return
     if (!acceptedTypes.has(file.type) || file.size > maxFileSize) {
-      setValidationError(`${file.name} must be a JPEG, PNG, WebP, or AVIF image under 10 MB.`)
+      setValidationError(t("{name} must be a JPEG, PNG, WebP, or AVIF image under 10 MB.", { name: file.name }))
       return
     }
     setValidationError("")
@@ -79,7 +80,7 @@ function CompactImagePicker({ label, disabled, loading = false, image, error, on
 
   return <section className="space-y-2">
     <input ref={inputRef} className="sr-only" type="file" accept={accept} disabled={disabled} onChange={onInputChange} />
-    <div className="flex justify-center">{loading ? <Skeleton className="size-16 rounded-md" /> : <button type="button" aria-label={`${image ? "Replace" : "Upload"} ${label}`} disabled={disabled} onClick={() => inputRef.current?.click()} onDragOver={(event) => event.preventDefault()} onDrop={onDrop} className="grid size-16 place-items-center overflow-hidden rounded-md border border-border bg-white p-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-55 dark:bg-white">{image?.src ? <img src={image.src} alt={image.alt} className="size-full object-contain" /> : <ImageIcon className="size-5" aria-hidden="true" />}</button>}</div>
+    <div className="flex justify-center">{loading ? <Skeleton className="size-16 rounded-md" /> : <button type="button" aria-label={t(image ? "Replace {label}" : "Upload {label}", { label })} disabled={disabled} onClick={() => inputRef.current?.click()} onDragOver={(event) => event.preventDefault()} onDrop={onDrop} className="grid size-16 place-items-center overflow-hidden rounded-md border border-border bg-white p-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-55 dark:bg-white">{image?.src ? <img src={image.src} alt={image.alt} className="size-full object-contain" /> : <ImageIcon className="size-5" aria-hidden="true" />}</button>}</div>
     {(error || validationError) && <Alert variant="destructive"><AlertDescription>{error || validationError}</AlertDescription></Alert>}
   </section>
 }

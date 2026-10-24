@@ -1,3 +1,4 @@
+import { InteractionTimeline } from "@/pages/activities"
 import { useCallback, useEffect, useState, type ReactNode } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -25,6 +26,7 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { locale, t } from "@/lib/i18n"
 
 type Contact = ContactComponents["schemas"]["Contact"]
 type Account = ContactComponents["schemas"]["Account"]
@@ -39,11 +41,11 @@ type ContactEnvelope = { contact: Contact }
 const contactPermission = { view: "contact.view", edit: "contact.edit", delete: "contact.delete" } as const
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, "Enter a contact name."),
+  name: z.string().trim().min(1, t("Enter a contact name.")),
   title: z.string(),
-  email: z.string().trim().email("Enter a valid email address.").or(z.literal("")),
-  phone: z.string().trim().min(1, "Enter a phone number."),
-  account_id: z.number().int("Choose an account.").min(1, "Choose an account.").max(10, "Choose an account from the documented range."),
+  email: z.string().trim().email(t("Enter a valid email address.")).or(z.literal("")),
+  phone: z.string().trim().min(1, t("Enter a phone number.")),
+  account_id: z.number().int(t("Choose an account.")).min(1, t("Choose an account.")).max(10, t("Choose an account from the documented range.")),
 })
 
 type ContactFormValues = z.infer<typeof contactSchema>
@@ -148,7 +150,7 @@ async function loadAccountOptions(query: string, page: number, signal: AbortSign
 }
 function valuesFromContact(contact: ContactRecord): ContactFormValues { return { name: contact.name, title: contact.title ?? "", email: contact.email ?? "", phone: contact.phone, account_id: contact.account?.id ?? contact.account_id ?? 0 } }
 function toBasePayload(values: ContactFormValues): ContactBasePayload { return { name: values.name.trim(), title: values.title.trim() || null, email: values.email.trim() || null, phone: values.phone.trim(), account_id: values.account_id } }
-function formatDate(value?: string) { if (!value) return "—"; const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date) }
+function formatDate(value?: string) { if (!value) return "—"; const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date) }
 function detailsPath(id: number, returnSearch = "", edit = false) {
   const params = new URLSearchParams()
   if (edit) params.set("mode", "edit")
@@ -197,7 +199,7 @@ export function ContactsPage() {
       setMeta(body.meta ?? null)
       return nextContacts
     }
-    catch (caught) { if (caught instanceof DOMException && caught.name === "AbortError") return []; setError(caught instanceof Error ? caught.message : "Unable to load contacts."); return [] }
+    catch (caught) { if (caught instanceof DOMException && caught.name === "AbortError") return []; setError(caught instanceof Error ? caught.message : t("Unable to load contacts.")); return [] }
     finally { if (!signal?.aborted) setLoading(false) }
   }, [accountFilter, page, query, titleFilter])
   useEffect(() => {
@@ -223,12 +225,12 @@ export function ContactsPage() {
     setPreviewError(null)
     void apiJson<ContactEnvelope>(`${API_BASE_URL}/v1/contacts/${selectedId}`, { signal: controller.signal }).then((body) => {
       const normalized = normalizeContact(body.contact)
-      if (!normalized) throw new Error("The contact response did not contain a usable contact record.")
+      if (!normalized) throw new Error(t("The contact response did not contain a usable contact record."))
       setSelected(normalized)
     }).catch((caught) => {
       if (caught instanceof DOMException && caught.name === "AbortError") return
       setSelected(null)
-      setPreviewError({ message: caught instanceof Error ? caught.message : "Unable to load this contact.", status: caught instanceof ApiError ? caught.status : undefined })
+      setPreviewError({ message: caught instanceof Error ? caught.message : t("Unable to load this contact."), status: caught instanceof ApiError ? caught.status : undefined })
     }).finally(() => { if (!controller.signal.aborted) setSelectionLoading(false) })
     return () => controller.abort()
   }, [contacts, mode, navigate, returnSearch, selectedId, setSearchParams])
@@ -255,8 +257,8 @@ export function ContactsPage() {
   async function deleteContact() {
     if (!pendingDelete?.id) return
     setDeleting(true); setDeleteError("")
-    try { const response = await apiFetch(`${API_BASE_URL}/v1/contacts/${pendingDelete.id}`, { method: "DELETE" }); if (!response.ok) throw await readApiError(response); const deletedId = pendingDelete.id; setPendingDelete(null); if (selectedId === deletedId) setParams({ record: undefined, mode: undefined }); await loadContacts(); setNotice("Contact deleted.") }
-    catch (caught) { setDeleteError(caught instanceof Error ? caught.message : "Unable to delete this contact.") }
+    try { const response = await apiFetch(`${API_BASE_URL}/v1/contacts/${pendingDelete.id}`, { method: "DELETE" }); if (!response.ok) throw await readApiError(response); const deletedId = pendingDelete.id; setPendingDelete(null); if (selectedId === deletedId) setParams({ record: undefined, mode: undefined }); await loadContacts(); setNotice(t("Contact deleted.")) }
+    catch (caught) { setDeleteError(caught instanceof Error ? caught.message : t("Unable to delete this contact.")) }
     finally { setDeleting(false) }
   }
 
@@ -264,27 +266,27 @@ export function ContactsPage() {
   const canEdit = can(contactPermission.edit); const canDelete = can(contactPermission.delete)
   const previewOpen = Boolean(selectedId && mode !== "create" && mode !== "edit")
   return <div className="space-y-6 p-6 lg:p-8">
-    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6"><div><p className="text-xs font-medium text-muted-foreground">CRM / People</p><h1 className="mt-2 text-2xl font-semibold tracking-tight">Contacts</h1><p className="mt-1 max-w-2xl text-sm text-muted-foreground">Keep the people behind every account visible, connected, and easy to reach.</p></div><div className="flex gap-2"><Button variant="outline" size="sm" onClick={() => { setNotice(""); void loadContacts() }} disabled={loading}><RefreshCw className="me-2 size-3.5" />Refresh</Button></div></div>
+    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6"><div><p className="text-xs font-medium text-muted-foreground">{t("CRM / People")}</p><h1 className="mt-2 text-2xl font-semibold tracking-tight">{t("Contacts")}</h1><p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("Keep the people behind every account visible, connected, and easy to reach.")}</p></div><div className="flex gap-2"><Button variant="outline" size="sm" onClick={() => { setNotice(""); void loadContacts() }} disabled={loading}><RefreshCw className="me-2 size-3.5" />{t("Refresh")}</Button></div></div>
     {error && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</div>}{notice && <div role="status" className="border border-primary/20 bg-primary/5 p-3 text-sm text-primary">{notice}</div>}
-    <div className="space-y-3 border-b border-border pb-4"><div className="flex flex-wrap items-end gap-3"><div className="min-w-56 flex-1"><label className="text-xs font-medium text-muted-foreground" htmlFor="contact-search">Search people and accounts</label><div className="relative mt-1"><Search className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input id="contact-search" className="ps-8" value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder="Name, title, email, phone, account…" /></div></div><div className="min-w-44"><label className="text-xs font-medium text-muted-foreground" htmlFor="contact-title-filter">Title</label><Input id="contact-title-filter" className="mt-1" value={titleInput} onChange={(event) => setTitleInput(event.target.value)} placeholder="Any title" /></div><SearchableResourcePicker id="contact-account-filter" label="Account" labelStyle="plain" value={Number(accountFilter) || 0} onChange={(value) => updateFilter("account", String(value))} loadOptions={loadAccountOptions} placeholder="All accounts" searchPlaceholder="Search accounts…" loadingLabel="Searching accounts…" emptyLabel="No accounts found." noResultsLabel="No accounts match your search." renderOption={(option) => <span className="min-w-0"><span className="block truncate font-medium">{option.label}</span>{option.description && <span className="block truncate text-xs text-muted-foreground">{option.description}</span>}</span>} renderSelectedOption={(option) => <span className="truncate">{option.label}</span>} className="min-w-48" />{hasFilters && <Button variant="ghost" size="sm" onClick={clearFilters}><X className="me-1.5 size-3.5" />Clear</Button>}</div></div>
+    <div className="space-y-3 border-b border-border pb-4"><div className="flex flex-wrap items-end gap-3"><div className="min-w-56 flex-1"><label className="text-xs font-medium text-muted-foreground" htmlFor="contact-search">{t("Search people and accounts")}</label><div className="relative mt-1"><Search className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input id="contact-search" className="ps-8" value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder={t("Name, title, email, phone, account…")} /></div></div><div className="min-w-44"><label className="text-xs font-medium text-muted-foreground" htmlFor="contact-title-filter">{t("Title|job")}</label><Input id="contact-title-filter" className="mt-1" value={titleInput} onChange={(event) => setTitleInput(event.target.value)} placeholder={t("Any title")} /></div><SearchableResourcePicker id="contact-account-filter" label={t("Account")} labelStyle="plain" value={Number(accountFilter) || 0} onChange={(value) => updateFilter("account", String(value))} loadOptions={loadAccountOptions} placeholder={t("All accounts")} searchPlaceholder={t("Search accounts…")} loadingLabel={t("Searching accounts…")} emptyLabel={t("No accounts found.")} noResultsLabel={t("No accounts match your search.")} renderOption={(option) => <span className="min-w-0"><span className="block truncate font-medium">{option.label}</span>{option.description && <span className="block truncate text-xs text-muted-foreground">{option.description}</span>}</span>} renderSelectedOption={(option) => <span className="truncate">{option.label}</span>} className="min-w-48" />{hasFilters && <Button variant="ghost" size="sm" onClick={clearFilters}><X className="me-1.5 size-3.5" />{t("Clear")}</Button>}</div></div>
     <section data-testid="contacts-table-surface" className="min-w-0 border border-border bg-card">
-      <Table><TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Account</TableHead><TableHead>Reach</TableHead><TableHead className="w-48 min-w-48 max-w-48 text-end">Actions</TableHead></TableRow></TableHeader><TableBody>
+      <Table><TableHeader><TableRow><TableHead>{t("Name")}</TableHead><TableHead>{t("Account")}</TableHead><TableHead>{t("Reach")}</TableHead><TableHead className="w-48 min-w-48 max-w-48 text-end">{t("Actions")}</TableHead></TableRow></TableHeader><TableBody>
         {loading ? Array.from({ length: 5 }, (_, index) => <TableRow key={index}><TableCell colSpan={4}><Skeleton className="h-5 w-3/4" /></TableCell></TableRow>) : visibleContacts.length ? visibleContacts.map((contact) => {
           const isPreviewing = selectedId === contact.id && !mode
           const accountId = contact.account?.id ?? contact.account_id
           return <TableRow key={contact.id} data-state={selectedId === contact.id ? "selected" : undefined} className="cursor-pointer" onClick={() => openContact(contact.id)}>
             <TableCell><div className="flex min-w-0 items-center gap-3"><PersonAvatar name={contact.name} size="sm" /><div className="min-w-0"><div className="truncate font-medium">{contact.name}</div><div className="truncate text-xs text-muted-foreground">{contact.title}</div></div></div></TableCell>
-            <TableCell onClick={(event) => event.stopPropagation()}>{contact.account ? <Link className="inline-flex max-w-44 items-center gap-1.5 truncate text-sm text-primary hover:text-foreground" to={`/accounts/${contact.account.id}`}><Building2 className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{contact.account.name}</span></Link> : accountId ? <Link className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-foreground" to={`/accounts/${accountId}`}><Building2 className="size-3.5" aria-hidden="true" />Account #{accountId}</Link> : <span className="text-sm text-muted-foreground">—</span>}</TableCell>
-            <TableCell><div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1.5 truncate"><Mail className="size-3.5 shrink-0" aria-hidden="true" />{contact.email || "No email"}</span><span className="inline-flex items-center gap-1.5 truncate"><span className="size-3.5 shrink-0 text-center" aria-hidden="true">☎</span>{contact.phone}</span></div></TableCell>
-            <TableCell className="w-48 min-w-48 max-w-48 text-end"><div className="flex justify-end gap-1 [&_[data-slot=button]]:transition-none" onClick={(event) => event.stopPropagation()}><ActionTooltip label="Open dedicated details"><Button asChild variant={isPreviewing ? "secondary" : "ghost"} size="icon" aria-pressed={isPreviewing}><Link to={detailsPath(contact.id, returnSearch)} aria-label={`Open details for ${contact.name}`}><Eye /></Link></Button></ActionTooltip>{canEdit && <ActionTooltip label="Edit contact"><Button asChild variant="ghost" size="icon"><Link to={detailsPath(contact.id, returnSearch, true)} aria-label={`Edit ${contact.name}`}><Pencil /></Link></Button></ActionTooltip>}{canDelete && <ActionTooltip label="Delete contact"><Button variant="ghost" size="icon" aria-label={`Delete ${contact.name}`} className="text-destructive hover:text-destructive" onClick={() => requestDelete(contact)}><Trash2 /></Button></ActionTooltip>}</div></TableCell>
+            <TableCell onClick={(event) => event.stopPropagation()}>{contact.account ? <Link className="inline-flex max-w-44 items-center gap-1.5 truncate text-sm text-primary hover:text-foreground" to={`/accounts/${contact.account.id}`}><Building2 className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{contact.account.name}</span></Link> : accountId ? <Link className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-foreground" to={`/accounts/${accountId}`}><Building2 className="size-3.5" aria-hidden="true" />{t("Account #{id}", { id: accountId })}</Link> : <span className="text-sm text-muted-foreground">—</span>}</TableCell>
+            <TableCell><div className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1.5 truncate"><Mail className="size-3.5 shrink-0" aria-hidden="true" />{contact.email || t("No email")}</span><span className="inline-flex items-center gap-1.5 truncate"><span className="size-3.5 shrink-0 text-center" aria-hidden="true">☎</span>{contact.phone}</span></div></TableCell>
+            <TableCell className="w-48 min-w-48 max-w-48 text-end"><div className="flex justify-end gap-1 [&_[data-slot=button]]:transition-none" onClick={(event) => event.stopPropagation()}><ActionTooltip label={t("Open dedicated details")}><Button asChild variant={isPreviewing ? "secondary" : "ghost"} size="icon" aria-pressed={isPreviewing}><Link to={detailsPath(contact.id, returnSearch)} aria-label={t("Open details for {name}", { name: contact.name })}><Eye /></Link></Button></ActionTooltip>{canEdit && <ActionTooltip label={t("Edit contact")}><Button asChild variant="ghost" size="icon"><Link to={detailsPath(contact.id, returnSearch, true)} aria-label={t("Edit {name}", { name: contact.name })}><Pencil /></Link></Button></ActionTooltip>}{canDelete && <ActionTooltip label={t("Delete contact")}><Button variant="ghost" size="icon" aria-label={t("Delete {name}", { name: contact.name })} className="text-destructive hover:text-destructive" onClick={() => requestDelete(contact)}><Trash2 /></Button></ActionTooltip>}</div></TableCell>
           </TableRow>
-        }) : <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground">{hasFilters ? <>No contacts match the current filters. <Button variant="link" size="sm" className="ms-1" onClick={clearFilters}>Clear filters</Button></> : <div><p>No contacts found.</p></div>}</TableCell></TableRow>}
+        }) : <TableRow><TableCell colSpan={4} className="h-32 text-center text-muted-foreground">{hasFilters ? <>{t("No contacts match the current filters.")} <Button variant="link" size="sm" className="ms-1" onClick={clearFilters}>{t("Clear filters")}</Button></> : <div><p>{t("No contacts found.")}</p></div>}</TableCell></TableRow>}
       </TableBody></Table><ResourcePagination page={currentPage} lastPage={lastPage} disabled={loading} onPageChange={(nextPage) => setParams({ page: String(nextPage), record: undefined, mode: undefined })} />
     </section>
-    <ResourcePreviewDrawer open={previewOpen} onOpenChange={(open) => { if (!open) setParams({ record: undefined }) }} title="Contact preview" description="Read-only contact details and available actions.">
-      {selectionLoading && !selected ? <div className="space-y-4 p-5"><Skeleton className="h-8 w-2/3" /><Skeleton className="h-24 w-full" /><Skeleton className="h-32 w-full" /></div> : previewError ? <div className="space-y-3 p-5"><h2 className="font-semibold">{previewError.status === 403 ? "Contact is restricted" : previewError.status === 404 ? "Contact not found" : "Unable to load contact"}</h2><p role="alert" className="text-sm text-destructive">{previewError.message}</p><Button variant="outline" size="sm" onClick={() => setParams({ record: undefined })}>Close preview</Button></div> : selected ? <ContactInspector contact={selected} detailsHref={detailsPath(selected.id, returnSearch)} editHref={detailsPath(selected.id, returnSearch, true)} canEdit={canEdit} canDelete={canDelete} canViewAccount={can("account.view")} canViewLead={can("lead.view")} onDelete={() => requestDelete(selected)} /> : <div className="p-5 text-sm text-muted-foreground">This contact could not be loaded.</div>}
+    <ResourcePreviewDrawer open={previewOpen} onOpenChange={(open) => { if (!open) setParams({ record: undefined }) }} title={t("Contact preview")} description={t("Read-only contact details and available actions.")}>
+      {selectionLoading && !selected ? <div className="space-y-4 p-5"><Skeleton className="h-8 w-2/3" /><Skeleton className="h-24 w-full" /><Skeleton className="h-32 w-full" /></div> : previewError ? <div className="space-y-3 p-5"><h2 className="font-semibold">{previewError.status === 403 ? t("Contact is restricted") : previewError.status === 404 ? t("Contact not found") : t("Unable to load contact")}</h2><p role="alert" className="text-sm text-destructive">{previewError.message}</p><Button variant="outline" size="sm" onClick={() => setParams({ record: undefined })}>{t("Close preview")}</Button></div> : selected ? <ContactInspector contact={selected} detailsHref={detailsPath(selected.id, returnSearch)} editHref={detailsPath(selected.id, returnSearch, true)} canEdit={canEdit} canDelete={canDelete} canViewAccount={can("account.view")} canViewLead={can("lead.view")} onDelete={() => requestDelete(selected)} /> : <div className="p-5 text-sm text-muted-foreground">{t("This contact could not be loaded.")}</div>}
     </ResourcePreviewDrawer>
-    <ResourceDeleteDialog open={Boolean(pendingDelete)} onOpenChange={(open) => { if (!open && !deleting) { setPendingDelete(null); setDeleteError("") } }} title={`Delete ${pendingDelete?.name ?? "contact"}?`} description={<>This permanently removes {pendingDelete?.name ?? "this contact"}. This action cannot be undone.</>} confirmLabel="Delete contact" pending={deleting} error={deleteError} onConfirm={deleteContact} />
+    <ResourceDeleteDialog open={Boolean(pendingDelete)} onOpenChange={(open) => { if (!open && !deleting) { setPendingDelete(null); setDeleteError("") } }} title={t("Delete {name}?", { name: pendingDelete?.name ?? t("contact") })} description={t("This permanently removes {name}. This action cannot be undone.", { name: pendingDelete?.name ?? t("this contact") })} confirmLabel={t("Delete contact")} pending={deleting} error={deleteError} onConfirm={deleteContact} />
   </div>
 }
 
@@ -293,17 +295,18 @@ function ContactInspector({ contact, detailsHref, editHref, canEdit, canDelete, 
   if (!contact) return null
   return <div className="flex min-h-full flex-col">
     <div className="space-y-5 p-5">
-    <div className="flex items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><PersonAvatar name={contact.name} size="lg" /><div className="min-w-0"><p className="text-xs font-medium text-muted-foreground">Contact record</p><h2 className="mt-1 truncate text-lg font-semibold">{contact.name}</h2><p className="mt-1 truncate text-sm text-muted-foreground">{contact.title || "—"}</p></div></div><div className="flex shrink-0 gap-1"><ActionTooltip label="Open dedicated details"><Button asChild variant="outline" size="icon"><Link to={detailsHref} aria-label="Open dedicated details"><Eye /></Link></Button></ActionTooltip>{canEdit && <ActionTooltip label="Edit contact"><Button asChild variant="outline" size="icon"><Link to={editHref} aria-label="Edit contact"><Pencil /></Link></Button></ActionTooltip>}{canDelete && <ActionTooltip label="Delete contact"><Button variant="outline" size="icon" aria-label="Delete contact" className="text-destructive hover:text-destructive" onClick={onDelete}><Trash2 /></Button></ActionTooltip>}</div></div>
-    <Badge variant="secondary" className="w-fit gap-1.5"><UserRound className="size-3.5" aria-hidden="true" />Person</Badge>
-    <Separator /><div><p className="text-xs font-medium text-muted-foreground">Reach this person</p><dl className="mt-3 grid gap-4 text-sm"><Info icon={<Mail />} label="Email" value={contact.email ?? "—"} /><Info icon={<span aria-hidden="true">☎</span>} label="Phone" value={contact.phone} /></dl></div>
-    <section className="border border-border bg-muted/20 p-4"><div className="flex items-start gap-3"><Building2 className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" /><div className="min-w-0"><p className="text-xs font-medium text-muted-foreground">Account</p><p className="mt-1 truncate font-semibold">{canViewAccount && contact.account ? <Link className="text-primary hover:text-foreground" to={`/accounts/${contact.account.id}`}>{contact.account.name}</Link> : contact.account?.name ?? "No account recorded"}</p>{contact.account?.industry && <p className="mt-1 truncate text-xs text-muted-foreground">{contact.account.industry}</p>}</div></div></section>
-    <Separator /><div><p className="text-xs font-medium text-muted-foreground">Relationship context</p><dl className="mt-3 grid gap-4 text-sm"><Info icon={<CalendarDays />} label="Added" value={formatDate(contact.created_at)} /></dl></div>
+    <div className="flex items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><PersonAvatar name={contact.name} size="lg" /><div className="min-w-0"><p className="text-xs font-medium text-muted-foreground">{t("Contact record")}</p><h2 className="mt-1 truncate text-lg font-semibold">{contact.name}</h2><p className="mt-1 truncate text-sm text-muted-foreground">{contact.title || "—"}</p></div></div><div className="flex shrink-0 gap-1"><ActionTooltip label={t("Open dedicated details")}><Button asChild variant="outline" size="icon"><Link to={detailsHref} aria-label={t("Open dedicated details")}><Eye /></Link></Button></ActionTooltip>{canEdit && <ActionTooltip label={t("Edit contact")}><Button asChild variant="outline" size="icon"><Link to={editHref} aria-label={t("Edit contact")}><Pencil /></Link></Button></ActionTooltip>}{canDelete && <ActionTooltip label={t("Delete contact")}><Button variant="outline" size="icon" aria-label={t("Delete contact")} className="text-destructive hover:text-destructive" onClick={onDelete}><Trash2 /></Button></ActionTooltip>}</div></div>
+    <Badge variant="secondary" className="w-fit gap-1.5"><UserRound className="size-3.5" aria-hidden="true" />{t("Person")}</Badge>
+    <Separator /><div><p className="text-xs font-medium text-muted-foreground">{t("Reach this person")}</p><dl className="mt-3 grid gap-4 text-sm"><Info icon={<Mail />} label={t("Email")} value={contact.email ?? "—"} /><Info icon={<span aria-hidden="true">☎</span>} label={t("Phone")} value={contact.phone} /></dl></div>
+    <section className="border border-border bg-muted/20 p-4"><div className="flex items-start gap-3"><Building2 className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" /><div className="min-w-0"><p className="text-xs font-medium text-muted-foreground">{t("Account")}</p><p className="mt-1 truncate font-semibold">{canViewAccount && contact.account ? <Link className="text-primary hover:text-foreground" to={`/accounts/${contact.account.id}`}>{contact.account.name}</Link> : contact.account?.name ?? t("No account recorded")}</p>{contact.account?.industry && <p className="mt-1 truncate text-xs text-muted-foreground">{contact.account.industry}</p>}</div></div></section>
+    <Separator /><div><p className="text-xs font-medium text-muted-foreground">{t("Relationship context")}</p><dl className="mt-3 grid gap-4 text-sm"><Info icon={<CalendarDays />} label={t("Added")} value={formatDate(contact.created_at)} /></dl></div>
     </div>
+    {contact.id !== undefined && <div className="p-5"><InteractionTimeline subject={`contact:${contact.id}`} /></div>}
     {contact.lead && canViewLead && <footer className="mt-auto border-t border-border bg-muted/20 p-5"><LeadShowLink lead={contact.lead} prominent className="w-full" /></footer>}
   </div>
 }
 function Info({ icon, label, value, href }: { icon?: ReactNode; label: string; value: string; href?: string }) { const content = href ? <Link className="text-primary hover:text-foreground" to={href}>{value}</Link> : value; return <div><dt className="flex items-center gap-1.5 text-xs text-muted-foreground">{icon && <span className="[&>svg]:size-3.5" aria-hidden="true">{icon}</span>}{label}</dt><dd className="mt-1 font-medium">{content}</dd></div> }
-function ForbiddenContacts() { return <ErrorState kind="forbidden" title="Contacts are restricted" description="You do not have permission to view contacts." actionLabel="Return to overview" actionTo="/" /> }
+function ForbiddenContacts() { return <ErrorState kind="forbidden" title={t("Contacts are restricted")} description={t("You do not have permission to view contacts.")} actionLabel={t("Return to overview")} actionTo="/" /> }
 
 export function ContactDetailsPage() {
   const { can } = useAuth()
@@ -330,14 +333,14 @@ export function ContactDetailsPage() {
     try {
       const body = await apiJson<ContactEnvelope>(`${API_BASE_URL}/v1/contacts/${id}`, { signal })
       const normalized = normalizeContact(body.contact)
-      if (!normalized) throw new Error("The contact response did not contain a usable contact record.")
+      if (!normalized) throw new Error(t("The contact response did not contain a usable contact record."))
       setContact(normalized); form.reset(valuesFromContact(normalized))
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return
       if (caught instanceof ApiError && caught.status === 401) setAccessError("unauthorized")
       else if (caught instanceof ApiError && caught.status === 403) setAccessError("forbidden")
       else if (caught instanceof ApiError && caught.status === 404) setMissing(true)
-      else setError(caught instanceof Error ? caught.message : "Unable to load this contact.")
+      else setError(caught instanceof Error ? caught.message : t("Unable to load this contact."))
     } finally { if (!signal?.aborted) setLoading(false) }
   }, [can, form, id])
 
@@ -360,7 +363,7 @@ export function ContactDetailsPage() {
     if (!contact?.id) return
     const accountId = contact.account?.id ?? contact.account_id
     if (!accountId) {
-      setError("This contact cannot be updated because its response does not include the account ID required by the API.")
+      setError(t("This contact cannot be updated because its response does not include the account ID required by the API."))
       return
     }
     setError("")
@@ -368,11 +371,11 @@ export function ContactDetailsPage() {
       const payload: ContactUpdatePayload = { ...toBasePayload(values), account_id: accountId, _method: "PUT" }
       const result = await apiJson<ContactEnvelope>(`${API_BASE_URL}/v1/contacts/${contact.id}`, { method: "POST", body: JSON.stringify(payload) })
       const normalized = normalizeContact(result.contact)
-      if (!normalized) throw new Error("The update response did not contain a usable contact record.")
+      if (!normalized) throw new Error(t("The update response did not contain a usable contact record."))
       setContact(normalized); form.reset(valuesFromContact(normalized)); setEditMode(false)
     } catch (caught) {
       if (caught instanceof ApiError) Object.entries(caught.fields).forEach(([field, messages]) => form.setError(field as keyof ContactFormValues, { message: messages[0] }))
-      setError(caught instanceof Error ? caught.message : "Unable to save this contact.")
+      setError(caught instanceof Error ? caught.message : t("Unable to save this contact."))
     }
   })
 
@@ -383,37 +386,37 @@ export function ContactDetailsPage() {
       const response = await apiFetch(`${API_BASE_URL}/v1/contacts/${contact.id}`, { method: "DELETE" })
       if (!response.ok) throw await readApiError(response)
       navigate(indexHref, { replace: true })
-    } catch (caught) { setDeleteError(caught instanceof Error ? caught.message : "Unable to delete this contact.") }
+    } catch (caught) { setDeleteError(caught instanceof Error ? caught.message : t("Unable to delete this contact.")) }
     finally { setDeleting(false) }
   }
 
   if (!can(contactPermission.view)) return <ForbiddenContacts />
-  if (!Number.isInteger(id) || id < 1) return <ContactDetailsState title="Contact not found" description="The contact identifier is invalid." backTo={indexHref} />
+  if (!Number.isInteger(id) || id < 1) return <ContactDetailsState title={t("Contact not found")} description={t("The contact identifier is invalid.")} backTo={indexHref} />
   if (loading) return <ContactDetailsSkeleton />
-  if (accessError === "unauthorized") return <ErrorState kind="unauthorized" title="Your session has ended" description="Sign in again to continue working with contacts." actionLabel="Sign in" actionTo="/login" />
-  if (accessError === "forbidden") return <ErrorState kind="forbidden" title="This contact is restricted" description="You do not have access to this contact record." actionLabel="Return to contacts" actionTo={indexHref} />
-  if (missing) return <ContactDetailsState title="Contact not found" description="This contact may have been removed or you may not have access to it." backTo={indexHref} />
-  if (!contact) return <ContactDetailsLoadError message={error || "Unable to load this contact."} backTo={indexHref} onRetry={() => void loadContact()} />
+  if (accessError === "unauthorized") return <ErrorState kind="unauthorized" title={t("Your session has ended")} description={t("Sign in again to continue working with contacts.")} actionLabel={t("Sign in")} actionTo="/login" />
+  if (accessError === "forbidden") return <ErrorState kind="forbidden" title={t("This contact is restricted")} description={t("You do not have access to this contact record.")} actionLabel={t("Return to contacts")} actionTo={indexHref} />
+  if (missing) return <ContactDetailsState title={t("Contact not found")} description={t("This contact may have been removed or you may not have access to it.")} backTo={indexHref} />
+  if (!contact) return <ContactDetailsLoadError message={error || t("Unable to load this contact.")} backTo={indexHref} onRetry={() => void loadContact()} />
 
   const canEdit = can(contactPermission.edit)
   const canDelete = can(contactPermission.delete)
-  const accountName = contact.account?.name ?? "No account recorded"
+  const accountName = contact.account?.name ?? t("No account recorded")
   const accountLink = contact.account && can("account.view") ? <Link className="text-primary hover:text-foreground" to={`/accounts/${contact.account.id}`}>{contact.account.name}</Link> : accountName
 
   return <main className="mx-auto max-w-[100rem] space-y-6 p-6 pb-24 lg:p-8">
     <header className="border-b border-border pb-5">
       <div className="flex flex-wrap items-start justify-between gap-5">
-        <div className="min-w-0"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={indexHref}><ArrowLeft className="me-2 size-3.5" />Contacts</Link></Button><div className="mt-5 flex min-w-0 items-center gap-3"><PersonAvatar name={contact.name} size="lg" /><div className="min-w-0"><p className="text-xs font-medium text-muted-foreground">CRM / People</p><h1 className="mt-1 truncate text-3xl font-semibold tracking-tight">{contact.name}</h1><p className="mt-1 truncate text-sm text-muted-foreground">{contact.title || "No title recorded"}</p></div></div></div>
-        <div className="flex flex-wrap items-center gap-2"><Button variant="outline" size="sm" onClick={() => void loadContact()} disabled={form.formState.isSubmitting || deleting}><RefreshCw className="me-2 size-3.5" />Refresh</Button>{canEdit && <Button size="sm" variant={editing ? "secondary" : "default"} onClick={() => { form.reset(valuesFromContact(contact)); setEditMode(!editing) }}><Pencil className="me-2 size-3.5" />{editing ? "Editing" : "Edit contact"}</Button>}{canDelete && <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => { setDeleteError(""); setDeleteOpen(true) }}><Trash2 className="me-2 size-3.5" />Delete</Button>}</div>
+        <div className="min-w-0"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={indexHref}><ArrowLeft className="me-2 size-3.5 rtl:rotate-180" />{t("Contacts")}</Link></Button><div className="mt-5 flex min-w-0 items-center gap-3"><PersonAvatar name={contact.name} size="lg" /><div className="min-w-0"><p className="text-xs font-medium text-muted-foreground">{t("CRM / People")}</p><h1 className="mt-1 truncate text-3xl font-semibold tracking-tight">{contact.name}</h1><p className="mt-1 truncate text-sm text-muted-foreground">{contact.title || t("No title recorded")}</p></div></div></div>
+        <div className="flex flex-wrap items-center gap-2"><Button variant="outline" size="sm" onClick={() => void loadContact()} disabled={form.formState.isSubmitting || deleting}><RefreshCw className="me-2 size-3.5" />{t("Refresh")}</Button>{canEdit && <Button size="sm" variant={editing ? "secondary" : "default"} onClick={() => { form.reset(valuesFromContact(contact)); setEditMode(!editing) }}><Pencil className="me-2 size-3.5" />{editing ? t("Editing") : t("Edit contact")}</Button>}{canDelete && <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => { setDeleteError(""); setDeleteOpen(true) }}><Trash2 className="me-2 size-3.5" />{t("Delete")}</Button>}</div>
       </div>
     </header>
 
     <p className="sr-only" aria-live="polite">{error}</p>
-    {error && <div role="alert" className="flex items-center justify-between gap-4 border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"><span>{error}</span><Button variant="ghost" size="sm" className="shrink-0" onClick={() => setError("")}>Dismiss</Button></div>}
+    {error && <div role="alert" className="flex items-center justify-between gap-4 border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"><span>{error}</span><Button variant="ghost" size="sm" className="shrink-0" onClick={() => setError("")}>{t("Dismiss")}</Button></div>}
 
-    {editing ? <ContactDetailsEditor form={form} saving={form.formState.isSubmitting} accountLink={accountLink} onCancel={() => { form.reset(valuesFromContact(contact)); setEditMode(false) }} onSubmit={saveContact} /> : <><ContactMobileActionBar contact={contact} /><div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_21rem] xl:items-start"><div className="min-w-0 space-y-8"><section className="grid border-y border-border sm:grid-cols-2"><DetailsMetric label="Phone" value={contact.phone} action={contact.phone ? <a className="text-primary hover:text-foreground" href={`tel:${contact.phone}`}>Call</a> : undefined} /><DetailsMetric label="Email" value={contact.email || "No email recorded"} action={contact.email ? <a className="text-primary hover:text-foreground" href={`mailto:${contact.email}`}>Email</a> : undefined} /></section><section className="border-t border-border pt-5"><h2 className="text-lg font-semibold tracking-tight">Account</h2>{contact.account ? <div className="mt-4 grid gap-x-8 gap-y-5 sm:grid-cols-2"><ContactInfo label="Organization" value={accountLink} /><ContactInfo label="Industry" value={contact.account.industry || "—"} /><ContactInfo label="Phone" value={contact.account.phone ? <a className="text-primary hover:text-foreground" href={`tel:${contact.account.phone}`}>{contact.account.phone}</a> : "—"} /><ContactInfo label="Address" value={contact.account.address || "—"} /></div> : <p className="mt-3 text-sm text-muted-foreground">No account is included in this contact record.</p>}</section>{contact.id !== undefined && <ActivityLogList model="contact" id={contact.id} title="Contact activity" onReverted={() => void loadContact()} />}</div><div className="hidden xl:block"><ContactActionRail contact={contact} /></div></div></>}
+    {editing ? <ContactDetailsEditor form={form} saving={form.formState.isSubmitting} accountLink={accountLink} onCancel={() => { form.reset(valuesFromContact(contact)); setEditMode(false) }} onSubmit={saveContact} /> : <><ContactMobileActionBar contact={contact} /><div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_21rem] xl:items-start"><div className="min-w-0 space-y-8"><section className="grid border-y border-border sm:grid-cols-2"><DetailsMetric label={t("Phone")} value={contact.phone} action={contact.phone ? <a className="text-primary hover:text-foreground" href={`tel:${contact.phone}`}>{t("Call")}</a> : undefined} /><DetailsMetric label={t("Email")} value={contact.email || t("No email recorded")} action={contact.email ? <a className="text-primary hover:text-foreground" href={`mailto:${contact.email}`}>{t("Email")}</a> : undefined} /></section><section className="border-t border-border pt-5"><h2 className="text-lg font-semibold tracking-tight">{t("Account")}</h2>{contact.account ? <div className="mt-4 grid gap-x-8 gap-y-5 sm:grid-cols-2"><ContactInfo label={t("Organization")} value={accountLink} /><ContactInfo label={t("Industry")} value={contact.account.industry || "—"} /><ContactInfo label={t("Phone")} value={contact.account.phone ? <a className="text-primary hover:text-foreground" href={`tel:${contact.account.phone}`}>{contact.account.phone}</a> : "—"} /><ContactInfo label={t("Address")} value={contact.account.address || "—"} /></div> : <p className="mt-3 text-sm text-muted-foreground">{t("No account is included in this contact record.")}</p>}</section>{contact.id !== undefined && <InteractionTimeline subject={`contact:${contact.id}`} />}{contact.id !== undefined && <ActivityLogList model="contact" id={contact.id} title={t("Contact activity")} onReverted={() => void loadContact()} />}</div><div className="hidden xl:block"><ContactActionRail contact={contact} /></div></div></>}
 
-    <ResourceDeleteDialog open={deleteOpen} onOpenChange={(open) => { if (!open && !deleting) { setDeleteOpen(false); setDeleteError("") } }} title={`Delete ${contact.name}?`} description={<>This permanently removes {contact.name}. This action cannot be undone.</>} confirmLabel="Delete contact" pending={deleting} error={deleteError} onConfirm={deleteCurrentContact} />
+    <ResourceDeleteDialog open={deleteOpen} onOpenChange={(open) => { if (!open && !deleting) { setDeleteOpen(false); setDeleteError("") } }} title={t("Delete {name}?", { name: contact.name })} description={t("This permanently removes {name}. This action cannot be undone.", { name: contact.name })} confirmLabel={t("Delete contact")} pending={deleting} error={deleteError} onConfirm={deleteCurrentContact} />
   </main>
 }
 
@@ -423,37 +426,37 @@ function ContactInfo({ label, value }: { label: string; value: ReactNode }) { re
 function LeadShowLink({ lead, className, prominent = false }: { lead: Lead | null | undefined; className?: string; prominent?: boolean }) {
   const { can } = useAuth()
   if (!lead || !can("lead.view")) return null
-  return <Button asChild variant={prominent ? "default" : "outline"} size={prominent ? "lg" : "sm"} className={className}><Link to={`/leads/${lead.id}`}>Open lead</Link></Button>
+  return <Button asChild variant={prominent ? "default" : "outline"} size={prominent ? "lg" : "sm"} className={className}><Link to={`/leads/${lead.id}`}>{t("Open lead")}</Link></Button>
 }
 
 function ContactMobileActionBar({ contact }: { contact: ContactRecord }) {
-  return <aside className="flex flex-wrap justify-end gap-2 border-y border-border py-3 xl:hidden">{contact.email && <Button asChild variant="outline" size="sm"><a href={`mailto:${contact.email}`}><Mail className="me-1.5 size-3.5" />Email</a></Button>}{contact.phone && <Button asChild variant="outline" size="sm"><a href={`tel:${contact.phone}`}><Phone className="me-1.5 size-3.5" />Call</a></Button>}<LeadShowLink lead={contact.lead} className="w-full" /></aside>
+  return <aside className="flex flex-wrap justify-end gap-2 border-y border-border py-3 xl:hidden">{contact.email && <Button asChild variant="outline" size="sm"><a href={`mailto:${contact.email}`}><Mail className="me-1.5 size-3.5" />{t("Email")}</a></Button>}{contact.phone && <Button asChild variant="outline" size="sm"><a href={`tel:${contact.phone}`}><Phone className="me-1.5 size-3.5" />{t("Call")}</a></Button>}<LeadShowLink lead={contact.lead} className="w-full" /></aside>
 }
 
 function ContactActionRail({ contact }: { contact: ContactRecord }) {
-  return <aside className="border-t border-border pt-5 xl:sticky xl:top-20"><p className="text-xs font-medium text-muted-foreground">Reachability</p><div className="mt-4 flex items-center gap-3"><PersonAvatar name={contact.name} /><div className="min-w-0"><p className="truncate font-semibold">{contact.name}</p><p className="truncate text-xs text-muted-foreground">{contact.title || "No title recorded"}</p></div></div>{(contact.email || contact.phone) ? <><div className="mt-5 space-y-3 border-t border-border pt-4">{contact.phone && <a className="flex items-center gap-2 text-sm text-primary hover:text-foreground" href={`tel:${contact.phone}`}><Phone className="size-3.5" aria-hidden="true" /><span>{contact.phone}</span></a>}{contact.email && <a className="flex items-center gap-2 text-sm text-primary hover:text-foreground" href={`mailto:${contact.email}`}><Mail className="size-3.5" aria-hidden="true" /><span className="truncate">{contact.email}</span></a>}</div><div className="mt-5 flex flex-wrap gap-2">{contact.email && <Button asChild variant="outline" size="sm"><a href={`mailto:${contact.email}`}><Mail className="me-1.5 size-3.5" />Email</a></Button>}{contact.phone && <Button asChild variant="outline" size="sm"><a href={`tel:${contact.phone}`}><Phone className="me-1.5 size-3.5" />Call</a></Button>}</div></> : <p className="mt-3 text-sm text-muted-foreground">No contact method recorded.</p>}<LeadShowLink lead={contact.lead} className="mt-5 w-full" /></aside>
+  return <aside className="border-t border-border pt-5 xl:sticky xl:top-20"><p className="text-xs font-medium text-muted-foreground">{t("Reachability")}</p><div className="mt-4 flex items-center gap-3"><PersonAvatar name={contact.name} /><div className="min-w-0"><p className="truncate font-semibold">{contact.name}</p><p className="truncate text-xs text-muted-foreground">{contact.title || t("No title recorded")}</p></div></div>{(contact.email || contact.phone) ? <><div className="mt-5 space-y-3 border-t border-border pt-4">{contact.phone && <a className="flex items-center gap-2 text-sm text-primary hover:text-foreground" href={`tel:${contact.phone}`}><Phone className="size-3.5" aria-hidden="true" /><span>{contact.phone}</span></a>}{contact.email && <a className="flex items-center gap-2 text-sm text-primary hover:text-foreground" href={`mailto:${contact.email}`}><Mail className="size-3.5" aria-hidden="true" /><span className="truncate">{contact.email}</span></a>}</div><div className="mt-5 flex flex-wrap gap-2">{contact.email && <Button asChild variant="outline" size="sm"><a href={`mailto:${contact.email}`}><Mail className="me-1.5 size-3.5" />{t("Email")}</a></Button>}{contact.phone && <Button asChild variant="outline" size="sm"><a href={`tel:${contact.phone}`}><Phone className="me-1.5 size-3.5" />{t("Call")}</a></Button>}</div></> : <p className="mt-3 text-sm text-muted-foreground">{t("No contact method recorded.")}</p>}<LeadShowLink lead={contact.lead} className="mt-5 w-full" /></aside>
 }
 
 function BlockStartField({ inputId, label, required, error, icon, children, className, plain = false }: { inputId: string; label: string; required?: boolean; error?: string; icon?: ReactNode; children: ReactNode; className?: string; plain?: boolean }) {
   const labelId = `${inputId}-label`
-  return <Field className={className}>{plain ? <><FieldLabel id={labelId} htmlFor={inputId}>{label}{required && <span className="font-normal text-muted-foreground"> (required)</span>}</FieldLabel>{children}</> : <InputGroup className="h-auto! overflow-hidden"><InputGroupAddon align="block-start" className="bg-muted dark:bg-muted"><InputGroupText id={labelId}><span className="inline-flex items-center gap-1.5">{icon}{label}{required && <span className="font-normal text-muted-foreground">(required)</span>}</span></InputGroupText></InputGroupAddon>{children}</InputGroup>}<FieldError>{error}</FieldError></Field>
+  return <Field className={className}>{plain ? <><FieldLabel id={labelId} htmlFor={inputId}>{label}{required && <span className="font-normal text-muted-foreground"> {t("(required)")}</span>}</FieldLabel>{children}</> : <InputGroup className="h-auto! overflow-hidden"><InputGroupAddon align="block-start" className="bg-muted dark:bg-muted"><InputGroupText id={labelId}><span className="inline-flex items-center gap-1.5">{icon}{label}{required && <span className="font-normal text-muted-foreground">{t("(required)")}</span>}</span></InputGroupText></InputGroupAddon>{children}</InputGroup>}<FieldError>{error}</FieldError></Field>
 }
 
 function ContactDetailsEditor({ form, saving, accountLink, onCancel, onSubmit }: { form: ReturnType<typeof useForm<ContactFormValues>>; saving: boolean; accountLink: ReactNode; onCancel: () => void; onSubmit: () => void }) {
   const { register, setValue, watch, formState: { errors } } = form
   const inputClassName = "h-8 rounded-none border-0 px-2.5 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
   return <form onSubmit={onSubmit} className="w-full border-t border-border pt-5">
-    <div className="sticky top-0 z-10 -mt-5 border-b border-border bg-background py-4"><div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-medium text-muted-foreground">Edit contact</p><h2 className="mt-1 text-xl font-semibold tracking-tight">Contact information</h2></div><div className="flex gap-2"><Button type="button" variant="outline" onClick={onCancel}>Cancel</Button><Button type="submit" disabled={saving}>{saving ? "Saving…" : <><Save className="me-2 size-3.5" />Save changes</>}</Button></div></div></div>
+    <div className="sticky top-0 z-10 -mt-5 border-b border-border bg-background py-4"><div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-medium text-muted-foreground">{t("Edit contact")}</p><h2 className="mt-1 text-xl font-semibold tracking-tight">{t("Contact information")}</h2></div><div className="flex gap-2"><Button type="button" variant="outline" onClick={onCancel}>{t("Cancel")}</Button><Button type="submit" disabled={saving}>{saving ? t("Saving…") : <><Save className="me-2 size-3.5" />{t("Save changes")}</>}</Button></div></div></div>
     <FieldGroup className="mt-6 grid w-full gap-4 sm:grid-cols-2">
-      <BlockStartField inputId="contact-details-name" label="Name" required error={errors.name?.message}><InputGroupInput id="contact-details-name" aria-labelledby="contact-details-name-label" {...register("name")} className={inputClassName} /></BlockStartField>
-      <BlockStartField inputId="contact-details-title" label="Title" error={errors.title?.message}><InputGroupInput id="contact-details-title" aria-labelledby="contact-details-title-label" {...register("title")} className={inputClassName} /></BlockStartField>
-      <BlockStartField plain inputId="contact-details-phone" label="Phone" required error={errors.phone?.message}><PhoneField id="contact-details-phone" aria-labelledby="contact-details-phone-label" aria-invalid={Boolean(errors.phone)} value={watch("phone")} onValueChange={(value) => setValue("phone", value, { shouldDirty: true, shouldValidate: true })} /></BlockStartField>
-      <BlockStartField inputId="contact-details-email" label="Email" error={errors.email?.message}><InputGroupInput id="contact-details-email" aria-labelledby="contact-details-email-label" type="email" {...register("email")} className={inputClassName} /></BlockStartField>
-      <Field className="sm:col-span-2"><FieldLabel>Account</FieldLabel><div className="border border-border bg-muted/20 px-3 py-2 text-sm font-medium">{accountLink}</div><p className="mt-2 text-xs text-muted-foreground">The documented Accounts collection has no typed response, so this relationship stays read-only here.</p></Field>
+      <BlockStartField inputId="contact-details-name" label={t("Name")} required error={errors.name?.message}><InputGroupInput id="contact-details-name" aria-labelledby="contact-details-name-label" {...register("name")} className={inputClassName} /></BlockStartField>
+      <BlockStartField inputId="contact-details-title" label={t("Title|job")} error={errors.title?.message}><InputGroupInput id="contact-details-title" aria-labelledby="contact-details-title-label" {...register("title")} className={inputClassName} /></BlockStartField>
+      <BlockStartField plain inputId="contact-details-phone" label={t("Phone")} required error={errors.phone?.message}><PhoneField id="contact-details-phone" aria-labelledby="contact-details-phone-label" aria-invalid={Boolean(errors.phone)} value={watch("phone")} onValueChange={(value) => setValue("phone", value, { shouldDirty: true, shouldValidate: true })} /></BlockStartField>
+      <BlockStartField inputId="contact-details-email" label={t("Email")} error={errors.email?.message}><InputGroupInput id="contact-details-email" aria-labelledby="contact-details-email-label" type="email" {...register("email")} className={inputClassName} /></BlockStartField>
+      <Field className="sm:col-span-2"><FieldLabel>{t("Account")}</FieldLabel><div className="border border-border bg-muted/20 px-3 py-2 text-sm font-medium">{accountLink}</div><p className="mt-2 text-xs text-muted-foreground">{t("The documented Accounts collection has no typed response, so this relationship stays read-only here.")}</p></Field>
     </FieldGroup>
   </form>
 }
 
 function ContactDetailsSkeleton() { return <div className="mx-auto max-w-[100rem] space-y-6 p-6 lg:p-8"><div className="border-b border-border pb-6"><Skeleton className="h-7 w-24" /><Skeleton className="mt-6 h-10 w-3/5" /><Skeleton className="mt-3 h-5 w-2/5" /><Skeleton className="mt-8 h-12 w-full" /></div><div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_21rem]"><Skeleton className="h-64 w-full" /><Skeleton className="h-72 w-full" /></div></div> }
-function ContactDetailsState({ title, description, backTo }: { title: string; description: string; backTo: string }) { return <ErrorState kind="not-found" title={title} description={description} actionLabel="Return to contacts" actionTo={backTo} /> }
-function ContactDetailsLoadError({ message, backTo, onRetry }: { message: string; backTo: string; onRetry: () => void }) { return <div className="mx-auto max-w-xl p-6 lg:p-8"><div role="alert" className="border border-destructive/30 bg-destructive/5 p-5"><p className="font-semibold">Unable to open contact</p><p className="mt-2 text-sm text-muted-foreground">{message}</p><div className="mt-4 flex gap-2"><Button onClick={onRetry}>Try again</Button><Button asChild variant="outline"><Link to={backTo}>Back to contacts</Link></Button></div></div></div> }
+function ContactDetailsState({ title, description, backTo }: { title: string; description: string; backTo: string }) { return <ErrorState kind="not-found" title={title} description={description} actionLabel={t("Return to contacts")} actionTo={backTo} /> }
+function ContactDetailsLoadError({ message, backTo, onRetry }: { message: string; backTo: string; onRetry: () => void }) { return <div className="mx-auto max-w-xl p-6 lg:p-8"><div role="alert" className="border border-destructive/30 bg-destructive/5 p-5"><p className="font-semibold">{t("Unable to open contact")}</p><p className="mt-2 text-sm text-muted-foreground">{message}</p><div className="mt-4 flex gap-2"><Button onClick={onRetry}>{t("Try again")}</Button><Button asChild variant="outline"><Link to={backTo}>{t("Back to contacts")}</Link></Button></div></div></div> }

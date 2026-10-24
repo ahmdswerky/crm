@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { components as MediaComponents } from "@/api/generated/Media"
 import { API_BASE_URL, apiFetch, apiJson, readApiError } from "@/api/client"
+import { t } from "@/lib/i18n"
 
 export type ManagedMedia = MediaComponents["schemas"]["Media"]
 export type MediaOwnerType = MediaComponents["schemas"]["OwnerType"]
@@ -27,7 +28,7 @@ const ordered = (media: ManagedMedia[]) => [...media].sort((left, right) => left
 
 export async function uploadMediaFiles({ ownerType, ownerId, collection, files }: MediaUploadOptions) {
   if (!files.length) return []
-  if (files.length > 10) throw new Error("You can upload up to 10 images at a time.")
+  if (files.length > 10) throw new Error(t("You can upload up to 10 images at a time."))
 
   const body = new FormData()
   body.set("owner_type", ownerType)
@@ -78,7 +79,7 @@ export function useMediaCollection({ ownerType, ownerId, collection, onChange }:
       return nextMedia
     } catch (caught) {
       if (!(caught instanceof DOMException && caught.name === "AbortError")) {
-        setError(caught instanceof Error ? caught.message : "Unable to load media.")
+        setError(caught instanceof Error ? caught.message : t("Unable to load media."))
       }
     } finally {
       if (!signal?.aborted) setLoading(false)
@@ -100,7 +101,7 @@ export function useMediaCollection({ ownerType, ownerId, collection, onChange }:
       await uploadMediaFiles({ ownerType, ownerId, collection, files })
       await refresh()
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to upload media.")
+      setError(caught instanceof Error ? caught.message : t("Unable to upload media."))
       throw caught
     } finally {
       setBusy(false)
@@ -115,7 +116,7 @@ export function useMediaCollection({ ownerType, ownerId, collection, onChange }:
       if (!response.ok) throw await readApiError(response)
       replaceMedia(media.filter((item) => item.id !== id))
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to delete media.")
+      setError(caught instanceof Error ? caught.message : t("Unable to delete media."))
       throw caught
     } finally {
       setBusy(false)
@@ -137,7 +138,7 @@ export function useMediaCollection({ ownerType, ownerId, collection, onChange }:
       })
       replaceMedia(response.data)
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to reorder media.")
+      setError(caught instanceof Error ? caught.message : t("Unable to reorder media."))
       throw caught
     } finally {
       setBusy(false)

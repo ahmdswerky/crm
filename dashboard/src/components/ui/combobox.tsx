@@ -3,6 +3,7 @@ import { XIcon } from "lucide-react"
 import { Command, CommandEmpty, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { t } from "@/lib/i18n"
 
 type ComboboxContextValue = {
   items: unknown[]
@@ -69,7 +70,7 @@ function ComboboxValue({ className, ...props }: React.ComponentProps<"span">) {
 
 function ComboboxChip({ value, className, children, ...props }: React.ComponentProps<"span"> & { value?: unknown }) {
   const { removeItem } = useComboboxContext()
-  return <span data-slot="combobox-chip" className={cn("inline-flex h-6 items-center gap-1 rounded-sm bg-muted px-1.5 text-xs font-medium", className)} {...props}>{children}<button type="button" aria-label={`Remove ${String(children)}`} className="rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring" onClick={(event) => { event.stopPropagation(); removeItem(value ?? children) }}><XIcon className="size-3" /></button></span>
+  return <span data-slot="combobox-chip" className={cn("inline-flex h-6 items-center gap-1 rounded-sm bg-muted px-1.5 text-xs font-medium", className)} {...props}>{children}<button type="button" aria-label={t("Remove {label}", { label: String(children) })} className="rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring" onClick={(event) => { event.stopPropagation(); removeItem(value ?? children) }}><XIcon className="size-3" /></button></span>
 }
 
 function ComboboxChipsInput({ className, onChange, onFocus, ...props }: React.ComponentProps<"input">) {

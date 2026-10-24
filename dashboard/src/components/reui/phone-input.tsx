@@ -21,6 +21,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { GlobeIcon } from "lucide-react"
+import arLabels from "react-phone-number-input/locale/ar.json"
+import { language, t } from "@/lib/i18n"
 
 type PhoneInputSize = "sm" | "default" | "lg"
 
@@ -73,6 +75,7 @@ function PhoneInput({
         countrySelectComponent={CountrySelect}
         inputComponent={InputComponent}
         smartCaret={false}
+        labels={language === "ar" ? arLabels : undefined}
         value={value || undefined}
         onChange={(value) => onChange?.(value || ("" as BasePhoneInput.Value))}
         {...props}
@@ -86,8 +89,9 @@ function InputComponent({ className, ...props }: ComponentProps<typeof Input>) {
 
   return (
     <Input
+      dir="ltr"
       className={cn(
-        "rounded-s-none focus:z-1",
+        "rounded-s-none text-start focus:z-1",
         variant === "sm" && "h-7",
         variant === "lg" && "h-9",
         className
@@ -136,7 +140,7 @@ function CountrySelect({
           )}
           disabled={disabled}
         >
-          <span className="sr-only">Select country</span>
+          <span className="sr-only">{t("Select country")}</span>
           <FlagComponent country={selectedCountry} countryName={selectedCountry} />
         </Button>
       </PopoverTrigger>
@@ -146,12 +150,12 @@ function CountrySelect({
       >
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Search country"
+            placeholder={t("Search country")}
             value={searchValue}
             onValueChange={setSearchValue}
           />
           <CommandList>
-            <CommandEmpty>No country found.</CommandEmpty>
+            <CommandEmpty>{t("No country found.")}</CommandEmpty>
             {filteredCountries.map((item) =>
               item.value ? (
                 <CommandItem

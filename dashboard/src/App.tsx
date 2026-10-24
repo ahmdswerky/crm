@@ -3,9 +3,13 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation, useSearchParams } 
 import { AuthProvider, useAuth } from "@/auth/auth-provider"
 import { LoginPage } from "@/pages/auth/login"
 import { ErrorState } from "@/components/shared/error-state"
+import { t } from "@/lib/i18n"
 
 const AppShell = lazy(() => import("@/components/shared/app-shell").then(({ AppShell }) => ({ default: AppShell })))
 const OverviewPage = lazy(() => import("@/pages/overview").then(({ OverviewPage }) => ({ default: OverviewPage })))
+const ActivitiesPage = lazy(() => import("@/pages/activities").then(({ ActivitiesPage }) => ({ default: ActivitiesPage })))
+const ContactsPage = lazy(() => import("@/pages/contacts").then(({ ContactsPage }) => ({ default: ContactsPage })))
+const ContactDetailsPage = lazy(() => import("@/pages/contacts").then(({ ContactDetailsPage }) => ({ default: ContactDetailsPage })))
 const ReportsPage = lazy(() => import("@/pages/reports").then(({ ReportsPage }) => ({ default: ReportsPage })))
 const InvoicesPage = lazy(() => import("@/pages/invoices").then(({ InvoicesPage }) => ({ default: InvoicesPage })))
 const ApiDocsPage = lazy(() => import("@/pages/api-docs").then(({ ApiDocsPage }) => ({ default: ApiDocsPage })))
@@ -29,7 +33,7 @@ const RolesPage = lazy(() => import("@/pages/settings/roles").then(({ RolesPage 
 const ResourceDetailsPage = lazy(() => import("@/pages/resource-page").then(({ ResourceDetailsPage }) => ({ default: ResourceDetailsPage })))
 
 function WorkspaceLoading() {
-  return <div className="grid min-h-svh place-items-center text-sm text-muted-foreground" role="status">Loading workspace…</div>
+  return <div className="grid min-h-svh place-items-center text-sm text-muted-foreground" role="status">{t("Loading workspace…")}</div>
 }
 
 function LazyRoute({ children }: { children: ReactNode }) {
@@ -45,7 +49,7 @@ function Protected() {
   const { user, loading, error, refresh } = useAuth()
   const location = useLocation()
   if (loading) return <WorkspaceLoading />
-  if (error && !user) return <div className="min-h-svh"><ErrorState kind="unauthorized" title="Unable to verify your session" description={error} actionLabel="Retry" onAction={() => void refresh()} /></div>
+  if (error && !user) return <div className="min-h-svh"><ErrorState kind="unauthorized" title={t("Unable to verify your session")} description={error} actionLabel={t("Retry")} onAction={() => void refresh()} /></div>
   return user ? <LazyRoute><AppShell /></LazyRoute> : <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />
 }
 
@@ -64,6 +68,9 @@ function AuthenticatedApp() {
     <Route path="/login" element={<LoginPage />} />
     <Route element={<Protected />}>
       <Route index element={<LazyRoute><OverviewPage /></LazyRoute>} />
+      <Route path="activities" element={<LazyRoute><ActivitiesPage /></LazyRoute>} />
+      <Route path="contacts" element={<LazyRoute><ContactsPage /></LazyRoute>} />
+      <Route path="contacts/:contactId" element={<LazyRoute><ContactDetailsPage /></LazyRoute>} />
       <Route path="reports" element={<LazyRoute><ReportsPage /></LazyRoute>} />
       <Route path="invoices" element={<LazyRoute><InvoicesPage /></LazyRoute>} />
       <Route path="reports/:reportRunId" element={<LazyRoute><ReportDetailsPage /></LazyRoute>} />
@@ -87,9 +94,9 @@ function AuthenticatedApp() {
       <Route path="profile" element={<LazyRoute><ProfilePage /></LazyRoute>} />
       <Route path="settings" element={<Navigate to="/settings/roles" replace />} />
       <Route path="settings/roles" element={<LazyRoute><SuperOnly><RolesPage /></SuperOnly></LazyRoute>} />
-      <Route path="settings/roles/:resourceId" element={<LazyRoute><SuperOnly><ResourceDetailsPage title="Role details" eyebrow="CRM / Access" description="The role and its permissions." endpoint="/v1/roles" envelopeKey="role" backPath="/settings/roles" fields={[{ key: "name", label: "Name" }, { key: "guard_name", label: "Guard" }, { key: "permissions", label: "Permissions" }]} /></SuperOnly></LazyRoute>} />
+      <Route path="settings/roles/:resourceId" element={<LazyRoute><SuperOnly><ResourceDetailsPage title={t("Role details")} eyebrow={t("CRM / Access")} description={t("The role and its permissions.")} endpoint="/v1/roles" envelopeKey="role" backPath="/settings/roles" fields={[{ key: "name", label: t("Name") }, { key: "guard_name", label: t("Guard") }, { key: "permissions", label: t("Permissions") }]} /></SuperOnly></LazyRoute>} />
     </Route>
-    <Route path="*" element={<ErrorState kind="not-found" title="Page not found" description="The page you are looking for does not exist or may have moved." actionLabel="Return to overview" actionTo="/" />} />
+    <Route path="*" element={<ErrorState kind="not-found" title={t("Page not found")} description={t("The page you are looking for does not exist or may have moved.")} actionLabel={t("Return to overview")} actionTo="/" />} />
   </Routes></AuthProvider>
 }
 

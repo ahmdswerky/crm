@@ -3,10 +3,11 @@ import { format } from "date-fns"
 import { CalendarDays, Clock3, X } from "lucide-react"
 import type { DateRange } from "react-day-picker"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar, dateLocale } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { locale, t } from "@/lib/i18n"
 
 function parseDate(value?: string) {
   if (!value) return undefined
@@ -24,14 +25,14 @@ function formatDateValue(date?: Date) {
 
 function formatDateLabel(value?: string) {
   const date = parseDate(value)
-  return date ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(date) : ""
+  return date ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date) : ""
 }
 
 function rangeFromValues(from?: string, to?: string): DateRange | undefined {
   return from || to ? { from: parseDate(from), to: parseDate(to) } : undefined
 }
 
-function DatePicker({ value, onChange, placeholder = "Pick a date", className, disabled, clearable = false }: { value?: string; onChange: (value: string) => void; placeholder?: string; className?: string; disabled?: boolean; clearable?: boolean }) {
+function DatePicker({ value, onChange, placeholder = t("Pick a date"), className, disabled, clearable = false }: { value?: string; onChange: (value: string) => void; placeholder?: string; className?: string; disabled?: boolean; clearable?: boolean }) {
   const [open, setOpen] = useState(false)
   const date = useMemo(() => parseDate(value), [value])
   return <Popover open={open} onOpenChange={setOpen}>
@@ -42,12 +43,12 @@ function DatePicker({ value, onChange, placeholder = "Pick a date", className, d
     </PopoverTrigger>
     <PopoverContent className="w-auto p-0" align="start">
       <Calendar mode="single" selected={date} onSelect={(selected) => { const next = formatDateValue(selected); if (next !== value) onChange(next); if (selected) setOpen(false) }} />
-      {clearable && value && <div className="border-t border-border p-2"><Button type="button" variant="ghost" size="sm" className="w-full" onClick={() => { onChange(""); setOpen(false) }}><X className="me-2 size-3.5" />Clear date</Button></div>}
+      {clearable && value && <div className="border-t border-border p-2"><Button type="button" variant="ghost" size="sm" className="w-full" onClick={() => { onChange(""); setOpen(false) }}><X className="me-2 size-3.5" />{t("Clear date")}</Button></div>}
     </PopoverContent>
   </Popover>
 }
 
-function DateRangePicker({ from, to, onChange, placeholder = "Pick a date range", className }: { from?: string; to?: string; onChange: (range: { from: string; to: string }) => void; placeholder?: string; className?: string }) {
+function DateRangePicker({ from, to, onChange, placeholder = t("Pick a date range"), className }: { from?: string; to?: string; onChange: (range: { from: string; to: string }) => void; placeholder?: string; className?: string }) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => rangeFromValues(from, to))
 
   useEffect(() => {
@@ -79,17 +80,17 @@ function DateRangePicker({ from, to, onChange, placeholder = "Pick a date range"
     <PopoverTrigger asChild>
       <Button type="button" variant="outline" data-empty={!dateRange?.from} className={cn("h-8 w-full min-w-0 justify-start rounded-lg border-input bg-transparent px-2.5 py-1 text-start text-sm font-normal shadow-none transition-none active:translate-y-0 data-[empty=true]:text-muted-foreground dark:bg-input/30", !dateRange?.from && "text-muted-foreground", className)}>
         <CalendarDays className="me-2 size-4" aria-hidden="true" />
-        {dateRange?.from ? dateRange.to ? <>{format(dateRange.from, "LLL dd, y")} – {format(dateRange.to, "LLL dd, y")}</> : format(dateRange.from, "LLL dd, y") : <span>{placeholder}</span>}
+        {dateRange?.from ? dateRange.to ? <>{format(dateRange.from, "LLL dd, y", { locale: dateLocale })} – {format(dateRange.to, "LLL dd, y", { locale: dateLocale })}</> : format(dateRange.from, "LLL dd, y", { locale: dateLocale }) : <span>{placeholder}</span>}
       </Button>
     </PopoverTrigger>
     <PopoverContent className="w-auto p-0" align="start">
       <Calendar autoFocus mode="range" resetOnSelect defaultMonth={dateRange?.from} selected={dateRange} onSelect={selectRange} numberOfMonths={2} />
-      {dateRange?.from && <div className="border-t border-border p-2"><Button type="button" variant="ghost" size="sm" className="w-full" onClick={clearRange}><X className="me-2 size-3.5" />Clear range</Button></div>}
+      {dateRange?.from && <div className="border-t border-border p-2"><Button type="button" variant="ghost" size="sm" className="w-full" onClick={clearRange}><X className="me-2 size-3.5" />{t("Clear range")}</Button></div>}
     </PopoverContent>
   </Popover>
 }
 
-function DateTimePicker({ value, onChange, placeholder = "Pick date and time", className }: { value?: string; onChange: (value: string) => void; placeholder?: string; className?: string }) {
+function DateTimePicker({ value, onChange, placeholder = t("Pick date and time"), className }: { value?: string; onChange: (value: string) => void; placeholder?: string; className?: string }) {
   const [open, setOpen] = useState(false)
   const date = useMemo(() => parseDate(value), [value])
   const time = value?.slice(11, 16) || "09:00"
@@ -103,8 +104,8 @@ function DateTimePicker({ value, onChange, placeholder = "Pick date and time", c
     </PopoverTrigger>
     <PopoverContent className="w-auto p-0" align="start">
       <Calendar mode="single" selected={date} onSelect={(selected) => update(selected)} />
-      <div className="flex items-center gap-2 border-t border-border p-3"><Clock3 className="size-4 text-muted-foreground" aria-hidden="true" /><label htmlFor="date-time-picker-time" className="text-xs font-medium text-muted-foreground">Time</label><Input id="date-time-picker-time" type="time" value={time} disabled={!date} onChange={(event) => update(date, event.target.value)} className="w-32" /></div>
-      {value && <div className="border-t border-border p-2"><Button type="button" variant="ghost" size="sm" className="w-full" onClick={() => { onChange(""); setOpen(false) }}><X className="me-2 size-3.5" />Clear date</Button></div>}
+      <div className="flex items-center gap-2 border-t border-border p-3"><Clock3 className="size-4 text-muted-foreground" aria-hidden="true" /><label htmlFor="date-time-picker-time" className="text-xs font-medium text-muted-foreground">{t("Time")}</label><Input id="date-time-picker-time" type="time" value={time} disabled={!date} onChange={(event) => update(date, event.target.value)} dir="ltr" className="w-32" /></div>
+      {value && <div className="border-t border-border p-2"><Button type="button" variant="ghost" size="sm" className="w-full" onClick={() => { onChange(""); setOpen(false) }}><X className="me-2 size-3.5" />{t("Clear date")}</Button></div>}
     </PopoverContent>
   </Popover>
 }

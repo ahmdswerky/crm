@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ChangeEvent, type DragEvent } 
 import { Check, FileImage, LoaderCircle, UploadCloud, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { t } from "@/lib/i18n"
 
 type QueueStatus = "queued" | "uploading" | "processing" | "error"
 
@@ -56,7 +57,7 @@ function revokePreviewUrl(url: string) {
   if (url && typeof URL.revokeObjectURL === "function") URL.revokeObjectURL(url)
 }
 
-export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false, emptyTitle, emptyDescription, ariaLabel, ariaLabelledBy, className, uploadLabel, uploadMode = "immediate", autoUpload = false, deferredDescription = "Images upload after this record is created.", queueLayout = "horizontal", onUpload, onFilesChange }: MediaDropzoneProps) {
+export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false, emptyTitle, emptyDescription, ariaLabel, ariaLabelledBy, className, uploadLabel, uploadMode = "immediate", autoUpload = false, deferredDescription = t("Images upload after this record is created."), queueLayout = "horizontal", onUpload, onFilesChange }: MediaDropzoneProps) {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const queueRef = useRef<QueuedFile[]>([])
@@ -74,18 +75,18 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     if (disabled || !inputFiles.length) return
     const remaining = Math.max(0, maxFiles - queue.length)
     if (!remaining) {
-      setMessage(`This field accepts up to ${maxFiles} ${maxFiles === 1 ? "image" : "images"} at a time.`)
+      setMessage(t("This field accepts up to {count} image(s) at a time.", { count: maxFiles }))
       return
     }
 
     if (inputFiles.length > remaining) {
-      setMessage(`Choose up to ${remaining} more ${remaining === 1 ? "image" : "images"}.`)
+      setMessage(t("Choose up to {count} more image(s).", { count: remaining }))
       return
     }
 
     const invalid = inputFiles.find((file) => !acceptedTypes.has(file.type) || file.size > maxFileSize)
     if (invalid) {
-      setMessage(`${invalid.name} must be a JPEG, PNG, WebP, or AVIF image under 10 MB.`)
+      setMessage(t("{name} must be a JPEG, PNG, WebP, or AVIF image under 10 MB.", { name: invalid.name }))
       return
     }
 
@@ -135,9 +136,9 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     try {
       await onUpload(files.map((item) => item.file))
       setQueue((current) => current.map((item) => ids.has(item.id) ? { ...item, status: "processing" } : item))
-      setMessage("Originals are stored. Optimized previews are processing in the background.")
+      setMessage(t("Originals are stored. Optimized previews are processing in the background."))
     } catch {
-      setQueue((current) => current.map((item) => ids.has(item.id) ? { ...item, status: "error", error: "Upload failed. Try again." } : item))
+      setQueue((current) => current.map((item) => ids.has(item.id) ? { ...item, status: "error", error: t("Upload failed. Try again.") } : item))
     }
   }
 
@@ -176,8 +177,8 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
       <input ref={inputRef} id={inputId} className="sr-only" type="file" accept={accept} multiple={multiple} disabled={disabled} onChange={onInputChange} />
       <div className="pointer-events-none space-y-2">
         <span className={cn("mx-auto grid size-10 place-items-center border border-border bg-background text-muted-foreground", isDragging && "border-primary text-primary")}><UploadCloud className="size-5" aria-hidden="true" /></span>
-        <div><p className="text-sm font-medium">{isDragging ? "Drop images to add them" : emptyTitle}</p><p className="mt-1 text-xs text-muted-foreground">{emptyDescription}</p></div>
-        <p className="text-xs font-medium text-primary">Browse files</p>
+        <div><p className="text-sm font-medium">{isDragging ? t("Drop images to add them") : emptyTitle}</p><p className="mt-1 text-xs text-muted-foreground">{emptyDescription}</p></div>
+        <p className="text-xs font-medium text-primary">{t("Browse files")}</p>
       </div>
     </div>
 
@@ -189,11 +190,11 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
     </div>}
 
     {queue.length > 0 && <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
-      <p className="text-xs text-muted-foreground">{queue.length} {queue.length === 1 ? "image" : "images"} {autoUpload ? "added" : "staged"}</p>
+      <p className="text-xs text-muted-foreground">{t(autoUpload ? "{count} image(s) added" : "{count} image(s) staged", { count: queue.length })}</p>
       <div className="flex gap-2">
-        {uploadMode === "deferred" ? <><p className="text-xs text-muted-foreground">{deferredDescription}</p><Button type="button" variant="ghost" size="sm" onClick={clearQueue}>Clear queue</Button></> : <><Button type="button" variant="ghost" size="sm" disabled={hasUploading} onClick={clearQueue}>Clear queue</Button>{(!autoUpload || queue.some((item) => item.status === "error")) && <Button type="button" size="sm" disabled={!queuedCount || hasUploading || disabled} onClick={() => void uploadQueue()}>
+        {uploadMode === "deferred" ? <><p className="text-xs text-muted-foreground">{deferredDescription}</p><Button type="button" variant="ghost" size="sm" onClick={clearQueue}>{t("Clear queue")}</Button></> : <><Button type="button" variant="ghost" size="sm" disabled={hasUploading} onClick={clearQueue}>{t("Clear queue")}</Button>{(!autoUpload || queue.some((item) => item.status === "error")) && <Button type="button" size="sm" disabled={!queuedCount || hasUploading || disabled} onClick={() => void uploadQueue()}>
           {hasUploading ? <LoaderCircle className="motion-safe:animate-spin" /> : <UploadCloud />}
-          {hasUploading ? "Uploading" : uploadLabel ?? `Upload ${queuedCount} ${queuedCount === 1 ? "image" : "images"}`}
+          {hasUploading ? t("Uploading") : uploadLabel ?? t("Upload {count} image(s)", { count: queuedCount })}
         </Button>}</>}
       </div>
     </div>}
@@ -202,11 +203,11 @@ export function MediaDropzone({ multiple = false, maxFiles = 1, disabled = false
 
 function QueueItem({ item, onRemove, disabled, fullWidth = false }: { item: QueuedFile; onRemove: () => void; disabled: boolean; fullWidth?: boolean }) {
   const isWorking = item.status === "uploading"
-  const status = item.status === "queued" ? "Ready to upload" : item.status === "uploading" ? "Uploading" : item.status === "processing" ? "Stored · processing queued" : item.error ?? "Upload failed"
+  const status = item.status === "queued" ? t("Ready to upload") : item.status === "uploading" ? t("Uploading") : item.status === "processing" ? t("Stored · processing queued") : item.error ?? t("Upload failed")
 
   return <article className={cn("relative flex overflow-hidden border border-border bg-card shadow-xs", fullWidth ? "w-full" : "w-80")}>
     <img src={item.previewUrl} alt="" className="size-16 shrink-0 object-cover" />
     <div className="min-w-0 flex-1 px-3 py-2"><p className="truncate text-xs font-medium" title={item.file.name}>{item.file.name}</p><p className="mt-0.5 text-[11px] text-muted-foreground">{fileType(item.file)} · {fileSize(item.file.size)}</p><div className="mt-2 flex items-center gap-1.5 text-[11px] text-muted-foreground">{item.status === "processing" ? <Check className="size-3 text-primary" /> : item.status === "error" ? <X className="size-3 text-destructive" /> : isWorking ? <LoaderCircle className="size-3 motion-safe:animate-spin" /> : <FileImage className="size-3" />}<span>{status}</span></div>{isWorking && <div className="mt-2 h-0.5 overflow-hidden bg-muted"><div className="h-full w-2/3 bg-primary motion-safe:animate-pulse" /></div>}</div>
-    <Button type="button" variant="ghost" size="icon-xs" className="absolute right-1 top-1" aria-label={`Remove ${item.file.name} from queue`} disabled={disabled} onClick={onRemove}><X /></Button>
+    <Button type="button" variant="ghost" size="icon-xs" className="absolute end-1 top-1" aria-label={t("Remove {name} from queue", { name: item.file.name })} disabled={disabled} onClick={onRemove}><X /></Button>
   </article>
 }

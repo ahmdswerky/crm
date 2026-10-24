@@ -32,6 +32,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
+import { t } from "@/lib/i18n"
 
 type Lead = MarketingComponents["schemas"]["Lead"]
 type Account = ContactComponents["schemas"]["Account"]
@@ -62,10 +63,10 @@ const filterMotionTransition = { type: "spring", stiffness: 500, damping: 42, ma
 const filterSlideTransition = { duration: 0.18, ease: [0.22, 1, 0.36, 1] as const }
 
 const statuses = [
-  { value: "pending", label: "New Lead", shortLabel: "New Lead", color: "bg-amber-500", wash: "bg-amber-500/10", text: "text-amber-800 dark:text-amber-200" },
-  { value: "contacted", label: "Contacted", shortLabel: "Contacted", color: "bg-blue-500", wash: "bg-blue-500/10", text: "text-blue-800 dark:text-blue-200" },
-  { value: "unqualified", label: "Rejected", shortLabel: "Rejected", color: "bg-red-500", wash: "bg-red-500/10", text: "text-red-800 dark:text-red-200" },
-  { value: "qualified", label: "Converted", shortLabel: "Converted", color: "bg-emerald-500", wash: "bg-emerald-500/10", text: "text-emerald-800 dark:text-emerald-200" },
+  { value: "pending", label: t("New Lead"), shortLabel: t("New Lead"), color: "bg-amber-500", wash: "bg-amber-500/10", text: "text-amber-800 dark:text-amber-200" },
+  { value: "contacted", label: t("Contacted"), shortLabel: t("Contacted"), color: "bg-blue-500", wash: "bg-blue-500/10", text: "text-blue-800 dark:text-blue-200" },
+  { value: "unqualified", label: t("Rejected"), shortLabel: t("Rejected"), color: "bg-red-500", wash: "bg-red-500/10", text: "text-red-800 dark:text-red-200" },
+  { value: "qualified", label: t("Converted"), shortLabel: t("Converted"), color: "bg-emerald-500", wash: "bg-emerald-500/10", text: "text-emerald-800 dark:text-emerald-200" },
 ] as const satisfies ReadonlyArray<{ value: LeadStatus; label: string; shortLabel: string; color: string; wash: string; text: string }>
 
 const sources: LeadSource[] = ["facebook", "whatsapp", "instagram", "x"]
@@ -158,7 +159,7 @@ export function LeadsKanbanPage() {
       setHasMore(Object.fromEntries(statuses.map((status) => [status.value, body.columns[status.value]?.has_more ?? false])) as LeadHasMoreState)
       setStats(body.stats ?? {})
     } catch (caught) {
-      if (!(caught instanceof DOMException && caught.name === "AbortError")) setError(caught instanceof Error ? caught.message : "Unable to load leads.")
+      if (!(caught instanceof DOMException && caught.name === "AbortError")) setError(caught instanceof Error ? caught.message : t("Unable to load leads."))
     } finally {
       if (!signal?.aborted) setLoading(emptyLoadingState())
     }
@@ -175,7 +176,7 @@ export function LeadsKanbanPage() {
       setCursors((current) => ({ ...current, [status]: body.next_cursor ?? null }))
       setHasMore((current) => ({ ...current, [status]: body.has_more ?? false }))
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to load leads.")
+      setError(caught instanceof Error ? caught.message : t("Unable to load leads."))
     } finally {
       setLoadingMore((current) => ({ ...current, [status]: false }))
     }
@@ -212,7 +213,7 @@ export function LeadsKanbanPage() {
     void apiJson<LeadEnvelope>(`${API_BASE_URL}/v1/leads/${selectedLeadId}`, { signal: controller.signal }).then((body) => {
       setSelectedLead(body.lead)
     }).catch((caught) => {
-      if (!(caught instanceof DOMException && caught.name === "AbortError")) setSelectedLeadError(caught instanceof Error ? caught.message : "Unable to load lead details.")
+      if (!(caught instanceof DOMException && caught.name === "AbortError")) setSelectedLeadError(caught instanceof Error ? caught.message : t("Unable to load lead details."))
     }).finally(() => {
       if (!controller.signal.aborted) setSelectedLeadLoading(false)
     })
@@ -237,7 +238,7 @@ export function LeadsKanbanPage() {
       setPreviewDeals(body.data)
       setPreviewDealsTotal(body.meta?.total ?? body.data.length)
     }).catch((caught) => {
-      if (!(caught instanceof DOMException && caught.name === "AbortError")) setPreviewDealsError(caught instanceof Error ? caught.message : "Unable to load deals.")
+      if (!(caught instanceof DOMException && caught.name === "AbortError")) setPreviewDealsError(caught instanceof Error ? caught.message : t("Unable to load deals."))
     }).finally(() => {
       if (!controller.signal.aborted) setPreviewDealsLoading(false)
     })
@@ -336,9 +337,9 @@ export function LeadsKanbanPage() {
       }
       setDeleteOpen(false)
       closeLeadPreview()
-      toast.success("Lead deleted.")
+      toast.success(t("Lead deleted."))
     } catch (caught) {
-      setDeleteError(caught instanceof Error ? caught.message : "Unable to delete this lead.")
+      setDeleteError(caught instanceof Error ? caught.message : t("Unable to delete this lead."))
     } finally {
       setDeletingLead(false)
     }
@@ -349,16 +350,16 @@ export function LeadsKanbanPage() {
     const name = values.name.trim()
     const email = values.email.trim()
     const phone = values.phone.trim()
-    if (!name) { toast.error("Name is required."); return false }
-    if (!phone) { toast.error("Phone is required."); return false }
-    if (!selectedLead.contact && !email) { toast.error("Email is required for a lead."); return false }
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) { toast.error("Enter a valid email address."); return false }
+    if (!name) { toast.error(t("Name is required.")); return false }
+    if (!phone) { toast.error(t("Phone is required.")); return false }
+    if (!selectedLead.contact && !email) { toast.error(t("Email is required for a lead.")); return false }
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) { toast.error(t("Enter a valid email address.")); return false }
     setUpdatingLeadInfo(true)
     try {
       if (selectedLead.contact) {
-        if (selectedLead.contact.id === undefined) { toast.error("This contact cannot be updated because its ID is missing."); return false }
+        if (selectedLead.contact.id === undefined) { toast.error(t("This contact cannot be updated because its ID is missing.")); return false }
         const accountId = selectedLead.contact.account?.id
-        if (accountId === undefined) { toast.error("This contact cannot be updated because its account ID is missing."); return false }
+        if (accountId === undefined) { toast.error(t("This contact cannot be updated because its account ID is missing.")); return false }
         const payload: LeadContactUpdatePayload = { name, phone, account_id: accountId, title: values.title.trim() || null, email: email || null, _method: "PUT" }
         const result = await apiJson<{ contact: ContactComponents["schemas"]["Contact"] }>(`${API_BASE_URL}/v1/contacts/${selectedLead.contact.id}`, { method: "POST", body: JSON.stringify(payload) })
         const savedContact = result.contact
@@ -370,10 +371,10 @@ export function LeadsKanbanPage() {
         setSelectedLead(result.lead)
         setLeads((current) => Object.fromEntries(statuses.map((status) => [status.value, current[status.value].map((item) => item.id === selectedLead.id ? { ...item, ...result.lead } : item)])) as LeadStatusState)
       }
-      toast.success("Information saved.")
+      toast.success(t("Information saved."))
       return true
     } catch (caught) {
-      toast.error(caught instanceof Error ? caught.message : "Unable to save the information.")
+      toast.error(caught instanceof Error ? caught.message : t("Unable to save the information."))
       return false
     } finally {
       setUpdatingLeadInfo(false)
@@ -393,7 +394,7 @@ export function LeadsKanbanPage() {
     const nextStatus = statusFor(overContainer)
     if (!lead || lead.id === undefined || !previousStatus || !nextStatus || previousStatus === nextStatus) return
     if (nextStatus === "qualified" && (!lead.company_name?.trim() || !(lead.assigned_agent_id ?? lead.assigned_agent?.id))) {
-      toast.error("Add a company and assign an agent before qualifying this lead.")
+      toast.error(t("Add a company and assign an agent before qualifying this lead."))
       return
     }
     setMovingId(id)
@@ -411,7 +412,7 @@ export function LeadsKanbanPage() {
         [nextStatus]: current[nextStatus].filter((item) => item.id !== id),
         [previousStatus]: (() => { const previousLeads = current[previousStatus].filter((item) => item.id !== id); previousLeads.splice(Math.min(Math.max(activeIndex, 0), previousLeads.length), 0, { ...lead, status: previousStatus }); return previousLeads })(),
       }))
-      toast.error(caught instanceof Error ? caught.message : "Unable to update the lead status.")
+      toast.error(caught instanceof Error ? caught.message : t("Unable to update the lead status."))
     } finally { setMovingId(null) }
   }
 
@@ -420,7 +421,7 @@ export function LeadsKanbanPage() {
     const previousStatus = statusFor(selectedLead.status)
     if (!previousStatus || previousStatus === nextStatus) return
     if (nextStatus === "qualified" && (!selectedLead.company_name?.trim() || !(selectedLead.assigned_agent_id ?? selectedLead.assigned_agent?.id))) {
-      toast.error("Add a company and assign an agent before qualifying this lead.")
+      toast.error(t("Add a company and assign an agent before qualifying this lead."))
       return
     }
     const id = selectedLead.id
@@ -445,7 +446,7 @@ export function LeadsKanbanPage() {
         [previousStatus]: (() => { const previousLeads = current[previousStatus].filter((item) => item.id !== id); previousLeads.splice(Math.min(Math.max(previousIndex, 0), previousLeads.length), 0, { ...boardLead, status: previousStatus }); return previousLeads })(),
       }))
       setTotals((current) => ({ ...current, [previousStatus]: current[previousStatus] + 1, [nextStatus]: Math.max(0, current[nextStatus] - 1) }))
-      toast.error(caught instanceof Error ? caught.message : "Unable to update the lead status.")
+      toast.error(caught instanceof Error ? caught.message : t("Unable to update the lead status."))
     } finally { setUpdatingLeadStatus(null) }
   }
 
@@ -469,7 +470,7 @@ export function LeadsKanbanPage() {
     } catch (caught) {
       setSelectedLead((current) => current ? updateAgent(current, previousAgentId, previousAgent) : current)
       if (boardLead) setLeads((current) => Object.fromEntries(statuses.map((status) => [status.value, current[status.value].map((lead) => lead.id === id ? updateAgent(lead, previousAgentId, previousAgent) : lead)])) as LeadStatusState)
-      toast.error(caught instanceof Error ? caught.message : "Unable to update the assigned agent.")
+      toast.error(caught instanceof Error ? caught.message : t("Unable to update the assigned agent."))
     } finally { setUpdatingLeadAgent(null) }
   }
 
@@ -488,7 +489,7 @@ export function LeadsKanbanPage() {
       })
     } catch (caught) {
       setSelectedLead((current) => current?.contact ? { ...current, contact: { ...current.contact, account: previousAccount } } : current)
-      toast.error(caught instanceof Error ? caught.message : "Unable to update the account.")
+      toast.error(caught instanceof Error ? caught.message : t("Unable to update the account."))
     } finally { setUpdatingLeadAccount(null) }
   }
 
@@ -523,16 +524,16 @@ export function LeadsKanbanPage() {
       setCreateOpen(false)
       createForm.reset(emptyValues)
       await loadBoard()
-      toast.success("Lead created.")
+      toast.success(t("Lead created."))
     } catch (caught) {
       if (caught instanceof ApiError) Object.entries(caught.fields).forEach(([field, messages]) => createForm.setError(field as keyof LeadFormValues, { message: messages[0] }))
-      setCreateError(caught instanceof Error ? caught.message : "Unable to create this lead.")
+      setCreateError(caught instanceof Error ? caught.message : t("Unable to create this lead."))
     } finally {
       setCreatingLead(false)
     }
   })
 
-  if (!can("lead.view")) return <ErrorState kind="forbidden" title="Lead access is restricted" description="You do not have permission to view leads." actionLabel="Return to overview" actionTo="/" />
+  if (!can("lead.view")) return <ErrorState kind="forbidden" title={t("Lead access is restricted")} description={t("You do not have permission to view leads.")} actionLabel={t("Return to overview")} actionTo="/" />
   const progressTotal = statuses.reduce((sum, status) => sum + statCount(stats, status.value), 0)
   const progressSegments = statuses.map((status) => {
     const value = statCount(stats, status.value)
@@ -547,9 +548,9 @@ export function LeadsKanbanPage() {
   displayedStatuses.forEach((status) => { visibleLeadCount += leads[status.value].length })
 
   return <div className="space-y-6 p-6 lg:p-8">
-    <div><h1 className="text-2xl font-semibold tracking-tight">Pipeline</h1><p className="mt-1 text-sm text-muted-foreground">Capture and qualify the next conversation.</p></div>
-    <section className="rounded-md bg-card p-4 shadow-sm" aria-label="Lead status distribution">
-      {statsLoading ? <LeadStatusDistributionSkeleton /> : <div className="relative grid w-full min-w-0 items-end pt-0" role="img" aria-label="Lead status distribution" style={{ gridTemplateColumns: progressGridColumns }}>
+    <div><h1 className="text-2xl font-semibold tracking-tight">{t("Pipeline")}</h1><p className="mt-1 text-sm text-muted-foreground">{t("Capture and qualify the next conversation.")}</p></div>
+    <section className="rounded-md bg-card p-4 shadow-sm" aria-label={t("Lead status distribution")}>
+      {statsLoading ? <LeadStatusDistributionSkeleton /> : <div className="relative grid w-full min-w-0 items-end pt-0" role="img" aria-label={t("Lead status distribution")} style={{ gridTemplateColumns: progressGridColumns }}>
           <div className="absolute inset-x-0 bottom-0 h-2 rounded-full bg-muted" />
           {progressSegments.map(({ status, value }, index) => <div key={status.value} className="relative z-10 min-w-0">
             {value > 0 && index !== lastProgressLabelIndex && <span className="pointer-events-none block min-w-0 mb-4 break-words font-mono text-xs font-semibold tabular-nums text-foreground">{value} {status.label}</span>}
@@ -561,39 +562,39 @@ export function LeadsKanbanPage() {
     <div className="relative">
       <div className="flex items-end justify-between gap-4">
         <div className="filter-tab filter-tab-roundout ms-3">
-          <button type="button" aria-expanded={filtersOpen} aria-controls="leads-filter-panel" onClick={() => setFiltersOpen((open) => !open)} className="filter-tab-roundout-button inline-flex items-center gap-1.5 rounded-t-md px-3 py-1.5 text-sm font-medium text-foreground transition-colors"><Funnel className="size-3.5" aria-hidden="true" /><span>Filter</span><motion.span animate={{ rotate: filtersOpen ? 180 : 0 }} transition={filterMotionTransition} className="inline-flex"><ChevronDown className="size-4" aria-hidden="true" /></motion.span></button>
+          <button type="button" aria-expanded={filtersOpen} aria-controls="leads-filter-panel" onClick={() => setFiltersOpen((open) => !open)} className="filter-tab-roundout-button inline-flex items-center gap-1.5 rounded-t-md px-3 py-1.5 text-sm font-medium text-foreground transition-colors"><Funnel className="size-3.5" aria-hidden="true" /><span>{t("Filter")}</span><motion.span animate={{ rotate: filtersOpen ? 180 : 0 }} transition={filterMotionTransition} className="inline-flex"><ChevronDown className="size-4" aria-hidden="true" /></motion.span></button>
         </div>
         <div className="mb-1 flex shrink-0 gap-2">
-          <Button type="button" variant="outline" className="shrink-0" onClick={refreshLeads} disabled={statsLoading || Object.values(loading).some(Boolean) || Object.values(loadingMore).some(Boolean)}><RefreshCw className="size-4" />Refresh</Button>
-          {can("lead.create") && <Button type="button" variant="outline" aria-label="Add new lead" onClick={openCreateLead}><Plus className="size-4" />Add new lead</Button>}
+          <Button type="button" variant="outline" className="shrink-0" onClick={refreshLeads} disabled={statsLoading || Object.values(loading).some(Boolean) || Object.values(loadingMore).some(Boolean)}><RefreshCw className="size-4" />{t("Refresh")}</Button>
+          {can("lead.create") && <Button type="button" variant="outline" aria-label={t("Add new lead")} onClick={openCreateLead}><Plus className="size-4" />{t("Add new lead")}</Button>}
         </div>
       </div>
       <motion.div initial={false} animate={{ height: filtersOpen ? "auto" : 0 }} transition={filterSlideTransition} className="overflow-hidden">
         <div className="search-filter-card rounded-md bg-muted/60 shadow-sm dark:bg-muted/70">
           <div className="p-4">
             <div id="leads-filter-panel" aria-hidden={!filtersOpen}>
-              <div className={`grid gap-3 pb-4 md:items-end ${isAgentUser ? "md:grid-cols-[minmax(0,1fr)_minmax(8rem,10rem)_9rem]" : "md:grid-cols-[minmax(0,1fr)_minmax(8rem,10rem)_9rem_minmax(13rem,16rem)]"}`}><div className="md:w-1/4 md:min-w-64"><label className="text-xs font-medium text-muted-foreground" htmlFor="lead-kanban-search">Search leads</label><div className="relative mt-1"><Search className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input id="lead-kanban-search" className="ps-8" value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder="Name, email, or phone" /></div></div><div><label className="text-xs font-medium text-muted-foreground">Status</label><ButtonGroup aria-label="Filter by status" className="mt-1 max-w-full overflow-hidden rounded-lg border border-input bg-transparent dark:bg-input/30">{statuses.map((status) => { const selected = statusFilters.includes(status.value); return <Tooltip key={status.value}><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" aria-label={status.label} aria-pressed={selected} onClick={() => toggleStatusFilter(status.value)} className={selected ? `${status.wash} ${status.text}` : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}><span className={`size-2.5 rounded-full ${status.color}`} /></Button></TooltipTrigger><TooltipContent side="top">{status.label}</TooltipContent></Tooltip> })}</ButtonGroup></div><div><label className="text-xs font-medium text-muted-foreground" htmlFor="lead-kanban-source">Source</label><Select value={sourceFilter || "all"} onValueChange={(value) => updateFilter("source", value === "all" ? "" : value)}><SelectTrigger id="lead-kanban-source" className="mt-1 w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All sources</SelectItem>{sources.map((source) => <SelectItem key={source} value={source}><SourceOption source={source} /></SelectItem>)}</SelectContent></Select></div>{!isAgentUser && <SearchableResourcePicker id="lead-kanban-agent" label="Assigned agent" labelStyle="plain" value={assignedAgentId} onChange={(value) => updateFilter("assigned_agent", value ? String(value) : "")} loadOptions={loadAgentOptions} placeholder="All agents" searchPlaceholder="Search agents…" loadingLabel="Loading agents…" emptyLabel="No agents found." noResultsLabel="No agents match your search." renderOption={(option) => <AgentOption option={option} />} renderSelectedOption={(option) => <AgentOption option={option} />} />}</div>
-              {hasFilters && <div className="flex justify-end"><Button variant="ghost" size="sm" onClick={clearFilters}><X className="me-1.5 size-3.5" />Clear</Button></div>}
+              <div className={`grid gap-3 pb-4 md:items-end ${isAgentUser ? "md:grid-cols-[minmax(0,1fr)_minmax(8rem,10rem)_9rem]" : "md:grid-cols-[minmax(0,1fr)_minmax(8rem,10rem)_9rem_minmax(13rem,16rem)]"}`}><div className="md:w-1/4 md:min-w-64"><label className="text-xs font-medium text-muted-foreground" htmlFor="lead-kanban-search">{t("Search leads")}</label><div className="relative mt-1"><Search className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input id="lead-kanban-search" className="ps-8" value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder={t("Name, email, or phone")} /></div></div><div><label className="text-xs font-medium text-muted-foreground">{t("Status")}</label><ButtonGroup aria-label={t("Filter by status")} className="mt-1 max-w-full overflow-hidden rounded-lg border border-input bg-transparent dark:bg-input/30">{statuses.map((status) => { const selected = statusFilters.includes(status.value); return <Tooltip key={status.value}><TooltipTrigger asChild><Button type="button" variant="ghost" size="icon-sm" aria-label={status.label} aria-pressed={selected} onClick={() => toggleStatusFilter(status.value)} className={selected ? `${status.wash} ${status.text}` : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}><span className={`size-2.5 rounded-full ${status.color}`} /></Button></TooltipTrigger><TooltipContent side="top">{status.label}</TooltipContent></Tooltip> })}</ButtonGroup></div><div><label className="text-xs font-medium text-muted-foreground" htmlFor="lead-kanban-source">{t("Source")}</label><Select value={sourceFilter || "all"} onValueChange={(value) => updateFilter("source", value === "all" ? "" : value)}><SelectTrigger id="lead-kanban-source" className="mt-1 w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">{t("All sources")}</SelectItem>{sources.map((source) => <SelectItem key={source} value={source}><SourceOption source={source} /></SelectItem>)}</SelectContent></Select></div>{!isAgentUser && <SearchableResourcePicker id="lead-kanban-agent" label={t("Assigned agent")} labelStyle="plain" value={assignedAgentId} onChange={(value) => updateFilter("assigned_agent", value ? String(value) : "")} loadOptions={loadAgentOptions} placeholder={t("All agents")} searchPlaceholder={t("Search agents…")} loadingLabel={t("Loading agents…")} emptyLabel={t("No agents found.")} noResultsLabel={t("No agents match your search.")} renderOption={(option) => <AgentOption option={option} />} renderSelectedOption={(option) => <AgentOption option={option} />} />}</div>
+              {hasFilters && <div className="flex justify-end"><Button variant="ghost" size="sm" onClick={clearFilters}><X className="me-1.5 size-3.5" />{t("Clear")}</Button></div>}
             </div>
           </div>
         </div>
       </motion.div>
     </div>
-    {error && <div role="alert" className="bg-destructive/5 p-3 text-sm text-destructive">{error}<Button variant="link" size="sm" className="ms-2 h-auto px-0 text-destructive" onClick={() => void refreshLeads()}>Try again</Button></div>}
+    {error && <div role="alert" className="bg-destructive/5 p-3 text-sm text-destructive">{error}<Button variant="link" size="sm" className="ms-2 h-auto px-0 text-destructive" onClick={() => void refreshLeads()}>{t("Try again")}</Button></div>}
     <Kanban value={leads} onValueChange={() => {}} getItemValue={(item) => String(item.id)} onMove={(event) => void moveLead(event)}><KanbanBoard>{displayedStatuses.map((status) => <LeadColumn key={status.value} status={status} leads={leads[status.value]} total={totals[status.value]} loading={loading[status.value]} loadingMore={loadingMore[status.value]} canLoadMore={hasMore[status.value]} onLoadMore={() => void loadColumn(status.value)} movingId={movingId} canEdit={can("lead.edit")} onOpenLead={openLeadPreview} />)}</KanbanBoard><KanbanOverlay>{({ value, width }) => { const lead = allLeads.find((item) => String(item.id) === value); return lead ? <LeadCardOverlay lead={lead} width={width} /> : null }}</KanbanOverlay></Kanban>
     <LeadPreviewDialog open={selectedLeadId !== null} lead={selectedLead} loading={selectedLeadLoading} error={selectedLeadError} deals={previewDeals} dealsTotal={previewDealsTotal} dealsLoading={previewDealsLoading} dealsError={previewDealsError} isSuper={isSuper} canEdit={can("lead.edit")} canDelete={can("lead.delete")} canEditInfo={selectedLead?.contact ? can("contact.edit") : can("lead.edit")} canEditAccount={can("contact.edit")} updatingStatus={updatingLeadStatus === selectedLead?.id} updatingAgent={updatingLeadAgent === selectedLead?.id} updatingAccount={updatingLeadAccount === selectedLead?.id} updatingInfo={updatingLeadInfo} deleting={deletingLead} loadAgentOptions={loadAgentOptions} loadAccountOptions={loadAccountOptions} onStatusChange={(status) => void updateLeadStatus(status)} onAgentChange={(agentId, option) => void updateLeadAgent(agentId, option)} onAccountChange={(accountId, option) => void updateLeadAccount(accountId, option)} onInfoSave={updateLeadInfo} onNameSave={updateLeadName} onDelete={requestDeleteLead} onOpenChange={(open) => { if (!open) closeLeadPreview() }} />
     <Dialog open={createOpen} onOpenChange={(open) => open ? setCreateOpen(true) : closeCreateLead()}>
       <DialogContent className="grid-rows-[auto_minmax(0,1fr)_auto] max-h-[80vh] min-w-3xl max-w-5xl overflow-hidden">
-        <DialogHeader><DialogTitle>Create lead</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("Create lead")}</DialogTitle></DialogHeader>
         {createError && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{createError}</div>}
         <div className="min-h-0 overflow-y-auto overscroll-contain pe-1">
-          <LeadForm create modal form={createForm} formId="lead-create-modal-form" title="Create lead" saving={creatingLead} onCancel={closeCreateLead} onSubmit={submitCreateLead} />
+          <LeadForm create modal form={createForm} formId="lead-create-modal-form" title={t("Create lead")} saving={creatingLead} onCancel={closeCreateLead} onSubmit={submitCreateLead} />
         </div>
-        <div className="flex justify-end gap-2 border-t border-border pt-4"><Button type="button" variant="outline" onClick={closeCreateLead} disabled={creatingLead}>Cancel</Button><Button type="submit" form="lead-create-modal-form" disabled={creatingLead}>{creatingLead ? "Creating…" : "Create"}</Button></div>
+        <div className="flex justify-end gap-2 border-t border-border pt-4"><Button type="button" variant="outline" onClick={closeCreateLead} disabled={creatingLead}>{t("Cancel")}</Button><Button type="submit" form="lead-create-modal-form" disabled={creatingLead}>{creatingLead ? t("Creating…") : t("Create")}</Button></div>
       </DialogContent>
     </Dialog>
-    <ResourceDeleteDialog open={deleteOpen} onOpenChange={(open) => { if (!open && !deletingLead) { setDeleteOpen(false); setDeleteError("") } }} title={`Delete ${selectedLead?.name ?? "this lead"}?`} description={<>This permanently removes {selectedLead?.name ?? "this lead"}. This action cannot be undone.</>} confirmLabel="Delete lead" pending={deletingLead} error={deleteError} onConfirm={deleteLead} />
-    {!hasLoading && !visibleLeadCount && <div className="px-5 py-12 text-center text-sm text-muted-foreground">{hasFilters ? "No leads match these filters." : "No leads found."}</div>}
+    <ResourceDeleteDialog open={deleteOpen} onOpenChange={(open) => { if (!open && !deletingLead) { setDeleteOpen(false); setDeleteError("") } }} title={t("Delete {name}?", { name: selectedLead?.name ?? t("this lead") })} description={t("This permanently removes {name}. This action cannot be undone.", { name: selectedLead?.name ?? t("this lead") })} confirmLabel={t("Delete lead")} pending={deletingLead} error={deleteError} onConfirm={deleteLead} />
+    {!hasLoading && !visibleLeadCount && <div className="px-5 py-12 text-center text-sm text-muted-foreground">{hasFilters ? t("No leads match these filters.") : t("No leads found.")}</div>}
   </div>
 }
 
@@ -610,7 +611,7 @@ function LeadColumn({ status, leads, total, loading, loadingMore, canLoadMore, o
   }, [])
 
   const visibleLeads = uniqueLeads(leads)
-  return <KanbanColumn value={status.value}><span ref={columnTopRef} className="pointer-events-none absolute top-0 size-px" aria-hidden="true" /><header className={`sticky top-0 z-10 flex items-center justify-between rounded-t-xl bg-card px-3 py-3 transition-shadow duration-200 ${headerStuck ? "shadow-[0_6px_10px_-6px_rgb(15_23_42_/_0.35)]" : ""}`}><div className="flex min-w-0 items-center gap-2"><span className={`size-2 rounded-full ${status.color}`} /><h2 className={`truncate text-sm font-semibold ${status.text}`}>{status.shortLabel}</h2></div><Badge variant="secondary" className="font-mono text-xs tabular-nums">{total}</Badge></header><KanbanColumnContent value={status.value}>{loading && !visibleLeads.length ? <ColumnSkeleton /> : visibleLeads.map((lead, index) => <Fragment key={`${status.value}-${lead.id ?? `${lead.email}-${lead.phone}-${index}`}`}><KanbanDropPlaceholder value={status.value} index={index}><LeadCardPlaceholder /></KanbanDropPlaceholder><LeadCard lead={lead} moving={movingId === lead.id} canEdit={canEdit} onOpen={() => onOpenLead(lead)} /></Fragment>)}<KanbanDropPlaceholder value={status.value} index={visibleLeads.length}><LeadCardPlaceholder /></KanbanDropPlaceholder>{!loading && !visibleLeads.length && <div className="flex flex-col items-center justify-center px-3 py-10 text-center text-muted-foreground"><span className="mb-2 flex size-9 items-center justify-center rounded-full bg-background/80 shadow-sm"><Inbox className="size-4" aria-hidden="true" /></span><p className="text-xs font-medium text-foreground/70">No leads in this stage.</p></div>}<ColumnLoadTrigger enabled={canLoadMore} loading={loadingMore} onLoadMore={onLoadMore} /></KanbanColumnContent></KanbanColumn>
+  return <KanbanColumn value={status.value}><span ref={columnTopRef} className="pointer-events-none absolute top-0 size-px" aria-hidden="true" /><header className={`sticky top-0 z-10 flex items-center justify-between rounded-t-xl bg-card px-3 py-3 transition-shadow duration-200 ${headerStuck ? "shadow-[0_6px_10px_-6px_rgb(15_23_42_/_0.35)]" : ""}`}><div className="flex min-w-0 items-center gap-2"><span className={`size-2 rounded-full ${status.color}`} /><h2 className={`truncate text-sm font-semibold ${status.text}`}>{status.shortLabel}</h2></div><Badge variant="secondary" className="font-mono text-xs tabular-nums">{total}</Badge></header><KanbanColumnContent value={status.value}>{loading && !visibleLeads.length ? <ColumnSkeleton /> : visibleLeads.map((lead, index) => <Fragment key={`${status.value}-${lead.id ?? `${lead.email}-${lead.phone}-${index}`}`}><KanbanDropPlaceholder value={status.value} index={index}><LeadCardPlaceholder /></KanbanDropPlaceholder><LeadCard lead={lead} moving={movingId === lead.id} canEdit={canEdit} onOpen={() => onOpenLead(lead)} /></Fragment>)}<KanbanDropPlaceholder value={status.value} index={visibleLeads.length}><LeadCardPlaceholder /></KanbanDropPlaceholder>{!loading && !visibleLeads.length && <div className="flex flex-col items-center justify-center px-3 py-10 text-center text-muted-foreground"><span className="mb-2 flex size-9 items-center justify-center rounded-full bg-background/80 shadow-sm"><Inbox className="size-4" aria-hidden="true" /></span><p className="text-xs font-medium text-foreground/70">{t("No leads in this stage.")}</p></div>}<ColumnLoadTrigger enabled={canLoadMore} loading={loadingMore} onLoadMore={onLoadMore} /></KanbanColumnContent></KanbanColumn>
 }
 
 function LeadCard({ lead, moving = false, canEdit = false, onOpen }: { lead: Lead; moving?: boolean; canEdit?: boolean; onOpen: () => void }) {
@@ -642,7 +643,7 @@ function LeadCardContent({ lead, moving = false }: { lead: Lead; moving?: boolea
   const displayName = lead.contact?.name ?? lead.name
   const displayPhone = lead.contact ? lead.contact.phone : lead.phone
   const displayEmail = lead.contact ? lead.contact.email : lead.email
-  return <article className={`w-full rounded-xl bg-background p-3 shadow-md ${moving ? "opacity-60" : ""}`}><div className="flex items-start gap-2.5"><PersonAvatar name={displayName} size="sm" /><h3 className="min-w-0 flex-1 truncate pt-0.5 text-sm font-semibold">{displayName}</h3></div><div className="mt-3 space-y-1.5 text-xs text-muted-foreground">{displayPhone && <span className="flex items-center gap-2 truncate"><Phone className="size-3 shrink-0" aria-hidden="true" />{displayPhone}</span>}{displayEmail && <span className="flex items-center gap-2 truncate"><Mail className="size-3 shrink-0" aria-hidden="true" />{displayEmail}</span>}</div><footer className="-mx-3 -mb-3 mt-3 flex items-center justify-between rounded-b-xl bg-foreground/10 px-3 py-2.5">{lead.source ? <span aria-label={`Source: ${lead.source}`} className={`inline-flex items-center ${sourceBrandClass[lead.source]}`}><SourceMark source={lead.source} /></span> : <span />}{lead.assigned_agent ? <span className="flex min-w-0 items-center gap-1.5"><span className="max-w-28 truncate text-xs text-muted-foreground">{lead.assigned_agent.name}</span><PersonAvatar name={lead.assigned_agent.name} avatar={lead.assigned_agent.avatar} size="sm" aria-label={`Assigned agent ${lead.assigned_agent.name}`} /></span> : <span />}</footer></article>
+  return <article className={`w-full rounded-xl bg-background p-3 shadow-md ${moving ? "opacity-60" : ""}`}><div className="flex items-start gap-2.5"><PersonAvatar name={displayName} size="sm" /><h3 className="min-w-0 flex-1 truncate pt-0.5 text-sm font-semibold">{displayName}</h3></div><div className="mt-3 space-y-1.5 text-xs text-muted-foreground">{displayPhone && <span className="flex items-center gap-2 truncate"><Phone className="size-3 shrink-0" aria-hidden="true" />{displayPhone}</span>}{displayEmail && <span className="flex items-center gap-2 truncate"><Mail className="size-3 shrink-0" aria-hidden="true" />{displayEmail}</span>}</div><footer className="-mx-3 -mb-3 mt-3 flex items-center justify-between rounded-b-xl bg-foreground/10 px-3 py-2.5">{lead.source ? <span aria-label={t("Source: {name}", { name: lead.source })} className={`inline-flex items-center ${sourceBrandClass[lead.source]}`}><SourceMark source={lead.source} /></span> : <span />}{lead.assigned_agent ? <span className="flex min-w-0 items-center gap-1.5"><span className="max-w-28 truncate text-xs text-muted-foreground">{lead.assigned_agent.name}</span><PersonAvatar name={lead.assigned_agent.name} avatar={lead.assigned_agent.avatar} size="sm" aria-label={t("Assigned agent {name}", { name: lead.assigned_agent.name })} /></span> : <span />}</footer></article>
 }
 
 function LeadTitleEditor({ displayName, canEdit, saving, onSave }: { displayName: string; canEdit: boolean; saving: boolean; onSave: (name: string) => Promise<boolean> }) {
@@ -657,7 +658,7 @@ function LeadTitleEditor({ displayName, canEdit, saving, onSave }: { displayName
   const cancel = () => { setDraft(displayName); setEditing(false) }
   const save = async () => {
     const name = draft.trim()
-    if (!name) { toast.error("Name is required."); return }
+    if (!name) { toast.error(t("Name is required.")); return }
     if (await onSave(name)) setEditing(false)
   }
 
@@ -665,24 +666,24 @@ function LeadTitleEditor({ displayName, canEdit, saving, onSave }: { displayName
     <PersonAvatar name={displayName} size="lg" />
     <DialogTitle className={editing ? "sr-only" : "min-w-0 truncate"}>{displayName}</DialogTitle>
     {editing ? <div className="flex min-w-0 flex-1 items-center gap-1.5">
-      <Input aria-label="Lead name" autoFocus value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void save() } if (event.key === "Escape") cancel() }} disabled={saving} className="h-8 min-w-0 max-w-md flex-1" />
-      <Button type="button" size="icon-sm" aria-label="Save lead name" onClick={() => void save()} disabled={saving}><Check aria-hidden="true" /></Button>
-      <Button type="button" variant="ghost" size="icon-sm" aria-label="Cancel editing lead name" onClick={cancel} disabled={saving}><X aria-hidden="true" /></Button>
-    </div> : canEdit && <Button type="button" variant="ghost" size="icon-sm" aria-label="Edit lead name" className="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" onClick={() => setEditing(true)}><Pencil aria-hidden="true" /></Button>}
+      <Input aria-label={t("Lead name")} autoFocus value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void save() } if (event.key === "Escape") cancel() }} disabled={saving} className="h-8 min-w-0 max-w-md flex-1" />
+      <Button type="button" size="icon-sm" aria-label={t("Save lead name")} onClick={() => void save()} disabled={saving}><Check aria-hidden="true" /></Button>
+      <Button type="button" variant="ghost" size="icon-sm" aria-label={t("Cancel editing lead name")} onClick={cancel} disabled={saving}><X aria-hidden="true" /></Button>
+    </div> : canEdit && <Button type="button" variant="ghost" size="icon-sm" aria-label={t("Edit lead name")} className="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" onClick={() => setEditing(true)}><Pencil aria-hidden="true" /></Button>}
   </div>
 }
 
 function LeadPreviewDialog({ open, lead, loading, error, deals, dealsTotal, dealsLoading, dealsError, isSuper, canEdit, canDelete, canEditInfo, canEditAccount, updatingStatus, updatingAgent, updatingAccount, updatingInfo, deleting, loadAgentOptions, loadAccountOptions, onStatusChange, onAgentChange, onAccountChange, onInfoSave, onNameSave, onDelete, onOpenChange }: { open: boolean; lead: LeadDetail | null; loading: boolean; error: string; deals: Deal[]; dealsTotal: number; dealsLoading: boolean; dealsError: string; isSuper: boolean; canEdit: boolean; canDelete: boolean; canEditInfo: boolean; canEditAccount: boolean; updatingStatus: boolean; updatingAgent: boolean; updatingAccount: boolean; updatingInfo: boolean; deleting: boolean; loadAgentOptions: (query: string, page: number, signal: AbortSignal) => Promise<SearchableResourcePage>; loadAccountOptions: (query: string, page: number, signal: AbortSignal) => Promise<SearchableResourcePage>; onStatusChange: (status: LeadStatus) => void; onAgentChange: (agentId: number, option?: SearchableResourceOption) => void; onAccountChange: (accountId: number, option?: SearchableResourceOption) => void; onInfoSave: (values: LeadInfoValues) => Promise<boolean>; onNameSave: (name: string) => Promise<boolean>; onDelete: () => void; onOpenChange: (open: boolean) => void }) {
   if (!open) return <Dialog open={false} onOpenChange={onOpenChange} />
   if (loading) return <Dialog open onOpenChange={onOpenChange}><DialogContent className="max-h-[80vh] max-w-3xl"><LeadPreviewSkeleton /></DialogContent></Dialog>
-  if (error) return <Dialog open onOpenChange={onOpenChange}><DialogContent className="max-h-[80vh] max-w-3xl"><div className="space-y-2 py-4"><p className="font-medium">Unable to load lead details</p><p role="alert" className="text-sm text-destructive">{error}</p></div></DialogContent></Dialog>
-  if (!lead) return <Dialog open onOpenChange={onOpenChange}><DialogContent className="max-h-[80vh] max-w-3xl"><p className="py-4 text-sm text-muted-foreground">This lead could not be loaded.</p></DialogContent></Dialog>
+  if (error) return <Dialog open onOpenChange={onOpenChange}><DialogContent className="max-h-[80vh] max-w-3xl"><div className="space-y-2 py-4"><p className="font-medium">{t("Unable to load lead details")}</p><p role="alert" className="text-sm text-destructive">{error}</p></div></DialogContent></Dialog>
+  if (!lead) return <Dialog open onOpenChange={onOpenChange}><DialogContent className="max-h-[80vh] max-w-3xl"><p className="py-4 text-sm text-muted-foreground">{t("This lead could not be loaded.")}</p></DialogContent></Dialog>
   const displayName = lead.contact?.name ?? lead.name
   return <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent className="max-h-[80vh] min-w-3xl max-w-5xl overflow-hidden">
       <DialogHeader className="pe-16"><LeadTitleEditor displayName={displayName} canEdit={canEditInfo} saving={updatingInfo} onSave={onNameSave} /></DialogHeader>
-      {canDelete && (lead.contact ? <Tooltip><TooltipTrigger asChild><span tabIndex={0} className="absolute top-2 end-10 inline-flex rounded-md"><Button type="button" variant="ghost" size="icon-sm" aria-label="Delete lead" disabled className="text-destructive"><Trash2 aria-hidden="true" /></Button></span></TooltipTrigger><TooltipContent>Leads with contacts can't be deleted.</TooltipContent></Tooltip> : <Button type="button" variant="ghost" size="icon-sm" aria-label="Delete lead" title="Delete lead" disabled={deleting} onClick={onDelete} className="absolute top-2 end-10 text-destructive hover:bg-destructive/10 hover:text-destructive"><Trash2 aria-hidden="true" /></Button>)}
-      <ScrollArea className="max-h-[calc(80vh-5rem)]"><div className="p-4"><div className="flex flex-wrap gap-2"><LeadStatusMenu status={lead.status} canEdit={canEdit} canQualify={Boolean(lead.company_name?.trim() && (lead.assigned_agent_id ?? lead.assigned_agent?.id))} updating={updatingStatus} onChange={onStatusChange} />{lead.source && <Badge variant="secondary" className={`gap-1.5 ${sourceBrandClass[lead.source]}`}><SourceMark source={lead.source} /><span className="capitalize">{lead.source}</span></Badge>}</div><div className="mt-5 flex flex-col gap-6 lg:flex-row"><div className="min-w-0 flex-1 lg:w-2/3"><LeadInfoCard lead={lead} canEdit={canEditInfo} updating={updatingInfo} onSave={onInfoSave} /></div><aside className="min-w-0 lg:w-1/3"><LeadAgentCard lead={lead} canEdit={canEdit} updating={updatingAgent} loadOptions={loadAgentOptions} onChange={onAgentChange} /><LeadAccountCard account={lead.contact?.account} canEdit={canEditAccount && lead.contact?.id !== undefined} updating={updatingAccount} loadOptions={loadAccountOptions} onChange={onAccountChange} /></aside></div>{lead.contact?.id !== undefined && <LeadDealsPreview contactId={lead.contact.id} deals={deals} total={dealsTotal} loading={dealsLoading} error={dealsError} />}{isSuper && lead.id !== undefined && <ActivityLogList model="lead" id={lead.id} title="Lead activity" className="mt-5" />}</div></ScrollArea>
+      {canDelete && (lead.contact ? <Tooltip><TooltipTrigger asChild><span tabIndex={0} className="absolute top-2 end-10 inline-flex rounded-md"><Button type="button" variant="ghost" size="icon-sm" aria-label={t("Delete lead")} disabled className="text-destructive"><Trash2 aria-hidden="true" /></Button></span></TooltipTrigger><TooltipContent>{t("Leads with contacts can't be deleted.")}</TooltipContent></Tooltip> : <Button type="button" variant="ghost" size="icon-sm" aria-label={t("Delete lead")} title={t("Delete lead")} disabled={deleting} onClick={onDelete} className="absolute top-2 end-10 text-destructive hover:bg-destructive/10 hover:text-destructive"><Trash2 aria-hidden="true" /></Button>)}
+      <ScrollArea className="max-h-[calc(80vh-5rem)]"><div className="p-4"><div className="flex flex-wrap gap-2"><LeadStatusMenu status={lead.status} canEdit={canEdit} canQualify={Boolean(lead.company_name?.trim() && (lead.assigned_agent_id ?? lead.assigned_agent?.id))} updating={updatingStatus} onChange={onStatusChange} />{lead.source && <Badge variant="secondary" className={`gap-1.5 ${sourceBrandClass[lead.source]}`}><SourceMark source={lead.source} /><span className="capitalize">{lead.source}</span></Badge>}</div><div className="mt-5 flex flex-col gap-6 lg:flex-row"><div className="min-w-0 flex-1 lg:w-2/3"><LeadInfoCard lead={lead} canEdit={canEditInfo} updating={updatingInfo} onSave={onInfoSave} /></div><aside className="min-w-0 lg:w-1/3"><LeadAgentCard lead={lead} canEdit={canEdit} updating={updatingAgent} loadOptions={loadAgentOptions} onChange={onAgentChange} /><LeadAccountCard account={lead.contact?.account} canEdit={canEditAccount && lead.contact?.id !== undefined} updating={updatingAccount} loadOptions={loadAccountOptions} onChange={onAccountChange} /></aside></div>{lead.contact?.id !== undefined && <LeadDealsPreview contactId={lead.contact.id} deals={deals} total={dealsTotal} loading={dealsLoading} error={dealsError} />}{isSuper && lead.id !== undefined && <ActivityLogList model="lead" id={lead.id} title={t("Lead activity")} className="mt-5" />}</div></ScrollArea>
     </DialogContent>
   </Dialog>
 }
@@ -714,12 +715,12 @@ function LeadInfoCard({ lead, canEdit, updating, onSave }: { lead: LeadDetail; c
   const save = async () => { if (await onSave(draft)) setEditing(false) }
 
   return <div className="relative rounded-lg bg-muted/40 p-4">
-    {canEdit && !editing && <Button type="button" variant="ghost" size="icon-sm" className="absolute top-2 end-2" aria-label="Edit lead information" onClick={() => setEditing(true)}><Pencil aria-hidden="true" /></Button>}
+    {canEdit && !editing && <Button type="button" variant="ghost" size="icon-sm" className="absolute top-2 end-2" aria-label={t("Edit lead information")} onClick={() => setEditing(true)}><Pencil aria-hidden="true" /></Button>}
     {editing ? <div className="space-y-2.5">
-      <PhoneField aria-label="Phone" placeholder="Phone" value={draft.phone} onValueChange={(value) => setDraft((current) => ({ ...current, phone: value }))} disabled={updating} />
-      <InputGroup><InputGroupAddon><Mail aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label="Email" type="email" value={draft.email} onChange={update("email")} placeholder="Email" disabled={updating} /></InputGroup>
-      {hasContact ? <InputGroup><InputGroupAddon><Briefcase aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label="Contact title" value={draft.title} onChange={update("title")} placeholder="Role in company" disabled={updating} /></InputGroup> : <><InputGroup><InputGroupAddon><MapPin aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label="City" value={draft.city} onChange={update("city")} placeholder="City" disabled={updating} /></InputGroup><InputGroup><InputGroupAddon><MapPin aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label="Address" value={draft.address} onChange={update("address")} placeholder="Address" disabled={updating} /></InputGroup><InputGroup><InputGroupAddon><Building2 aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label="Company name" value={draft.companyName} onChange={update("companyName")} placeholder="Company name" disabled={updating} /></InputGroup></>}
-      <div className="flex justify-end gap-2 pt-1"><Button type="button" variant="ghost" size="sm" onClick={cancel} disabled={updating}><X className="me-1.5 size-3.5" />Cancel</Button><Button type="button" size="sm" onClick={() => void save()} disabled={updating}><Save className="me-1.5 size-3.5" />{updating ? "Saving…" : "Save"}</Button></div>
+      <PhoneField aria-label={t("Phone")} placeholder={t("Phone")} value={draft.phone} onValueChange={(value) => setDraft((current) => ({ ...current, phone: value }))} disabled={updating} />
+      <InputGroup><InputGroupAddon><Mail aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label={t("Email")} type="email" value={draft.email} onChange={update("email")} placeholder={t("Email")} disabled={updating} /></InputGroup>
+      {hasContact ? <InputGroup><InputGroupAddon><Briefcase aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label={t("Contact title")} value={draft.title} onChange={update("title")} placeholder={t("Role in company")} disabled={updating} /></InputGroup> : <><InputGroup><InputGroupAddon><MapPin aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label={t("City")} value={draft.city} onChange={update("city")} placeholder={t("City")} disabled={updating} /></InputGroup><InputGroup><InputGroupAddon><MapPin aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label={t("Address")} value={draft.address} onChange={update("address")} placeholder={t("Address")} disabled={updating} /></InputGroup><InputGroup><InputGroupAddon><Building2 aria-hidden="true" /></InputGroupAddon><InputGroupInput aria-label={t("Company name")} value={draft.companyName} onChange={update("companyName")} placeholder={t("Company name")} disabled={updating} /></InputGroup></>}
+      <div className="flex justify-end gap-2 pt-1"><Button type="button" variant="ghost" size="sm" onClick={cancel} disabled={updating}><X className="me-1.5 size-3.5" />{t("Cancel")}</Button><Button type="button" size="sm" onClick={() => void save()} disabled={updating}><Save className="me-1.5 size-3.5" />{updating ? t("Saving…") : t("Save")}</Button></div>
     </div> : <div className="flex flex-col gap-3 pe-8 text-sm">
       {draft.phone && <a className="flex min-w-0 items-center gap-2 text-primary hover:text-foreground" href={`tel:${draft.phone}`}><Phone className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{draft.phone}</span></a>}
       {draft.email && <a className="flex min-w-0 items-center gap-2 text-primary hover:text-foreground" href={`mailto:${draft.email}`}><Mail className="size-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{draft.email}</span></a>}
@@ -735,14 +736,14 @@ function LeadStatusMenu({ status, canEdit, canQualify, updating, onChange }: { s
   const current = statuses.find((item) => item.value === status)
   const content = <><span className={`size-2 rounded-full ${current?.color ?? "bg-muted-foreground"}`} />{current?.label ?? status}{canEdit && <ChevronDown className="size-3.5 text-muted-foreground" aria-hidden="true" />}</>
   if (!canEdit) return <Badge variant="secondary" className="gap-1.5">{content}</Badge>
-  return <DropdownMenu><DropdownMenuTrigger asChild><Badge asChild variant="secondary" className="cursor-pointer gap-1.5"><button type="button" disabled={updating} aria-label="Change lead status">{content}</button></Badge></DropdownMenuTrigger><DropdownMenuContent align="start">{statuses.map((item) => { const disabled = updating || (item.value === "qualified" && status !== "qualified" && !canQualify); return <DropdownMenuItem key={item.value} disabled={disabled} onSelect={() => onChange(item.value)}><span className={`size-2 rounded-full ${item.color}`} />{item.label}{item.value === status && <Check className="ms-auto size-3.5" aria-hidden="true" />}</DropdownMenuItem> })}</DropdownMenuContent></DropdownMenu>
+  return <DropdownMenu><DropdownMenuTrigger asChild><Badge asChild variant="secondary" className="cursor-pointer gap-1.5"><button type="button" disabled={updating} aria-label={t("Change lead status")}>{content}</button></Badge></DropdownMenuTrigger><DropdownMenuContent align="start">{statuses.map((item) => { const disabled = updating || (item.value === "qualified" && status !== "qualified" && !canQualify); return <DropdownMenuItem key={item.value} disabled={disabled} onSelect={() => onChange(item.value)}><span className={`size-2 rounded-full ${item.color}`} />{item.label}{item.value === status && <Check className="ms-auto size-3.5" aria-hidden="true" />}</DropdownMenuItem> })}</DropdownMenuContent></DropdownMenu>
 }
 
 function LeadAgentCard({ lead, canEdit, updating, loadOptions, onChange }: { lead: LeadDetail; canEdit: boolean; updating: boolean; loadOptions: (query: string, page: number, signal: AbortSignal) => Promise<SearchableResourcePage>; onChange: (agentId: number, option?: SearchableResourceOption) => void }) {
   const agent = lead.assigned_agent
-  const emptyState = <div className="mt-3 flex items-center gap-2 rounded-md bg-background/60 p-2.5 text-sm text-muted-foreground"><span className="flex size-7 items-center justify-center rounded-full bg-muted"><UserRound className="size-3.5" aria-hidden="true" /></span><span>Unassigned</span></div>
+  const emptyState = <div className="mt-3 flex items-center gap-2 rounded-md bg-background/60 p-2.5 text-sm text-muted-foreground"><span className="flex size-7 items-center justify-center rounded-full bg-muted"><UserRound className="size-3.5" aria-hidden="true" /></span><span>{t("Unassigned")}</span></div>
   const currentOption = agent ? { id: agent.id, label: agent.name, data: agent } : undefined
-  return <section className="rounded-lg bg-muted/40 p-3">{canEdit ? <div className={updating ? "pointer-events-none opacity-60" : undefined}><SearchableResourcePicker id={`lead-dialog-agent-${lead.id}`} label="Agent" labelStyle="plain" value={lead.assigned_agent_id ?? agent?.id ?? 0} selectedOption={currentOption} onChange={onChange} loadOptions={loadOptions} placeholder="Choose an agent" searchPlaceholder="Search agents…" loadingLabel="Searching agents…" emptyLabel="No agents found." noResultsLabel="No agents match your search." renderOption={(option) => <AgentOption option={option} />} renderSelectedOption={(option) => <AgentOption option={option} />} /></div> : agent ? <div className="mt-3 flex items-center gap-2"><PersonAvatar name={agent.name} size="sm" /><span className="truncate text-sm font-medium">{agent.name}</span></div> : emptyState}</section>
+  return <section className="rounded-lg bg-muted/40 p-3">{canEdit ? <div className={updating ? "pointer-events-none opacity-60" : undefined}><SearchableResourcePicker id={`lead-dialog-agent-${lead.id}`} label={t("Agent")} labelStyle="plain" value={lead.assigned_agent_id ?? agent?.id ?? 0} selectedOption={currentOption} onChange={onChange} loadOptions={loadOptions} placeholder={t("Choose an agent")} searchPlaceholder={t("Search agents…")} loadingLabel={t("Searching agents…")} emptyLabel={t("No agents found.")} noResultsLabel={t("No agents match your search.")} renderOption={(option) => <AgentOption option={option} />} renderSelectedOption={(option) => <AgentOption option={option} />} /></div> : agent ? <div className="mt-3 flex items-center gap-2"><PersonAvatar name={agent.name} size="sm" /><span className="truncate text-sm font-medium">{agent.name}</span></div> : emptyState}</section>
 }
 
 function AccountLogo({ account, className = "size-8" }: { account: Pick<Account, "name" | "image">; className?: string }) { return account.image ? <img src={account.image.thumbnail_url || account.image.url} alt={`${account.name} logo`} className={`${className} shrink-0 rounded-md border border-border bg-white object-contain p-1 dark:bg-white`} /> : <span className={`grid ${className} shrink-0 place-items-center rounded-md border border-dashed border-border bg-white dark:bg-white`}><Building2 className="size-3.5 text-muted-foreground" aria-hidden="true" /></span> }
@@ -750,13 +751,13 @@ function AccountLogo({ account, className = "size-8" }: { account: Pick<Account,
 function LeadAccountOption({ option }: { option: SearchableResourceOption }) { const account = option.data as Account | undefined; return <span className="flex min-w-0 flex-1 items-center gap-2.5"><AccountLogo account={{ name: option.label, image: account?.image }} /><span className="min-w-0"><span className="block truncate font-medium">{option.label}</span>{option.description && <span className="block truncate text-xs text-muted-foreground">{option.description}</span>}</span></span> }
 
 function LeadAccountCard({ account, canEdit, updating, loadOptions, onChange }: { account: LeadAccount | null | undefined; canEdit: boolean; updating: boolean; loadOptions: (query: string, page: number, signal: AbortSignal) => Promise<SearchableResourcePage>; onChange: (accountId: number, option?: SearchableResourceOption) => void }) {
-  const emptyState = <div className="mt-3 flex items-center gap-2 rounded-md bg-background/60 p-2.5 text-sm text-muted-foreground"><span className="flex size-7 items-center justify-center rounded-full bg-muted"><Building2 className="size-3.5" aria-hidden="true" /></span><span>No account linked</span></div>
+  const emptyState = <div className="mt-3 flex items-center gap-2 rounded-md bg-background/60 p-2.5 text-sm text-muted-foreground"><span className="flex size-7 items-center justify-center rounded-full bg-muted"><Building2 className="size-3.5" aria-hidden="true" /></span><span>{t("No account linked")}</span></div>
   const currentOption = account?.id !== undefined ? { id: account.id, label: account.name, data: account } : undefined
-  return <section className="mt-4 rounded-lg bg-muted/40 p-3">{canEdit ? <div className={updating ? "pointer-events-none opacity-60" : undefined}><SearchableResourcePicker id="lead-dialog-account" label="Account" labelStyle="plain" value={account?.id ?? 0} selectedOption={currentOption} onChange={onChange} loadOptions={loadOptions} placeholder="Choose an account" searchPlaceholder="Search accounts…" loadingLabel="Searching accounts…" emptyLabel="No accounts found." noResultsLabel="No accounts match your search." renderOption={(option) => <LeadAccountOption option={option} />} renderSelectedOption={(option) => <span className="flex min-w-0 items-center gap-2"><AccountLogo account={{ name: option.label, image: (option.data as Account | undefined)?.image }} /><span className="truncate">{option.label}</span></span>} /></div> : account?.name ? <div className="mt-3 flex items-center gap-2"><AccountLogo account={account} />{account.id !== undefined ? <Link className="truncate font-medium text-primary hover:text-foreground" to={`/accounts/${account.id}`}>{account.name}</Link> : <span className="truncate font-medium">{account.name}</span>}</div> : emptyState}</section>
+  return <section className="mt-4 rounded-lg bg-muted/40 p-3">{canEdit ? <div className={updating ? "pointer-events-none opacity-60" : undefined}><SearchableResourcePicker id="lead-dialog-account" label={t("Account")} labelStyle="plain" value={account?.id ?? 0} selectedOption={currentOption} onChange={onChange} loadOptions={loadOptions} placeholder={t("Choose an account")} searchPlaceholder={t("Search accounts…")} loadingLabel={t("Searching accounts…")} emptyLabel={t("No accounts found.")} noResultsLabel={t("No accounts match your search.")} renderOption={(option) => <LeadAccountOption option={option} />} renderSelectedOption={(option) => <span className="flex min-w-0 items-center gap-2"><AccountLogo account={{ name: option.label, image: (option.data as Account | undefined)?.image }} /><span className="truncate">{option.label}</span></span>} /></div> : account?.name ? <div className="mt-3 flex items-center gap-2"><AccountLogo account={account} />{account.id !== undefined ? <Link className="truncate font-medium text-primary hover:text-foreground" to={`/accounts/${account.id}`}>{account.name}</Link> : <span className="truncate font-medium">{account.name}</span>}</div> : emptyState}</section>
 }
 
 function LeadDealsPreview({ contactId, deals, total, loading, error }: { contactId?: number; deals: Deal[]; total: number; loading: boolean; error: string }) {
-  return <section className="mt-6 rounded-lg bg-muted/40 p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold">Deals</h3>{contactId !== undefined && <Button asChild size="sm"><Link to="/deals/create">New deal</Link></Button>}</div>{loading ? <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">{Array.from({ length: 3 }, (_, index) => <div key={index} className="overflow-hidden rounded-lg bg-background shadow-sm"><Skeleton className="aspect-[4/3] w-full" /><div className="space-y-2 p-3"><Skeleton className="h-3 w-4/5" /><Skeleton className="h-5 w-3/5" /></div></div>)}</div> : error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : !contactId || !deals.length ? <div className="flex flex-col items-center justify-center gap-2 py-8 text-center"><span className="flex size-11 items-center justify-center rounded-full bg-background text-muted-foreground shadow-sm"><Inbox className="size-5" aria-hidden="true" /></span><p className="text-sm font-medium text-foreground/75">No deals yet</p></div> : <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">{deals.slice(0, 3).map((deal, index) => { const cover = deal.property.images?.[0]; const hasMoreDeals = deals.length > 3 || total > 3; const dealHref = deal.id !== undefined ? `/deals/${deal.id}` : undefined; return <article key={deal.id ?? `${deal.property.id}-${index}`} className="relative overflow-hidden rounded-lg bg-background shadow-sm">{dealHref ? <Link to={dealHref} aria-label={`Open deal for ${deal.property.title}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"><div className="relative aspect-[4/3] bg-muted/30">{cover ? <img src={cover.thumbnail_url || cover.url} alt={deal.property.title} className="size-full object-cover" loading="lazy" /> : <div className="grid size-full place-items-center text-muted-foreground"><ImageIcon className="size-5" aria-hidden="true" /></div>}<Badge variant="secondary" className={`absolute end-2 top-2 text-[11px] capitalize ${dealStatusPillClass[deal.status]}`}>{deal.status.replaceAll("_", " ")}</Badge></div><div className="space-y-2 p-3"><p className="truncate text-xs text-muted-foreground">{deal.property.title}</p><p className="truncate font-mono text-sm font-semibold tabular-nums">{formatDealValue(deal.deal_value)}</p></div></Link> : <><div className="relative aspect-[4/3] bg-muted/30">{cover ? <img src={cover.thumbnail_url || cover.url} alt={deal.property.title} className="size-full object-cover" loading="lazy" /> : <div className="grid size-full place-items-center text-muted-foreground"><ImageIcon className="size-5" aria-hidden="true" /></div>}<Badge variant="secondary" className={`absolute end-2 top-2 text-[11px] capitalize ${dealStatusPillClass[deal.status]}`}>{deal.status.replaceAll("_", " ")}</Badge></div><div className="space-y-2 p-3"><p className="truncate text-xs text-muted-foreground">{deal.property.title}</p><p className="truncate font-mono text-sm font-semibold tabular-nums">{formatDealValue(deal.deal_value)}</p></div></>}{index === 2 && hasMoreDeals && <Link className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black/75 px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-black/85" to={`/deals?contact=${contactId}`}>View all deals</Link>}</article> })}</div>}</section>
+  return <section className="mt-6 rounded-lg bg-muted/40 p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold">{t("Deals")}</h3>{contactId !== undefined && <Button asChild size="sm"><Link to="/deals/create">{t("New deal")}</Link></Button>}</div>{loading ? <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">{Array.from({ length: 3 }, (_, index) => <div key={index} className="overflow-hidden rounded-lg bg-background shadow-sm"><Skeleton className="aspect-[4/3] w-full" /><div className="space-y-2 p-3"><Skeleton className="h-3 w-4/5" /><Skeleton className="h-5 w-3/5" /></div></div>)}</div> : error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : !contactId || !deals.length ? <div className="flex flex-col items-center justify-center gap-2 py-8 text-center"><span className="flex size-11 items-center justify-center rounded-full bg-background text-muted-foreground shadow-sm"><Inbox className="size-5" aria-hidden="true" /></span><p className="text-sm font-medium text-foreground/75">{t("No deals yet")}</p></div> : <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">{deals.slice(0, 3).map((deal, index) => { const cover = deal.property.images?.[0]; const hasMoreDeals = deals.length > 3 || total > 3; const dealHref = deal.id !== undefined ? `/deals/${deal.id}` : undefined; return <article key={deal.id ?? `${deal.property.id}-${index}`} className="relative overflow-hidden rounded-lg bg-background shadow-sm">{dealHref ? <Link to={dealHref} aria-label={t("Open deal for {name}", { name: deal.property.title })} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"><div className="relative aspect-[4/3] bg-muted/30">{cover ? <img src={cover.thumbnail_url || cover.url} alt={deal.property.title} className="size-full object-cover" loading="lazy" /> : <div className="grid size-full place-items-center text-muted-foreground"><ImageIcon className="size-5" aria-hidden="true" /></div>}<Badge variant="secondary" className={`absolute end-2 top-2 text-[11px] capitalize ${dealStatusPillClass[deal.status]}`}>{deal.status.replaceAll("_", " ")}</Badge></div><div className="space-y-2 p-3"><p className="truncate text-xs text-muted-foreground">{deal.property.title}</p><p className="truncate font-mono text-sm font-semibold tabular-nums">{formatDealValue(deal.deal_value)}</p></div></Link> : <><div className="relative aspect-[4/3] bg-muted/30">{cover ? <img src={cover.thumbnail_url || cover.url} alt={deal.property.title} className="size-full object-cover" loading="lazy" /> : <div className="grid size-full place-items-center text-muted-foreground"><ImageIcon className="size-5" aria-hidden="true" /></div>}<Badge variant="secondary" className={`absolute end-2 top-2 text-[11px] capitalize ${dealStatusPillClass[deal.status]}`}>{deal.status.replaceAll("_", " ")}</Badge></div><div className="space-y-2 p-3"><p className="truncate text-xs text-muted-foreground">{deal.property.title}</p><p className="truncate font-mono text-sm font-semibold tabular-nums">{formatDealValue(deal.deal_value)}</p></div></>}{index === 2 && hasMoreDeals && <Link className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black/75 px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-black/85" to={`/deals?contact=${contactId}`}>{t("View all deals")}</Link>}</article> })}</div>}</section>
 }
 
 function formatDealValue(value: number) {
@@ -768,7 +769,7 @@ function LeadPreviewSkeleton() {
 }
 
 function LeadStatusDistributionSkeleton() {
-  return <div className="space-y-3" role="status" aria-label="Loading lead status distribution"><div className="flex items-center justify-between gap-3"><Skeleton className="h-3 w-16" /><Skeleton className="h-3 w-20" /><Skeleton className="h-3 w-16" /><Skeleton className="h-3 w-20" /></div><Skeleton className="h-2 w-full rounded-full" /></div>
+  return <div className="space-y-3" role="status" aria-label={t("Loading lead status distribution")}><div className="flex items-center justify-between gap-3"><Skeleton className="h-3 w-16" /><Skeleton className="h-3 w-20" /><Skeleton className="h-3 w-16" /><Skeleton className="h-3 w-20" /></div><Skeleton className="h-2 w-full rounded-full" /></div>
 }
 
 function statKey(status: LeadStatus): keyof LeadStats { return status === "unqualified" ? "unqualified_count" : `${status}_count` as keyof LeadStats }
@@ -789,5 +790,5 @@ function ColumnLoadTrigger({ enabled, loading, onLoadMore }: { enabled: boolean;
     observer.observe(node)
     return () => observer.disconnect()
   }, [enabled, loading, onLoadMore])
-  return <div ref={ref} className="flex min-h-6 items-center justify-center text-muted-foreground" aria-live="polite">{loading && <Loader2 className="size-3.5 animate-spin" aria-label="Loading more leads" />}</div>
+  return <div ref={ref} className="flex min-h-6 items-center justify-center text-muted-foreground" aria-live="polite">{loading && <Loader2 className="size-3.5 animate-spin" aria-label={t("Loading more leads")} />}</div>
 }

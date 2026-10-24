@@ -26,6 +26,7 @@ import {
   type DealPropertyOption,
   type User,
 } from "./shared"
+import { t } from "@/lib/i18n"
 
 export function DealCreatePage() {
   return <DealEditorPage />
@@ -70,7 +71,7 @@ function DealEditorPage() {
         agentsLoading: false,
       })
     } catch (caught) {
-      if (!(caught instanceof DOMException && caught.name === "AbortError")) setDealError(caught instanceof ApiError ? caught : new ApiError(caught instanceof Error ? caught.message : "Unable to load this deal.", 0))
+      if (!(caught instanceof DOMException && caught.name === "AbortError")) setDealError(caught instanceof ApiError ? caught : new ApiError(caught instanceof Error ? caught.message : t("Unable to load this deal."), 0))
     } finally {
       if (!signal?.aborted) setLoadingDeal(false)
     }
@@ -113,7 +114,7 @@ function DealEditorPage() {
           return { ...current, contacts: [], properties: prioritizeDealProperty(propertiesWithUrlSelection, urlPropertyId), propertiesLoading: false, propertiesLoadingMore: false, propertiesHasMore: propertyPageBody.currentPage < propertyPageBody.lastPage, agents: users ? userAgents : current.agents, agentsLoading: false }
         })
       })
-      .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : "Unable to load deal options.") })
+      .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : t("Unable to load deal options.")) })
       .finally(() => { if (!controller.signal.aborted) setRelationOptions((current) => ({ ...current, agentsLoading: false, propertiesLoading: false, propertiesLoadingMore: false })) })
     return () => controller.abort()
   }, [can, editing, form, propertyPage, propertyQuery, propertySearch])
@@ -127,7 +128,7 @@ function DealEditorPage() {
         const userAgents = users.data.filter((item): item is User & { id: number } => item.id !== undefined).map((item) => ({ id: item.id, name: item.name, username: item.username, avatar: item.avatar }))
         setRelationOptions((current) => ({ ...current, agents: Array.from(new Map([...current.agents, ...userAgents].map((agent) => [agent.id, agent])).values()), agentsLoading: false }))
       })
-      .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : "Unable to load deal options.") })
+      .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : t("Unable to load deal options.")) })
       .finally(() => { if (!controller.signal.aborted) setRelationOptions((current) => ({ ...current, agentsLoading: false })) })
     return () => controller.abort()
   }, [can, editing])
@@ -144,7 +145,7 @@ function DealEditorPage() {
         setRelationOptions((current) => ({ ...current, properties: prioritizeDealProperty(Array.from(new Map([...current.properties, loadedProperty].map((item) => [item.id, item])).values()), propertyId) }))
         applyPropertyToDealForm(form, loadedProperty)
       })
-      .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : "Unable to load the selected property.") })
+      .catch((caught) => { if (!(caught instanceof DOMException && caught.name === "AbortError")) setEditorError(caught instanceof Error ? caught.message : t("Unable to load the selected property.")) })
     return () => controller.abort()
   }, [editing, form, propertyQuery])
 
@@ -157,7 +158,7 @@ function DealEditorPage() {
       navigate(`/deals/${result.deal.id}${detailsParams ? `?${detailsParams}` : ""}`, { replace: true })
     } catch (caught) {
       if (caught instanceof ApiError) Object.entries(caught.fields).forEach(([field, messages]) => form.setError(field as keyof DealFormValues, { message: messages[0] }))
-      setEditorError(caught instanceof Error ? caught.message : "Unable to create this deal.")
+      setEditorError(caught instanceof Error ? caught.message : t("Unable to create this deal."))
     }
   })
 
@@ -170,20 +171,20 @@ function DealEditorPage() {
       navigate(`/deals/${result.deal.id ?? deal.id}${detailsParams ? `?${detailsParams}` : ""}`, { replace: true })
     } catch (caught) {
       if (caught instanceof ApiError) Object.entries(caught.fields).forEach(([field, messages]) => form.setError(field as keyof DealFormValues, { message: messages[0] }))
-      setEditorError(caught instanceof Error ? caught.message : "Unable to save this deal.")
+      setEditorError(caught instanceof Error ? caught.message : t("Unable to save this deal."))
     }
   })
 
-  if (!can("deal.view")) return <ErrorState kind="forbidden" title="Deals are restricted" description="You do not have permission to view deals." actionLabel="Return to overview" actionTo="/" />
-  if (!editing && !can("deal.create")) return <ErrorState kind="forbidden" title="Deal creation is restricted" description="You do not have permission to create deals." actionLabel="Return to deals" actionTo="/deals" />
-  if (editing && (!Number.isInteger(id) || id < 1)) return <ErrorState kind="not-found" title="Deal not found" description="The deal identifier is invalid." actionLabel="Return to deals" actionTo="/deals" />
-  if (editing && loadingDeal) return <div className="grid min-h-96 place-items-center p-6 text-sm text-muted-foreground" role="status">Loading deal…</div>
-  if (editing && (dealError || !deal)) return <ErrorState kind={dealError?.status === 403 ? "forbidden" : "not-found"} title={dealError?.status === 403 ? "Deal editing is restricted" : dealError?.status === 404 ? "Deal not found" : "Unable to open deal"} description={dealError?.message || "This deal is no longer available."} actionLabel="Return to deals" actionTo={backToIndex} />
+  if (!can("deal.view")) return <ErrorState kind="forbidden" title={t("Deals are restricted")} description={t("You do not have permission to view deals.")} actionLabel={t("Return to overview")} actionTo="/" />
+  if (!editing && !can("deal.create")) return <ErrorState kind="forbidden" title={t("Deal creation is restricted")} description={t("You do not have permission to create deals.")} actionLabel={t("Return to deals")} actionTo="/deals" />
+  if (editing && (!Number.isInteger(id) || id < 1)) return <ErrorState kind="not-found" title={t("Deal not found")} description={t("The deal identifier is invalid.")} actionLabel={t("Return to deals")} actionTo="/deals" />
+  if (editing && loadingDeal) return <div className="grid min-h-96 place-items-center p-6 text-sm text-muted-foreground" role="status">{t("Loading deal…")}</div>
+  if (editing && (dealError || !deal)) return <ErrorState kind={dealError?.status === 403 ? "forbidden" : "not-found"} title={dealError?.status === 403 ? t("Deal editing is restricted") : dealError?.status === 404 ? t("Deal not found") : t("Unable to open deal")} description={dealError?.message || t("This deal is no longer available.")} actionLabel={t("Return to deals")} actionTo={backToIndex} />
 
   const canEdit = Boolean(deal && (isSuper || can("deal.update") || user?.id === deal.agent_id))
-  if (editing && !canEdit) return <ErrorState kind="forbidden" title="Deal editing is restricted" description="You do not have permission to edit this deal." actionLabel="Return to deals" actionTo={backToIndex} />
+  if (editing && !canEdit) return <ErrorState kind="forbidden" title={t("Deal editing is restricted")} description={t("You do not have permission to edit this deal.")} actionLabel={t("Return to deals")} actionTo={backToIndex} />
 
   const formId = editing ? "deal-edit-form" : "deal-create-form"
   const saving = form.formState.isSubmitting
-  return <DealRelationOptionsContext.Provider value={{ ...relationOptions, onPropertySearch: editing ? undefined : searchProperties, onLoadMoreProperties: editing ? undefined : loadMoreProperties }}><div className="space-y-6 p-6 pb-24 lg:p-8"><header className="border-b border-border pb-6"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={backToIndex}><ArrowLeft className="me-2 size-3.5" />Back to deals</Link></Button><div className="mt-5 flex flex-wrap items-center justify-between gap-3"><div><h1 className="mt-2 text-2xl font-semibold tracking-tight">{editing ? "Edit deal" : "New deal"}</h1></div><div className="flex items-center gap-2"><Button type="button" variant="outline" size="sm" onClick={() => navigate(backToIndex)}>Cancel</Button><Button type="submit" form={formId} size="sm" disabled={saving}>{saving ? editing ? "Saving…" : "Creating…" : editing ? "Save changes" : "Create"}</Button></div></div></header>{editorError && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{editorError}</div>}<section className="w-full"><DealForm editing={editing} formId={formId} form={form} agentUserId={agentUserId} urlPropertyId={editing ? deal?.property.id : Number(propertyQuery) || undefined} onSubmit={editing ? submitEdit : submitCreate} /></section></div></DealRelationOptionsContext.Provider>
+  return <DealRelationOptionsContext.Provider value={{ ...relationOptions, onPropertySearch: editing ? undefined : searchProperties, onLoadMoreProperties: editing ? undefined : loadMoreProperties }}><div className="space-y-6 p-6 pb-24 lg:p-8"><header className="border-b border-border pb-6"><Button asChild variant="ghost" size="sm" className="-ms-2"><Link to={backToIndex}><ArrowLeft className="me-2 size-3.5 rtl:rotate-180" />{t("Back to deals")}</Link></Button><div className="mt-5 flex flex-wrap items-center justify-between gap-3"><div><h1 className="mt-2 text-2xl font-semibold tracking-tight">{editing ? t("Edit deal") : t("New deal")}</h1></div><div className="flex items-center gap-2"><Button type="button" variant="outline" size="sm" onClick={() => navigate(backToIndex)}>{t("Cancel")}</Button><Button type="submit" form={formId} size="sm" disabled={saving}>{saving ? editing ? t("Saving…") : t("Creating…") : editing ? t("Save changes") : t("Create")}</Button></div></div></header>{editorError && <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{editorError}</div>}<section className="w-full"><DealForm editing={editing} formId={formId} form={form} agentUserId={agentUserId} urlPropertyId={editing ? deal?.property.id : Number(propertyQuery) || undefined} onSubmit={editing ? submitEdit : submitCreate} /></section></div></DealRelationOptionsContext.Provider>
 }
