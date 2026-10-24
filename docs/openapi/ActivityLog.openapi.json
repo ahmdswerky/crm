@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Activity Logs",
-    "description": "",
+    "description": "Developer-only diagnostic audit logs, separate from sales activities and interaction history. Only the configured developer account with explicit activity-log permissions may access these endpoints; agents, managers and other superusers are denied.",
     "version": "1.0.0"
   },
   "tags": [],
@@ -11,7 +11,7 @@
       "get": {
         "summary": "activity-logs (list)",
         "deprecated": false,
-        "description": "Returns CRM activity logs ordered newest first. The endpoint supports filtering by subjects, event, causer, and creation date.",
+        "description": "Returns CRM activity logs ordered newest first. The endpoint supports filtering by subjects, event, causer, and creation date. Developer-only: requires the configured developer account and the relevant explicit activity-log permission.",
         "tags": [],
         "parameters": [
           {
@@ -296,7 +296,7 @@
       "get": {
         "summary": "activity-logs (show)",
         "deprecated": false,
-        "description": "",
+        "description": "Developer-only: requires the configured developer account and the relevant explicit activity-log permission.",
         "tags": [],
         "parameters": [
           {
@@ -379,7 +379,7 @@
       "post": {
         "summary": "activity-logs (revert)",
         "deprecated": false,
-        "description": "Reverts the latest CRM update or soft deletion for the activity's subject.",
+        "description": "Reverts the latest CRM update or soft deletion for the activity's subject. Developer-only: requires the configured developer account and the relevant explicit activity-log permission.",
         "tags": [],
         "parameters": [
           {
