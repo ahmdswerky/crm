@@ -414,7 +414,7 @@ services:
       retries: 10
 
   rabbitmq:
-    image: rabbitmq:4.1-management-alpine
+    image: rabbitmq:4.4-management-alpine
     entrypoint: ["/bin/sh", "/usr/local/bin/rabbitmq-entrypoint"]
     command: ["rabbitmq-server"]
     environment:
