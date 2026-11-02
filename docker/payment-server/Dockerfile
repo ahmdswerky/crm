@@ -1,4 +1,4 @@
-FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS dependencies
+FROM docker.io/library/node:26.13.0-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS dependencies
 WORKDIR /app
 COPY payment-server/package.json payment-server/package-lock.json ./
 RUN npm ci
@@ -7,12 +7,12 @@ FROM dependencies AS build
 COPY payment-server/ .
 RUN npm run build
 
-FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS production-dependencies
+FROM docker.io/library/node:26.13.0-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS production-dependencies
 WORKDIR /app
 COPY payment-server/package.json payment-server/package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-FROM docker.io/library/node:24.19.0-alpine@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43 AS runtime
+FROM docker.io/library/node:26.13.0-alpine@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS runtime
 ARG SOURCE_REVISION=unknown
 ARG BUILD_DATE=unknown
 LABEL org.opencontainers.image.title="CRM Payments API" \
