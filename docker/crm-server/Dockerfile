@@ -1,4 +1,4 @@
-FROM docker.io/library/php:8.4.27-fpm-alpine@sha256:8193f7c711715c88452ebe51d4ee7769172a3fa917446a8820cf84192da2c555 AS php-base
+FROM docker.io/library/php:8.6.0-fpm-alpine@sha256:3892978a38794b348f73d6926fb63e352b5338f8b302cdd2cf0ed968f63b50c5 AS php-base
 
 
 ARG APP_UID=1000
